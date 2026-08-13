@@ -1,12 +1,12 @@
 # SnackGym 태스크 백로그 (TODO)
 
 ## Phase 1: MVP 구현
-- [ ] **프로젝트 세팅 (Frontend & Backend)**
-  - [ ] Vite + React (TypeScript) + Tailwind CSS 기반 웹앱 보일러플레이트 세팅
-  - [ ] Firebase(Firestore, Cloud Functions, Auth) 프로젝트 초기화 및 환경 변수 구성
-- [ ] **웹앱 UI 및 인증 구현**
-  - [ ] 미션(약문통원해자)이 반영된 랜딩페이지 퍼블리싱
-  - [ ] 구글 Auth 로그인 연동 (랜딩페이지 진입점)
+- [x] **프로젝트 세팅 (Frontend & Backend)**
+  - [x] Vite + React (TypeScript) + Tailwind CSS 기반 웹앱 보일러플레이트 세팅
+  - [x] Firebase(Firestore, Cloud Functions, Auth) 프로젝트 초기화 및 환경 변수 구성
+- [/] **웹앱 UI 및 인증 구현**
+  - [x] 미션이 반영된 랜딩페이지 퍼블리싱 (영어 버전, Summer Forest Morning 테마)
+  - [x] 구글 Auth 로그인 연동 (랜딩페이지 진입점)
   - [ ] 온보딩 (보유 기구 및 부위 선택) 화면 구현
   - [ ] 카드 뒤집기(Flip) 방식의 싱글 뷰 듀얼 바디 맵 UI 개발
 - [ ] **텔레그램 봇 연동 & 보안**

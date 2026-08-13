@@ -19,3 +19,6 @@
 - **텔레그램 Bot API 격리**: 브라우저 클라이언트에서 텔레그램 API 직접 호출 금지. 100% Cloud Functions를 거쳐야 함.
 - **토큰 은닉**: Bot Token은 반드시 Firebase Secret Manager를 통해 환경 변수로 주입.
 - **OTP Handshake**: 텔레그램 봇 매핑(디프링크) 시 구글 Auth 유저임을 증명하는 5분 만료 일회성 해시 토큰 필수 생성 및 검증.
+
+## [Version History]
+- **v0.1.0** (2026-08-12): Initial deployment — Landing page (Summer Forest Morning theme, English copy) + Google Auth + Firebase Firestore initialized. Deployed via Vercel + GitHub (habitmon-app-v1 project).

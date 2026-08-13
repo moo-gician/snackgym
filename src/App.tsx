@@ -22,7 +22,7 @@ function App() {
       <div className="flex items-center justify-center min-h-screen" style={{ background: 'linear-gradient(160deg, #E8F5E9 0%, #F8FAF8 100%)' }}>
         <div className="text-center">
           <div className="text-5xl mb-4 animate-float">🌿</div>
-          <p className="text-base font-medium" style={{ color: '#4A6741' }}>로딩 중...</p>
+          <p className="text-base font-medium" style={{ color: '#4A6741' }}>Loading...</p>
         </div>
       </div>
     )
@@ -32,15 +32,15 @@ function App() {
     return <LandingPage />
   }
 
-  // TODO: 로그인 후 대시보드 (온보딩 → 홈 화면)
+  // TODO: Post-login dashboard (Onboarding → Home)
   return (
     <div className="flex items-center justify-center min-h-screen" style={{ background: 'linear-gradient(160deg, #E8F5E9 0%, #F8FAF8 100%)' }}>
       <div className="text-center p-8">
         <div className="text-5xl mb-4">💪</div>
         <h2 className="text-2xl font-bold mb-2" style={{ color: '#1A2E1A' }}>
-          {user.displayName}님, 반갑습니다!
+          Welcome, {user.displayName}!
         </h2>
-        <p style={{ color: '#4A6741' }}>대시보드 준비 중입니다 🌿</p>
+        <p style={{ color: '#4A6741' }}>Dashboard coming soon 🌿</p>
       </div>
     </div>
   )

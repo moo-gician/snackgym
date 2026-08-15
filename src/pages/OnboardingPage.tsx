@@ -185,10 +185,10 @@ export default function OnboardingPage() {
                       } ${eq === 'Bodyweight' ? 'opacity-90' : ''}`}
                     >
                       <div className={`absolute top-0 right-0 w-2 h-2 transition-colors ${isSelected ? 'bg-[var(--color-bronze)]' : 'bg-gray-800 group-hover:bg-[var(--color-bronze)]'}`}></div>
-                      <div className={`text-4xl flex items-center justify-center transition-transform duration-300 mb-3 ${isSelected ? 'scale-110 drop-shadow-[0_0_15px_rgba(200,154,81,0.5)]' : 'group-hover:scale-110 grayscale group-hover:grayscale-0'}`}>
+                      <div className={`text-6xl flex items-center justify-center transition-transform duration-300 mb-4 ${isSelected ? 'scale-110 drop-shadow-[0_0_15px_rgba(200,154,81,0.5)]' : 'group-hover:scale-110 grayscale group-hover:grayscale-0'}`}>
                         {item.emoji}
                       </div>
-                      <span className="font-display font-bold text-xs uppercase tracking-widest text-center">{item.label}</span>
+                      <span className="font-display font-bold text-sm uppercase tracking-widest text-center leading-tight">{item.label}</span>
                     </button>
                   );
                 })}

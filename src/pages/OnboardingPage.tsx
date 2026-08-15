@@ -459,7 +459,6 @@ export default function OnboardingPage() {
             {step === 6 
               ? (notificationMethod === 'telegram' ? 'Connect Telegram' : 'Complete Setup') 
               : 'CONTINUE'} 
-            {step !== 6 && <span className="font-display font-bold text-xl leading-none mt-0.5">→</span>}
           </button>
         </div>
       </div>

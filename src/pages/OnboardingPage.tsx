@@ -156,13 +156,18 @@ export default function OnboardingPage() {
               
               <div className="grid grid-cols-2 gap-4 pb-12">
                 {[
-                  { id: 'Bodyweight', Icon: IconBodyweight, label: 'Bodyweight', iconLabel: 'accessibility_new' },
-                  { id: 'Dumbbell', Icon: IconDumbbell, label: 'Dumbbells', iconLabel: 'fitness_center' },
-                  { id: 'PullupBar', Icon: IconPullupBar, label: 'Pull-up Bar', iconLabel: 'horizontal_rule' },
-                  { id: 'Mat', Icon: IconMat, label: 'Yoga Mat', iconLabel: 'panorama_horizontal' },
-                  { id: 'Band', Icon: IconBand, label: 'Resistance Band', iconLabel: 'loop' },
-                  { id: 'Barbell', Icon: IconBarbell, label: 'Barbell', iconLabel: 'sports_gymnastics' },
-                  { id: 'Bench', Icon: IconBench, label: 'Bench', iconLabel: 'event_seat' },
+                  { id: 'Bodyweight', emoji: '🤸', label: 'Bodyweight' },
+                  { id: 'Dumbbell', emoji: '🦾', label: 'Dumbbells' },
+                  { id: 'PullupBar', emoji: '🐒', label: 'Pull-up Bar' },
+                  { id: 'Mat', emoji: '🧘', label: 'Yoga Mat' },
+                  { id: 'Band', emoji: '🪢', label: 'Resistance Band' },
+                  { id: 'Barbell', emoji: '🏋️', label: 'Barbell' },
+                  { id: 'Bench', emoji: '🪑', label: 'Bench' },
+                  { id: 'CableMachine', emoji: '⛓️', label: 'Cable Machine' },
+                  { id: 'ParallelBars', emoji: '🪜', label: 'Parallel Bars' },
+                  { id: 'MedicineBall', emoji: '⚽', label: 'Medicine Ball' },
+                  { id: 'SmithMachine', emoji: '🏗️', label: 'Smith Machine' },
+                  { id: 'EZBar', emoji: '〰️', label: 'EZ Bar' },
                 ].map(item => {
                   const eq = item.id;
                   const isSelected = equipment.includes(eq);
@@ -181,8 +186,8 @@ export default function OnboardingPage() {
                       } ${eq === 'Bodyweight' ? 'opacity-90' : ''}`}
                     >
                       <div className={`absolute top-0 right-0 w-2 h-2 transition-colors ${isSelected ? 'bg-[var(--color-bronze)]' : 'bg-gray-800 group-hover:bg-[var(--color-bronze)]'}`}></div>
-                      <div className={`w-12 h-12 flex items-center justify-center transition-transform duration-300 mb-3 ${isSelected ? 'scale-110 text-[var(--color-bronze)]' : 'group-hover:scale-110'}`}>
-                        <item.Icon />
+                      <div className={`text-4xl flex items-center justify-center transition-transform duration-300 mb-3 ${isSelected ? 'scale-110 drop-shadow-[0_0_15px_rgba(200,154,81,0.5)]' : 'group-hover:scale-110 grayscale group-hover:grayscale-0'}`}>
+                        {item.emoji}
                       </div>
                       <span className="font-display font-bold text-xs uppercase tracking-widest text-center">{item.label}</span>
                     </button>
@@ -400,8 +405,8 @@ export default function OnboardingPage() {
       </main>
 
       {/* Action Footer */}
-      <div className="fixed bottom-0 w-full z-50 bg-gradient-to-t from-[var(--color-abyss)] via-[var(--color-abyss)]/90 to-transparent pb-safe px-6 pt-10 pointer-events-none">
-        <div className="h-20 flex gap-4 max-w-md mx-auto pointer-events-auto">
+      <div className="fixed bottom-24 w-full z-40 bg-gradient-to-t from-[var(--color-abyss)] via-[var(--color-abyss)]/90 to-transparent pb-4 px-6 pt-10 pointer-events-none">
+        <div className="h-16 flex gap-4 max-w-md mx-auto pointer-events-auto">
           {step > 1 && (
             <button 
               onClick={prevStep}
@@ -431,6 +436,34 @@ export default function OnboardingPage() {
           </button>
         </div>
       </div>
+
+      {/* ----------------- BOTTOM NAV ----------------- */}
+      <footer className="fixed bottom-0 left-0 right-0 w-full bg-transparent pb-safe px-4 z-50">
+        <div className="h-24 flex items-center justify-center pb-4">
+          <div className="flex items-center bg-[var(--color-charcoal)]/90 backdrop-blur-md rounded-full p-2 border border-gray-800 shadow-2xl w-full max-w-md mx-auto h-[72px]">
+            <button 
+              onClick={() => navigate('/dashboard')} 
+              className="flex-1 flex flex-col items-center justify-center gap-1 transition-all duration-300 text-gray-500 hover:text-gray-300"
+            >
+              <span className="text-2xl mb-1">⚔️</span>
+              <span className="font-display font-bold text-[10px] uppercase tracking-widest">Arena</span>
+            </button>
+            <button 
+              onClick={() => navigate('/dashboard')} 
+              className="flex-1 flex flex-col items-center justify-center gap-1 transition-all duration-300 text-gray-500 hover:text-gray-300"
+            >
+              <span className="text-2xl mb-1">🔥</span>
+              <span className="font-display font-bold text-[10px] uppercase tracking-widest">History</span>
+            </button>
+            <button 
+              className="flex-1 flex flex-col items-center justify-center gap-1 transition-all duration-300 text-[var(--color-bronze)]"
+            >
+              <span className="text-2xl mb-1 drop-shadow-[0_0_10px_rgba(200,154,81,0.5)] scale-110">⚙️</span>
+              <span className="font-display font-bold text-[10px] uppercase tracking-widest">Settings</span>
+            </button>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

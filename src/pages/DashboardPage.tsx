@@ -302,24 +302,33 @@ export default function DashboardPage() {
       </main>
 
       {/* ----------------- BOTTOM NAV ----------------- */}
-      <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-sm z-50 pb-safe bg-[var(--color-charcoal)]/80 backdrop-blur-xl rounded-none border border-gray-800 shadow-2xl">
-        <div className="flex justify-around items-center h-16 px-4">
-          <button 
-            onClick={() => setActiveTab('HOME')} 
-            className={`flex flex-col items-center justify-center transition-all duration-300 ${activeTab === 'HOME' ? 'text-[var(--color-bronze)] scale-110 drop-shadow-[0_0_10px_rgba(200,154,81,0.5)]' : 'text-gray-500 hover:text-gray-300'}`}
-          >
-            <span className="text-2xl mb-1">⚔️</span>
-            <span className="font-display font-bold text-[10px] uppercase tracking-widest leading-none">Arena</span>
-          </button>
-          <button 
-            onClick={() => setActiveTab('PROGRESS')} 
-            className={`flex flex-col items-center justify-center transition-all duration-300 ${activeTab === 'PROGRESS' ? 'text-[var(--color-bronze)] scale-110 drop-shadow-[0_0_10px_rgba(200,154,81,0.5)]' : 'text-gray-500 hover:text-gray-300'}`}
-          >
-            <span className="text-2xl mb-1">🔥</span>
-            <span className="font-display font-bold text-[10px] uppercase tracking-widest leading-none">History</span>
-          </button>
+      <footer className="fixed bottom-0 left-0 right-0 w-full bg-transparent pb-safe px-4 z-50">
+        <div className="h-24 flex items-center justify-center pb-4">
+          <div className="flex items-center bg-[var(--color-charcoal)]/90 backdrop-blur-md rounded-full p-2 border border-gray-800 shadow-2xl w-full max-w-md mx-auto h-[72px]">
+            <button 
+              onClick={() => setActiveTab('HOME')} 
+              className={`flex-1 flex flex-col items-center justify-center gap-1 transition-all duration-300 ${activeTab === 'HOME' ? 'text-[var(--color-bronze)]' : 'text-gray-500 hover:text-gray-300'}`}
+            >
+              <span className={`text-2xl mb-1 ${activeTab === 'HOME' ? 'drop-shadow-[0_0_10px_rgba(200,154,81,0.5)] scale-110' : ''}`}>⚔️</span>
+              <span className="font-display font-bold text-[10px] uppercase tracking-widest">Arena</span>
+            </button>
+            <button 
+              onClick={() => setActiveTab('PROGRESS')} 
+              className={`flex-1 flex flex-col items-center justify-center gap-1 transition-all duration-300 ${activeTab === 'PROGRESS' ? 'text-[var(--color-bronze)]' : 'text-gray-500 hover:text-gray-300'}`}
+            >
+              <span className={`text-2xl mb-1 ${activeTab === 'PROGRESS' ? 'drop-shadow-[0_0_10px_rgba(200,154,81,0.5)] scale-110' : ''}`}>🔥</span>
+              <span className="font-display font-bold text-[10px] uppercase tracking-widest">History</span>
+            </button>
+            <button 
+              onClick={() => setActiveTab('SETTINGS')} 
+              className={`flex-1 flex flex-col items-center justify-center gap-1 transition-all duration-300 ${activeTab === 'SETTINGS' ? 'text-[var(--color-bronze)]' : 'text-gray-500 hover:text-gray-300'}`}
+            >
+              <span className={`text-2xl mb-1 ${activeTab === 'SETTINGS' ? 'drop-shadow-[0_0_10px_rgba(200,154,81,0.5)] scale-110' : ''}`}>⚙️</span>
+              <span className="font-display font-bold text-[10px] uppercase tracking-widest">Settings</span>
+            </button>
+          </div>
         </div>
-      </nav>
+      </footer>
 
       {/* Daily Feedback Bottom Sheet */}
       {showFeedback && (

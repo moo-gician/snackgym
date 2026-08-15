@@ -143,8 +143,7 @@ export default function OnboardingPage() {
       <div className="flex-1 animate-fade-in-up">
         {step === 1 && (
           <div className="space-y-6 text-center">
-            <h1 className="text-3xl font-bold">What's in your workspace?</h1>
-            <p className="text-[var(--color-text-muted)] text-sm">Don't worry if it's empty.<br/>Bodyweight routines are always available.</p>
+            <h1 className="text-3xl font-bold mb-6">What's in your workspace?</h1>
             <div className="grid grid-cols-2 gap-4 mt-8">
               {[
                 { id: 'Bodyweight', Icon: IconBodyweight, label: 'Bodyweight' },
@@ -187,8 +186,7 @@ export default function OnboardingPage() {
 
         {step === 2 && (
           <div className="space-y-6 text-center">
-            <h1 className="text-3xl font-bold">Target Muscles</h1>
-            <p className="text-[var(--color-text-muted)] text-sm">Unselected muscles will trigger passive protection guard.</p>
+            <h1 className="text-3xl font-bold mb-6">Any sore muscles?</h1>
             <div className="mt-8">
               <BodyMap selectedMuscles={muscles} onChange={setMuscles} />
             </div>
@@ -197,8 +195,7 @@ export default function OnboardingPage() {
 
         {step === 3 && (
           <div className="space-y-6 text-center">
-            <h1 className="text-3xl font-bold">Choose your routine</h1>
-            <p className="text-[var(--color-text-muted)] text-sm">How much time do you want to spend?</p>
+            <h1 className="text-3xl font-bold mb-6">Pick your routine style</h1>
             
             <div className="grid grid-cols-1 gap-4 mt-8">
               <button 
@@ -245,8 +242,7 @@ export default function OnboardingPage() {
 
         {step === 4 && (
           <div className="space-y-6 text-center">
-            <h1 className="text-3xl font-bold">Schedule & Hours</h1>
-            <p className="text-[var(--color-text-muted)] text-sm">When should we push you to workout?</p>
+            <h1 className="text-3xl font-bold mb-6">Set your schedule</h1>
 
             <div className="mt-8 bg-white p-5 rounded-3xl border border-gray-200">
               <span className="text-xs font-bold text-gray-400 mb-3 block uppercase tracking-wider">Active Days</span>
@@ -307,8 +303,7 @@ export default function OnboardingPage() {
 
         {step === 5 && (
           <div className="space-y-6 text-center">
-            <h1 className="text-3xl font-bold">Choose your Spotter</h1>
-            <p className="text-[var(--color-text-muted)] text-sm">Who will push you today?</p>
+            <h1 className="text-3xl font-bold mb-6">Choose your spotter</h1>
             
             <div className="grid grid-cols-3 gap-3 mt-8">
               {[
@@ -347,8 +342,7 @@ export default function OnboardingPage() {
 
         {step === 6 && (
           <div className="space-y-6 flex flex-col items-center text-center pt-10">
-            <h1 className="text-3xl font-bold mb-2">Almost Done!</h1>
-            <p className="text-[var(--color-text-muted)] text-sm">How should we notify you?</p>
+            <h1 className="text-3xl font-bold mb-6">Almost Done!</h1>
 
             <div className="grid grid-cols-2 gap-4 w-full">
               <button 

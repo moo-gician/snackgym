@@ -12,8 +12,8 @@ export default function SessionPage() {
 
   // Mock data for MVP UI testing
   const exercises = [
-    { id: 'ex1', name: '덤벨 벤치프레스', weight: '12kg', reps: 12 },
-    { id: 'ex2', name: '원암 덤벨 로우', weight: '14kg', reps: 10 },
+    { id: 'ex1', name: 'Dumbbell Bench Press', weight: '12kg', reps: 12 },
+    { id: 'ex2', name: 'One-Arm Dumbbell Row', weight: '14kg', reps: 10 },
   ];
 
   const handleCheck = (exId: string) => {
@@ -26,19 +26,19 @@ export default function SessionPage() {
 
   const handleFinish = (isEarly: boolean) => {
     if (isEarly) {
-      if (!window.confirm("체크하지 않은 운동은 모두 '스킵'으로 안전하게 동결됩니다. 세션을 종료할까요?")) {
+      if (!window.confirm("Unchecked exercises will be skipped. End session?")) {
         return;
       }
     }
     // TODO: Save to Firestore
-    alert("세션 완료! 대시보드로 이동합니다.");
+    alert("Session complete! Returning to dashboard.");
     navigate('/dashboard');
   };
 
   const handleFullSkip = () => {
-    if (window.confirm("이 세션을 전체 스킵하시겠습니까? (스킵 비율 통계에 누적됩니다)")) {
+    if (window.confirm("Skip entire session? (This will affect your completion stats)")) {
       // TODO: Save skip status to Firestore
-      alert("세션이 전체 스킵되었습니다.");
+      alert("Session skipped.");
       navigate('/dashboard');
     }
   };
@@ -50,11 +50,11 @@ export default function SessionPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">⚡ 컴팩트 스낵</h1>
-          <p className="text-sm text-gray-500">세션 {id}</p>
+          <h1 className="text-2xl font-bold text-gray-800">⚡ Compact Snack</h1>
+          <p className="text-sm text-gray-500">Session {id}</p>
         </div>
         <button onClick={handleFullSkip} className="px-3 py-1.5 bg-gray-100 text-gray-600 rounded-lg text-sm font-medium hover:bg-gray-200">
-          전체 스킵
+          Skip All
         </button>
       </div>
 
@@ -81,7 +81,7 @@ export default function SessionPage() {
                   {ex.name}
                 </h3>
                 <p className="text-sm text-gray-500 mt-1 font-medium">
-                  {ex.weight} / {ex.reps}회
+                  {ex.weight} / {ex.reps} reps
                 </p>
               </div>
               <div className={`transition-transform duration-300 ${completed[ex.id] ? 'scale-110 text-[var(--color-primary)]' : 'text-gray-300'}`}>
@@ -102,7 +102,7 @@ export default function SessionPage() {
                 : 'bg-gray-800 text-white'
             }`}
           >
-            {allCompleted ? '🎉 운동 완료!' : '조기 종료 (남은 항목 스킵)'}
+            {allCompleted ? '🎉 Finish!' : 'Finish Early (Skip remaining)'}
           </button>
         </div>
       </div>

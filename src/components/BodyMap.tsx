@@ -4,15 +4,15 @@ type BodyMapProps = {
 };
 
 const MUSCLES = [
-  { id: '어깨', label: '어깨', side: 'left', y: 22 },
-  { id: '가슴', label: '가슴', side: 'left', y: 35 },
-  { id: '복근', label: '복근', side: 'left', y: 48 },
-  { id: '하체', label: '하체', side: 'left', y: 70 },
+  { id: 'Shoulders', label: 'Shoulders', side: 'left', y: 22 },
+  { id: 'Chest', label: 'Chest', side: 'left', y: 35 },
+  { id: 'Core', label: 'Core', side: 'left', y: 48 },
+  { id: 'Legs', label: 'Legs', side: 'left', y: 70 },
   
-  { id: '팔', label: '팔', side: 'right', y: 22 },
-  { id: '등', label: '등', side: 'right', y: 35 },
-  { id: '허리', label: '허리', side: 'right', y: 48 },
-  { id: '둔근', label: '둔근', side: 'right', y: 65 },
+  { id: 'Arms', label: 'Arms', side: 'right', y: 22 },
+  { id: 'Back', label: 'Back', side: 'right', y: 35 },
+  { id: 'Lower Back', label: 'Lower Back', side: 'right', y: 48 },
+  { id: 'Glutes', label: 'Glutes', side: 'right', y: 65 },
 ];
 
 export default function BodyMap({ selectedMuscles, onChange }: BodyMapProps) {
@@ -101,7 +101,7 @@ export default function BodyMap({ selectedMuscles, onChange }: BodyMapProps) {
       
       <div className="mt-8 flex flex-wrap gap-2 justify-center">
         {selectedMuscles.length === 0 ? (
-          <span className="text-sm text-gray-400 font-medium">선택된 부위가 없습니다</span>
+          <span className="text-sm text-gray-400 font-medium">No muscles selected</span>
         ) : (
           selectedMuscles.map(m => (
             <span key={m} className="px-3 py-1 bg-[#F0FCF2] text-[var(--color-primary)] rounded-full text-sm font-bold shadow-sm">

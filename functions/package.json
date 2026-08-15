@@ -2,7 +2,7 @@
   "name": "snackgym-functions",
   "description": "Cloud Functions for SnackGym Telegram Bot and Alarm Dispatcher",
   "engines": {
-    "node": "18"
+    "node": "20"
   },
   "main": "index.js",
   "scripts": {

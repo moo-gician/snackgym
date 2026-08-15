@@ -7,9 +7,9 @@ const db = admin.firestore();
 
 // 스포터 멘트 풀 (간소화 버전)
 const SPOTTER_MESSAGES = {
-  SPARTAN: "🤬 어이 게으른 엉덩이! 당장 일어나라. 시간 다 됐다.",
-  TSUNDERE: "😒 하... 진짜 귀찮게 하네. 시간 됐으니까 대충 이거나 해.",
-  ANGEL: "🥰 회원님! 운동할 시간이에요~ 자리에서 가볍게 시작해볼까요?"
+  SPARTAN: "🤬 Hey lazy ass! Get up right now. Time's up.",
+  TSUNDERE: "😒 Ugh... so annoying. It's time, just do this already.",
+  ANGEL: "🥰 Hey there! It's time to workout~ Let's start lightly at your desk!"
 };
 
 /**
@@ -46,7 +46,7 @@ exports.telegramWebhook = functions.https.onRequest(async (req, res) => {
         const userData = userDoc.data();
         const spotterType = userData?.spotter || "SPARTAN";
         
-        let message = SPOTTER_MESSAGES[spotterType] + "\n\n🤝 연동 완료! 이제 웹앱 대시보드로 돌아가시면 됩니다.";
+        let message = SPOTTER_MESSAGES[spotterType] + "\n\n🤝 Successfully connected! You can now return to the web dashboard.";
 
         // 3) Send Welcome Message via Telegram API
         const botToken = process.env.TELEGRAM_BOT_TOKEN || functions.config().telegram?.token;
@@ -103,7 +103,7 @@ exports.alarmDispatcher = functions.pubsub.schedule("*/30 * * * *").onRun(async 
 
       if (chatId) {
         const spotterType = userData.spotter || "SPARTAN";
-        const message = SPOTTER_MESSAGES[spotterType] + `\n\n👉 [세션 시작하기]\nhttps://snackgym.vercel.app/session/auto-${Date.now()}`;
+        const message = SPOTTER_MESSAGES[spotterType] + `\n\n👉 [Start Session]\nhttps://snackgym.vercel.app/session/auto-${Date.now()}`;
         
         // 텔레그램 발송 (단순화: 실제 프로덕션에선 초당 30건 스로틀링 큐 필요)
         const sendReq = fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {

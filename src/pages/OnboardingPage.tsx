@@ -8,8 +8,8 @@ import BodyMap from '../components/BodyMap';
 import { IconBodyweight, IconDumbbell, IconPullupBar, IconMat, IconBand, IconBarbell, IconBench } from '../components/EquipmentIcons';
 
 type CourseType = 'MICRO' | 'COMPACT' | 'CIRCUIT' | null;
-type SpotterType = 'SPARTAN' | 'TSUNDERE' | 'ANGEL' | null;
-type NotificationMethod = 'telegram' | 'email' | 'none' | null;
+type SpotterType = 'SPARTAN' | null;
+type NotificationMethod = 'telegram' | 'none' | null;
 
 export default function OnboardingPage() {
   const navigate = useNavigate();
@@ -44,7 +44,7 @@ export default function OnboardingPage() {
   });
 
   const [spotter, setSpotter] = useState<SpotterType>(() => {
-    return (sessionStorage.getItem('ob_spotter') as SpotterType) || null;
+    return (sessionStorage.getItem('ob_spotter') as SpotterType) || 'SPARTAN';
   });
 
   const [notificationMethod, setNotificationMethod] = useState<NotificationMethod>(() => {
@@ -81,7 +81,6 @@ export default function OnboardingPage() {
   useEffect(() => sessionStorage.setItem('ob_workStart', workStartTime), [workStartTime]);
   useEffect(() => sessionStorage.setItem('ob_workEnd', workEndTime), [workEndTime]);
   useEffect(() => sessionStorage.setItem('ob_sessions', sessionsPerDay.toString()), [sessionsPerDay]);
-  useEffect(() => sessionStorage.setItem('ob_activeDays', JSON.stringify(activeDays)), [activeDays]);
   useEffect(() => { if (spotter) sessionStorage.setItem('ob_spotter', spotter); }, [spotter]);
   useEffect(() => { if (notificationMethod) sessionStorage.setItem('ob_notif', notificationMethod); }, [notificationMethod]);
 
@@ -127,14 +126,14 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="min-h-screen pb-24 pt-8 px-4 flex flex-col max-w-md mx-auto">
+    <div className="min-h-screen bg-[var(--color-abyss)] text-[var(--color-ash)] pb-24 pt-8 px-4 flex flex-col max-w-md mx-auto font-sans">
       {/* Progress Bar */}
       <div className="flex gap-2 mb-8">
         {[1, 2, 3, 4, 5, 6].map((idx) => (
           <div 
             key={idx}
-            className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
-              step >= idx ? 'bg-[var(--color-primary)]' : 'bg-gray-200'
+            className={`h-1 flex-1 rounded-none transition-all duration-300 ${
+              step >= idx ? 'bg-[var(--color-bronze)] shadow-[0_0_10px_rgba(200,154,81,0.5)]' : 'bg-[var(--color-charcoal)]'
             }`}
           />
         ))}
@@ -143,7 +142,7 @@ export default function OnboardingPage() {
       <div className="flex-1 animate-fade-in-up">
         {step === 1 && (
           <div className="space-y-6 text-center">
-            <h1 className="text-3xl font-bold mb-6">What weapons are we using? 🛠️</h1>
+            <h1 className="text-3xl font-display font-bold uppercase tracking-wider mb-6 text-[var(--color-bone)]">What weapons are we using? 🛠️</h1>
             <div className="grid grid-cols-2 gap-4 mt-8">
               {[
                 { id: 'Bodyweight', Icon: IconBodyweight, label: 'Bodyweight' },
@@ -163,17 +162,17 @@ export default function OnboardingPage() {
                     onClick={() => setEquipment(prev => 
                       prev.includes(eq) ? prev.filter(i => i !== eq) : [...prev, eq]
                     )}
-                    className={`group aspect-[5/4] rounded-3xl border flex flex-col items-center justify-center text-center tap-scale transition-all overflow-hidden relative ${
+                    className={`group aspect-[5/4] rounded-none border flex flex-col items-center justify-center text-center tap-scale transition-all overflow-hidden relative ${
                       isSelected 
-                        ? 'border-[var(--color-primary)] bg-[#F0FCF2] shadow-sm'
-                        : 'border-gray-200 bg-white hover:border-gray-300'
+                        ? 'border-[var(--color-bronze)] bg-[var(--color-charcoal)] shadow-[0_0_15px_rgba(200,154,81,0.2)]'
+                        : 'border-gray-800 bg-[var(--color-charcoal)] hover:border-[var(--color-ash)]'
                     } ${eq === 'Bodyweight' ? 'opacity-90' : ''}`}
                   >
-                    <div className={`w-14 h-14 flex items-center justify-center transition-transform duration-300 ${isSelected ? '-translate-y-3 scale-110' : 'group-hover:-translate-y-3 group-hover:scale-110'}`}>
+                    <div className={`w-14 h-14 flex items-center justify-center transition-transform duration-300 text-[var(--color-bone)] ${isSelected ? '-translate-y-3 scale-110' : 'group-hover:-translate-y-3 group-hover:scale-110'}`}>
                       <item.Icon />
                     </div>
                     <div className={`absolute bottom-3 left-0 w-full text-center transition-opacity duration-300 ${isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
-                      <span className={`font-bold text-xs ${isSelected ? 'text-[var(--color-primary)]' : 'text-gray-500'}`}>
+                      <span className={`font-bold text-xs uppercase tracking-wider ${isSelected ? 'text-[var(--color-bronze)]' : 'text-[var(--color-ash)]'}`}>
                         {item.label}
                       </span>
                     </div>
@@ -186,7 +185,7 @@ export default function OnboardingPage() {
 
         {step === 2 && (
           <div className="space-y-6 text-center">
-            <h1 className="text-3xl font-bold mb-6">What are we destroying today? 🎯</h1>
+            <h1 className="text-3xl font-display font-bold uppercase tracking-wider mb-6 text-[var(--color-bone)]">What are we destroying today? 🎯</h1>
             <div className="mt-8">
               <BodyMap selectedMuscles={muscles} onChange={setMuscles} />
             </div>
@@ -195,45 +194,45 @@ export default function OnboardingPage() {
 
         {step === 3 && (
           <div className="space-y-6 text-center">
-            <h1 className="text-3xl font-bold mb-6">How long can you survive? ⚡</h1>
+            <h1 className="text-3xl font-display font-bold uppercase tracking-wider mb-6 text-[var(--color-bone)]">How long can you survive? ⚡</h1>
             
             <div className="grid grid-cols-1 gap-4 mt-8">
               <button 
                 onClick={() => setCourse('MICRO')}
-                className={`group w-full h-40 rounded-3xl border flex flex-col items-center justify-center p-4 transition-all ${
-                  course === 'MICRO' ? 'border-[var(--color-primary)] bg-[#F0FCF2] shadow-sm' : 'border-gray-200 bg-white hover:border-gray-300'
+                className={`group w-full h-40 rounded-none border flex flex-col items-center justify-center p-4 transition-all ${
+                  course === 'MICRO' ? 'border-[var(--color-blood)] bg-[var(--color-charcoal)] shadow-[0_0_20px_rgba(217,26,26,0.2)]' : 'border-gray-800 bg-[var(--color-charcoal)] hover:border-[var(--color-ash)]'
                 }`}
               >
                 <span className={`text-6xl mb-3 transition-transform duration-300 ${course === 'MICRO' ? 'scale-110' : 'group-hover:scale-110'}`}>⚡</span>
                 <div className="text-center flex flex-col">
-                  <span className={`font-bold text-lg ${course === 'MICRO' ? 'text-[var(--color-primary)]' : 'text-gray-800'}`}>Micro Assault (1-2m)</span>
-                  <span className="text-xs text-gray-500">1 set. Right at your desk.</span>
+                  <span className={`font-display font-bold text-2xl uppercase tracking-widest ${course === 'MICRO' ? 'text-[var(--color-blood)]' : 'text-[var(--color-bone)]'}`}>Micro Assault (1-2m)</span>
+                  <span className={`text-xs uppercase tracking-widest ${course === 'MICRO' ? 'text-[var(--color-bone)]' : 'text-[var(--color-ash)]'}`}>1 set. Max effort. No surrender.</span>
                 </div>
               </button>
 
               <button 
                 onClick={() => setCourse('COMPACT')}
-                className={`group w-full h-40 rounded-3xl border flex flex-col items-center justify-center p-4 transition-all ${
-                  course === 'COMPACT' ? 'border-[var(--color-primary)] bg-[#F0FCF2] shadow-sm' : 'border-gray-200 bg-white hover:border-gray-300'
+                className={`group w-full h-40 rounded-none border flex flex-col items-center justify-center p-4 transition-all ${
+                  course === 'COMPACT' ? 'border-[var(--color-blood)] bg-[var(--color-charcoal)] shadow-[0_0_20px_rgba(217,26,26,0.2)]' : 'border-gray-800 bg-[var(--color-charcoal)] hover:border-[var(--color-ash)]'
                 }`}
               >
                 <span className={`text-6xl mb-3 transition-transform duration-300 ${course === 'COMPACT' ? 'scale-110' : 'group-hover:scale-110'}`}>🔥</span>
                 <div className="text-center flex flex-col">
-                  <span className={`font-bold text-lg ${course === 'COMPACT' ? 'text-[var(--color-primary)]' : 'text-gray-800'}`}>Compact Target (3-5m)</span>
-                  <span className="text-xs text-gray-500">0 rest. Max pump.</span>
+                  <span className={`font-display font-bold text-2xl uppercase tracking-widest ${course === 'COMPACT' ? 'text-[var(--color-blood)]' : 'text-[var(--color-bone)]'}`}>Compact Target (3-5m)</span>
+                  <span className={`text-xs uppercase tracking-widest ${course === 'COMPACT' ? 'text-[var(--color-bone)]' : 'text-[var(--color-ash)]'}`}>0 rest. Max pump.</span>
                 </div>
               </button>
 
               <button 
                 onClick={() => setCourse('CIRCUIT')}
-                className={`group w-full h-40 rounded-3xl border flex flex-col items-center justify-center p-4 transition-all ${
-                  course === 'CIRCUIT' ? 'border-[var(--color-primary)] bg-[#F0FCF2] shadow-sm' : 'border-gray-200 bg-white hover:border-gray-300'
+                className={`group w-full h-40 rounded-none border flex flex-col items-center justify-center p-4 transition-all ${
+                  course === 'CIRCUIT' ? 'border-[var(--color-blood)] bg-[var(--color-charcoal)] shadow-[0_0_20px_rgba(217,26,26,0.2)]' : 'border-gray-800 bg-[var(--color-charcoal)] hover:border-[var(--color-ash)]'
                 }`}
               >
                 <span className={`text-6xl mb-3 transition-transform duration-300 ${course === 'CIRCUIT' ? 'scale-110' : 'group-hover:scale-110'}`}>👑</span>
                 <div className="text-center flex flex-col">
-                  <span className={`font-bold text-lg ${course === 'CIRCUIT' ? 'text-[var(--color-primary)]' : 'text-gray-800'}`}>Short Circuit (6-10m)</span>
-                  <span className="text-xs text-gray-500">Full body recharge loop.</span>
+                  <span className={`font-display font-bold text-2xl uppercase tracking-widest ${course === 'CIRCUIT' ? 'text-[var(--color-blood)]' : 'text-[var(--color-bone)]'}`}>Short Circuit (6-10m)</span>
+                  <span className={`text-xs uppercase tracking-widest ${course === 'CIRCUIT' ? 'text-[var(--color-bone)]' : 'text-[var(--color-ash)]'}`}>Full body destruction loop.</span>
                 </div>
               </button>
             </div>
@@ -242,10 +241,10 @@ export default function OnboardingPage() {
 
         {step === 4 && (
           <div className="space-y-6 text-center">
-            <h1 className="text-3xl font-bold mb-6">When do I strike you? ⏰</h1>
+            <h1 className="text-3xl font-display font-bold uppercase tracking-wider mb-6 text-[var(--color-bone)]">When do I strike you? ⏰</h1>
 
-            <div className="mt-8 bg-white p-5 rounded-3xl border border-gray-200">
-              <span className="text-xs font-bold text-gray-400 mb-3 block uppercase tracking-wider">Active Days</span>
+            <div className="mt-8 bg-[var(--color-charcoal)] p-5 rounded-none border border-gray-800">
+              <span className="text-xs font-bold text-[var(--color-bronze)] mb-3 block uppercase tracking-widest">Active Duty Days</span>
               <div className="flex justify-between gap-1">
                 {[
                   { day: 1, label: 'M' },
@@ -263,10 +262,10 @@ export default function OnboardingPage() {
                       onClick={() => setActiveDays(prev => 
                         prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day].sort()
                       )}
-                      className={`w-10 h-10 rounded-full font-bold text-sm flex items-center justify-center transition-all tap-scale ${
+                      className={`w-10 h-10 rounded-none font-display font-bold text-lg flex items-center justify-center transition-all tap-scale border ${
                         isActive 
-                          ? 'bg-[var(--color-primary)] text-white shadow-md shadow-green-200' 
-                          : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
+                          ? 'bg-[var(--color-bronze)] text-[var(--color-abyss)] border-[var(--color-bronze)] shadow-[0_0_10px_rgba(200,154,81,0.5)]' 
+                          : 'bg-transparent text-[var(--color-ash)] border-gray-800 hover:border-[var(--color-ash)]'
                       }`}
                     >
                       {label}
@@ -277,25 +276,25 @@ export default function OnboardingPage() {
             </div>
 
             <div className="flex gap-4 mt-6">
-              <div className="flex-1 bg-white p-5 rounded-3xl border border-gray-200 flex flex-col items-center">
+              <div className="flex-1 bg-[var(--color-charcoal)] p-5 rounded-none border border-gray-800 flex flex-col items-center">
                 <span className="text-4xl mb-4 block">🌅</span>
-                <span className="text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Start</span>
-                <input type="time" value={workStartTime} onChange={e => setWorkStartTime(e.target.value)} className="w-full text-center font-bold text-xl outline-none bg-transparent" />
+                <span className="text-xs font-bold text-[var(--color-ash)] mb-1 uppercase tracking-widest">Start</span>
+                <input type="time" value={workStartTime} onChange={e => setWorkStartTime(e.target.value)} className="w-full text-center font-display font-bold text-2xl outline-none bg-transparent text-[var(--color-bone)]" />
               </div>
-              <div className="flex-1 bg-white p-5 rounded-3xl border border-gray-200 flex flex-col items-center">
+              <div className="flex-1 bg-[var(--color-charcoal)] p-5 rounded-none border border-gray-800 flex flex-col items-center">
                 <span className="text-4xl mb-4 block">🌃</span>
-                <span className="text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">End</span>
-                <input type="time" value={workEndTime} onChange={e => setWorkEndTime(e.target.value)} className="w-full text-center font-bold text-xl outline-none bg-transparent" />
+                <span className="text-xs font-bold text-[var(--color-ash)] mb-1 uppercase tracking-widest">End</span>
+                <input type="time" value={workEndTime} onChange={e => setWorkEndTime(e.target.value)} className="w-full text-center font-display font-bold text-2xl outline-none bg-transparent text-[var(--color-bone)]" />
               </div>
             </div>
             
-            <div className="mt-6 bg-white p-5 rounded-3xl border border-gray-200 flex flex-col items-center">
+            <div className="mt-6 bg-[var(--color-charcoal)] p-5 rounded-none border border-gray-800 flex flex-col items-center">
               <span className="text-4xl mb-4 block">🎯</span>
-              <span className="text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Daily Goal</span>
-              <select value={sessionsPerDay} onChange={e => setSessionsPerDay(Number(e.target.value))} className="text-center font-bold text-xl outline-none bg-transparent w-full">
+              <span className="text-xs font-bold text-[var(--color-ash)] mb-1 uppercase tracking-widest">Daily Assault Quota</span>
+              <select value={sessionsPerDay} onChange={e => setSessionsPerDay(Number(e.target.value))} className="text-center font-display font-bold text-2xl outline-none bg-transparent w-full text-[var(--color-bone)]">
                 <option value={4}>4 times / day</option>
-                <option value={6}>6 times / day (Recommended)</option>
-                <option value={8}>8 times / day</option>
+                <option value={6}>6 times / day (Spartan)</option>
+                <option value={8}>8 times / day (Death)</option>
               </select>
             </div>
           </div>
@@ -303,38 +302,35 @@ export default function OnboardingPage() {
 
         {step === 5 && (
           <div className="space-y-6 text-center">
-            <h1 className="text-3xl font-bold mb-6">Who is dragging you through hell? 💀</h1>
+            <h1 className="text-3xl font-display font-bold uppercase tracking-wider mb-6 text-[var(--color-bone)]">Who is dragging you through hell? 💀</h1>
             
-            <div className="grid grid-cols-3 gap-3 mt-8">
+            <div className="grid grid-cols-1 gap-4 mt-8">
               {[
-                { id: 'SPARTAN', emoji: '🤬', label: 'Spartan' },
-                { id: 'TSUNDERE', emoji: '😒', label: 'Tsundere' },
-                { id: 'ANGEL', emoji: '🥰', label: 'Angel' },
+                { id: 'SPARTAN', emoji: '🤬', label: 'Spartan Spotter', subtitle: 'Ruthless. Brutal. Unforgiving.' }
               ].map(sp => (
                 <button
                   key={sp.id}
                   onClick={() => setSpotter(sp.id as SpotterType)}
-                  className={`group aspect-[3/4] rounded-3xl flex flex-col items-center justify-center border transition-all ${
+                  className={`group w-full h-40 rounded-none flex flex-col items-center justify-center border transition-all ${
                     spotter === sp.id 
-                      ? 'border-[var(--color-primary)] bg-[#F0FCF2] shadow-sm' 
-                      : 'border-gray-200 bg-white hover:border-gray-300'
+                      ? 'border-[var(--color-blood)] bg-[var(--color-charcoal)] shadow-[0_0_20px_rgba(217,26,26,0.2)]' 
+                      : 'border-gray-800 bg-[var(--color-charcoal)] hover:border-[var(--color-ash)]'
                   }`}
                 >
                   <span className={`text-6xl mb-2 transition-transform duration-300 ${spotter === sp.id ? 'scale-110' : 'group-hover:scale-110'}`}>
                     {sp.emoji}
                   </span>
                   <div className="w-full text-center">
-                    <span className={`font-bold text-sm ${spotter === sp.id ? 'text-[var(--color-primary)]' : 'text-gray-500'}`}>{sp.label}</span>
+                    <span className={`font-display font-bold text-2xl uppercase tracking-widest block mb-1 ${spotter === sp.id ? 'text-[var(--color-blood)]' : 'text-[var(--color-bone)]'}`}>{sp.label}</span>
+                    <span className={`text-xs uppercase tracking-widest ${spotter === sp.id ? 'text-[var(--color-bone)]' : 'text-[var(--color-ash)]'}`}>{sp.subtitle}</span>
                   </div>
                 </button>
               ))}
             </div>
 
             {spotter && (
-              <div className="mt-6 p-4 bg-gray-50 rounded-2xl border border-gray-100 text-sm italic text-gray-600 animate-fade-in-up">
+              <div className="mt-6 p-4 bg-[var(--color-charcoal)] rounded-none border border-gray-800 text-sm italic text-[var(--color-ash)] animate-fade-in-up">
                 {spotter === 'SPARTAN' && `"Get up, lazy bones! Time to crush it! 🤬"`}
-                {spotter === 'TSUNDERE' && `"It's time to work out... Not that I care if you get fit. 😒"`}
-                {spotter === 'ANGEL' && `"You're doing great! Keep it up! Let's do a quick session! 🥰"`}
               </div>
             )}
           </div>
@@ -342,30 +338,30 @@ export default function OnboardingPage() {
 
         {step === 6 && (
           <div className="space-y-6 flex flex-col items-center text-center pt-10">
-            <h1 className="text-3xl font-bold mb-6">No retreat! 🚪</h1>
+            <h1 className="text-3xl font-display font-bold uppercase tracking-wider mb-6 text-[var(--color-bone)]">No retreat! 🚪</h1>
 
             <div className="grid grid-cols-2 gap-4 w-full">
               <button 
                 onClick={() => setNotificationMethod('telegram')}
-                className={`group aspect-square rounded-3xl border flex flex-col items-center justify-center p-4 transition-all ${
-                  notificationMethod === 'telegram' ? 'border-[#2AABEE] bg-[#E8F5FE]' : 'border-gray-200 bg-white hover:border-gray-300'
+                className={`group aspect-square rounded-none border flex flex-col items-center justify-center p-4 transition-all ${
+                  notificationMethod === 'telegram' ? 'border-[#2AABEE] bg-[#0A1A24]' : 'border-gray-800 bg-[var(--color-charcoal)] hover:border-gray-600'
                 }`}
               >
                 <span className={`text-6xl mb-2 transition-transform duration-300 ${notificationMethod === 'telegram' ? 'scale-110' : 'group-hover:scale-110'}`}>✈️</span>
                 <div className="w-full text-center">
-                  <span className={`font-bold text-sm ${notificationMethod === 'telegram' ? 'text-[#2AABEE]' : 'text-gray-500'}`}>Telegram</span>
+                  <span className={`font-display font-bold text-lg uppercase tracking-wider ${notificationMethod === 'telegram' ? 'text-[#2AABEE]' : 'text-[var(--color-ash)]'}`}>Telegram</span>
                 </div>
               </button>
 
               <button 
                 onClick={() => setNotificationMethod('none')}
-                className={`group aspect-square rounded-3xl border flex flex-col items-center justify-center p-4 transition-all ${
-                  notificationMethod === 'none' ? 'border-gray-400 bg-gray-50' : 'border-gray-200 bg-white hover:border-gray-300'
+                className={`group aspect-square rounded-none border flex flex-col items-center justify-center p-4 transition-all ${
+                  notificationMethod === 'none' ? 'border-[var(--color-ash)] bg-gray-900' : 'border-gray-800 bg-[var(--color-charcoal)] hover:border-gray-600'
                 }`}
               >
                 <span className={`text-6xl mb-2 transition-transform duration-300 ${notificationMethod === 'none' ? 'scale-110' : 'group-hover:scale-110'}`}>🔕</span>
                 <div className="w-full text-center">
-                  <span className={`font-bold text-sm ${notificationMethod === 'none' ? 'text-gray-600' : 'text-gray-500'}`}>In-App</span>
+                  <span className={`font-display font-bold text-lg uppercase tracking-wider ${notificationMethod === 'none' ? 'text-[var(--color-bone)]' : 'text-[var(--color-ash)]'}`}>In-App</span>
                 </div>
               </button>
             </div>
@@ -374,12 +370,12 @@ export default function OnboardingPage() {
       </div>
 
       {/* Navigation Footer */}
-      <div className="fixed bottom-[68px] left-0 right-0 p-4 bg-gradient-to-t from-white via-white to-transparent z-30 pointer-events-none">
+      <div className="fixed bottom-[68px] left-0 right-0 p-4 bg-gradient-to-t from-[var(--color-abyss)] via-[var(--color-abyss)] to-transparent z-30 pointer-events-none">
         <div className="max-w-md mx-auto flex gap-4 pointer-events-auto">
           {step > 1 && (
             <button 
               onClick={prevStep}
-              className="w-14 h-14 rounded-2xl border-2 border-gray-200 flex items-center justify-center text-gray-500 tap-scale bg-white hover:bg-gray-50 transition-colors shadow-sm"
+              className="w-14 h-14 rounded-none border border-gray-800 flex items-center justify-center text-[var(--color-ash)] tap-scale bg-[var(--color-charcoal)] hover:text-[var(--color-bone)] hover:border-[var(--color-ash)] transition-colors shadow-sm"
             >
               <ArrowLeft size={24} />
             </button>
@@ -394,8 +390,8 @@ export default function OnboardingPage() {
               (step === 5 && !spotter) ||
               (step === 6 && !notificationMethod)
             }
-            className={`flex-1 h-14 rounded-2xl text-white font-bold flex items-center justify-center gap-2 tap-scale disabled:opacity-50 disabled:bg-gray-300 transition-all shadow-lg ${
-              step === 6 && notificationMethod === 'telegram' ? 'bg-[#2AABEE] shadow-[#2AABEE]/30' : 'bg-[#1A2E1A] shadow-black/10'
+            className={`flex-1 h-14 rounded-none text-[var(--color-abyss)] font-display font-bold uppercase tracking-widest flex items-center justify-center gap-2 tap-scale disabled:opacity-50 transition-all ${
+              step === 6 && notificationMethod === 'telegram' ? 'bg-[#2AABEE] text-white hover:bg-blue-400' : 'bg-[var(--color-bronze)] hover:bg-yellow-600'
             }`}
           >
             {step === 6 
@@ -407,28 +403,28 @@ export default function OnboardingPage() {
       </div>
 
       {/* ----------------- BOTTOM NAV ----------------- */}
-      <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white/80 backdrop-blur-md border-t border-gray-100 pb-safe z-40">
+      <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-[var(--color-charcoal)]/90 backdrop-blur-md border-t border-[var(--color-abyss)] pb-safe z-40">
         <div className="flex items-center justify-around p-2">
           <button 
             onClick={() => navigate('/dashboard')} 
-            className="flex flex-col items-center p-2 transition-colors text-gray-400 hover:text-gray-600"
+            className="flex flex-col items-center p-2 transition-colors text-gray-500 hover:text-gray-300"
           >
             <Home size={24} className="mb-1" />
-            <span className="text-[10px] font-bold">Home</span>
+            <span className="text-[10px] font-bold uppercase tracking-widest">Home</span>
           </button>
           <button 
             onClick={() => navigate('/dashboard')} 
-            className="flex flex-col items-center p-2 transition-colors text-gray-400 hover:text-gray-600"
+            className="flex flex-col items-center p-2 transition-colors text-gray-500 hover:text-gray-300"
           >
             <BarChart2 size={24} className="mb-1" />
-            <span className="text-[10px] font-bold">Progress</span>
+            <span className="text-[10px] font-bold uppercase tracking-widest">Glory</span>
           </button>
           <button 
             onClick={() => navigate('/dashboard')} 
-            className="flex flex-col items-center p-2 transition-colors text-[var(--color-primary)]"
+            className="flex flex-col items-center p-2 transition-colors text-[var(--color-bronze)]"
           >
             <SettingsIcon size={24} className="mb-1" />
-            <span className="text-[10px] font-bold">Settings</span>
+            <span className="text-[10px] font-bold uppercase tracking-widest">Armory</span>
           </button>
         </div>
       </div>

@@ -60,22 +60,16 @@ function App() {
     )
   }
 
-  // Guard: Not logged in
-  if (!user) {
-    // If they tried to access a protected route, save it for redirect
-    if (location.pathname !== '/') {
-      sessionStorage.setItem('redirectPath', location.pathname)
-    }
-    return <LandingPage />
+  // Guard: Not logged in (Removed so LandingPage is accessible to everyone)
+  // We still want to save the redirect path if they try to access a protected route directly
+  if (!user && location.pathname !== '/' && location.pathname !== '/landing') {
+    sessionStorage.setItem('redirectPath', location.pathname)
   }
-
-  const isOnboarded = sessionStorage.getItem('is_onboarded') === 'true';
 
   return (
     <Routes>
-      {/* If logged in and at root, redirect to onboarding or dashboard */}
-      <Route path="/" element={<Navigate to={isOnboarded ? "/dashboard" : "/onboarding"} replace />} />
-      <Route path="/onboarding" element={<OnboardingPage />} />
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/onboarding" element={user ? <OnboardingPage /> : <Navigate to="/" replace />} />
       
       {/* TODO: Create SessionPage & Dashboard */}
       <Route path="/session/:id" element={<SessionPage />} />

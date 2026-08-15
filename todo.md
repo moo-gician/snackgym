@@ -1,4 +1,4 @@
-# SnackGym 태스크 백로그 (TODO)
+# B.E.A.S.T. 태스크 백로그 (TODO)
 
 ## Phase 1: MVP 구현 (완료)
 - [x] Vite + React (TypeScript) + Tailwind CSS v4 보일러플레이트 세팅
@@ -39,6 +39,13 @@
 - [x] Bot Token → Firebase Secret Manager 등록
 - [x] Cloud Tasks 알람 디스패처 (스누즈 상태 확인 후 발송)
 - [x] Telegram API 스로틀링 큐 (초당 30건 제한 방어)
+
+## Phase 6.5: B.E.A.S.T. 300 Theme UI 리팩토링 (완료)
+- [x] `design.md` 및 `tailwind.config` 다크/브루탈 톤(abyss, charcoal, bronze, blood) 기반 수정
+- [x] LandingPage: US 타겟 'No Excuses / Just Carnage' 하드코어 영문 카피 적용 및 라우팅 개선
+- [x] OnboardingPage: 장비/타겟/스포터 다크 테마 카드 UI 교체 및 Spartan 스포터 단일화
+- [x] DashboardPage: Daily Beating Ring (bronze) 및 텍스트 톤앤매너 전면 스파르타화
+- [x] SessionPage: 핏빛 불꽃 애니메이션(💥) 추가 및 폰트 계층화(Oswald & Inter)
 
 ## Phase 7: 네이티브 앱 및 스토어 런칭 (장기 플랜)
 - [ ] PWA 기반 코드를 Capacitor 또는 React Native로 패키징

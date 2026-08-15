@@ -1,4 +1,4 @@
-# SnackGym (스낵짐) 기획서
+# B.E.A.S.T. (Brutal Extreme Assault Spartan Trainer) 기획서
 
 ## 📚 문서 생태계 (Documentation Ecosystem)
 본 프로젝트는 다음의 문서 계층 구조를 따릅니다.
@@ -7,13 +7,13 @@
 
 ---
 
-## [Mission Statement : Pump Up Your Energy]
-* **[약속] Promise**: 졸음이 쏟아지는 시간, 알람을 듣고 사내 체육관에서 가볍게 몇 세트! 빵빵해진 근육(Pumped Up)과 기분 좋은 에너지로 책상에 돌아오십시오.
-* **[문제] Problem**: 거창한 목표(할당량)를 채워야 한다는 부담감 때문에 운동을 시작조차 하지 못하는 직장인들의 스트레스.
-* **[통념] Conventional Wisdom**: 직장인에게 진짜 필요한 건 억지로 채우는 무거운 목표가 아니라 스트레스 없는 '가벼운 환기'입니다.
-* **[원인] Cause**: 당신이 운동을 포기한 이유는 완벽하게 해내야 한다는 압박감이 당신을 짓눌렀기 때문입니다.
-* **[해법] Solution**: 할당량 부담 제로! 알람이 울리면 짐에서 링크를 열고, 리스트 보면서 하나씩 체크하고, End Session 탭 한 번이면 끝입니다.
-* **[자각] Awakening**: 더 이상 할당량에 쫓기지 마십시오. 짧은 시간 기분 좋게 땀 흘리고 활력을 얻어 업무 효율이 극대화되는 일상을 즐기십시오.
+## [Mission Statement : BLOOD. SWEAT. IRON.]
+* **[약속] No Excuses**: 알람이 울리면 즉시 책상에서 일어나 운동하십시오. 부서질지언정 무적의 상태로 데스크로 복귀합니다.
+* **[문제] Weakness**: 거창한 할당량과 복잡한 운동 트래커가 당신을 나약하게 만들고 핑계를 대게 합니다.
+* **[통념] The Truth**: 직장인에게 진정으로 필요한 것은 얄팍한 응원이 아닌, 무자비한 '디지털 드릴 서전트(Drill Sergeant)'입니다.
+* **[원인] Cowardice**: 당신이 운동을 멈춘 이유는 인내할 규율(Discipline)이 부족했기 때문입니다.
+* **[해법] Assault**: 예측 불가능한 마이크로 어썰트(Micro-assaults)! 하루 1세트, 최대의 노력(Max effort), 타협은 없습니다.
+* **[자각] Glory**: 가짜 휴식(Doomscrolling, Cold brew)을 멈추고 당신의 한계에 도전하십시오.
 
 ---
 

@@ -1,36 +1,33 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Oswald:wght@400;700&display=swap');
 @import "tailwindcss";
 
 @theme {
-  /* Premium Modern Light - HSL Palette */
-  --color-bg-base: hsl(120, 33%, 98%);
-  --color-bg-surface: hsl(0, 0%, 100%);
-  --color-primary: hsl(127, 62%, 52%);
-  --color-primary-hover: hsl(127, 60%, 46%);
-  --color-accent: hsl(190, 76%, 40%);
-  
-  --color-text-heading: hsl(0, 0%, 10%);
-  --color-text-body: hsl(0, 0%, 40%);
-  --color-text-muted: hsl(0, 0%, 65%);
+  /* B.E.A.S.T. Dark Theme Palette */
+  --color-abyss: #0A0A0C;
+  --color-charcoal: #16161A;
+  --color-blood: #D91A1A;
+  --color-bronze: #C89A51;
+  --color-bone: #F0EFEA;
+  --color-ash: #8A8A93;
   
   --font-sans: 'Inter', system-ui, sans-serif;
+  --font-display: 'Oswald', sans-serif;
 }
 
 @layer base {
   * { box-sizing: border-box; margin: 0; padding: 0; }
   
   body {
-    font-family: 'Inter', system-ui, sans-serif;
-    background-color: var(--color-bg-base);
-    color: var(--color-text-body);
+    font-family: var(--font-sans);
+    background-color: var(--color-abyss);
+    color: var(--color-ash);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     line-height: 1.6;
   }
   
   h1, h2, h3, h4, h5, h6 {
-    color: var(--color-text-heading);
-    letter-spacing: -0.02em;
+    color: var(--color-bone);
     font-weight: 700;
   }
 }
@@ -56,16 +53,16 @@
     transition: all 0.3s ease;
   }
   .glow-hover:hover {
-    box-shadow: 0 0 20px hsla(127, 62%, 52%, 0.4);
-    border-color: var(--color-primary);
+    box-shadow: 0 0 20px rgba(200, 154, 81, 0.4); /* bronze glow */
+    border-color: var(--color-bronze);
   }
 
   .glass-card {
-    background: rgba(255, 255, 255, 0.7);
+    background: rgba(22, 22, 26, 0.7); /* charcoal with opacity */
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.9);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
   }
 }
 

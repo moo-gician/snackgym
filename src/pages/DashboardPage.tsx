@@ -56,10 +56,10 @@ export default function DashboardPage() {
 
   const handleSoftDelete = async () => {
     if (!user) return;
-    if (window.confirm("Are you sure you want to delete your account?")) {
+    if (window.confirm("Are you sure you want to surrender and delete your account?")) {
       try {
         await deactivateUser(user.uid);
-        alert("Account deleted successfully.");
+        alert("Cowardice recorded. Account deleted.");
         await signOut(auth);
         navigate('/');
       } catch (e) {
@@ -72,12 +72,12 @@ export default function DashboardPage() {
   const handleShare = () => {
     const text = `🤬 Spartan Spotter: "This lazy one just lifted 12kg dumbbells. Let's see how long this lasts. Who's in? [B.E.A.S.T. Link]"`;
     navigator.clipboard.writeText(text);
-    alert("Copied to clipboard! Share it on Slack/Teams.");
+    alert("Copied to clipboard! Share your glory.");
   };
 
   const handleFeedback = (level: string) => {
     console.log("Feedback recorded:", level);
-    alert("Feedback recorded. Tomorrow's session will adjust accordingly!");
+    alert("Feedback recorded. Prepare for tomorrow's assault!");
     setShowFeedback(false);
   };
 
@@ -95,33 +95,31 @@ export default function DashboardPage() {
   const beers = Math.floor(totalCalories / 150);
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-24 flex flex-col max-w-md mx-auto relative font-sans">
+    <div className="min-h-screen bg-[var(--color-abyss)] text-[var(--color-ash)] pb-24 flex flex-col max-w-md mx-auto relative font-sans">
       
       {/* ----------------- HOME TAB ----------------- */}
       {activeTab === 'HOME' && (
         <div className="flex-1 px-4 pt-8 animate-fade-in-up">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-2xl font-bold">Hello, {user?.displayName?.split(' ')[0] || 'User'}</h1>
-              <p className="text-sm text-gray-500">Ready for your daily beating?</p>
+              <h1 className="text-2xl font-bold font-display tracking-wide uppercase text-[var(--color-bone)]">Hello, {user?.displayName?.split(' ')[0] || 'Spartan'}</h1>
+              <p className="text-sm text-[var(--color-blood)] font-bold uppercase tracking-widest mt-1">Ready for your daily beating?</p>
             </div>
             <button 
               onClick={toggleSnooze}
-              className={`flex items-center gap-2 px-3 py-2 rounded-full font-bold text-sm transition-all tap-scale shadow-sm ${
-                isSnoozed ? 'bg-[var(--color-primary)] text-white' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
+              className={`flex items-center gap-2 px-3 py-2 rounded-none font-bold text-xs uppercase tracking-wider transition-all tap-scale shadow-sm border ${
+                isSnoozed ? 'bg-[var(--color-charcoal)] text-[var(--color-ash)] border-[var(--color-ash)] opacity-50' : 'bg-[var(--color-blood)] text-[var(--color-abyss)] border-[var(--color-blood)] hover:bg-red-700'
               }`}
             >
-              <BellOff size={16} className={isSnoozed ? 'text-white' : 'text-gray-400'} />
+              <BellOff size={16} className={isSnoozed ? 'text-[var(--color-ash)]' : 'text-[var(--color-abyss)]'} />
               {isSnoozed ? 'Snoozed 💤' : 'Snooze'}
             </button>
           </div>
 
-          <div className="glass-card px-4 py-3 rounded-2xl w-full text-center mb-8 border border-gray-100 shadow-sm relative">
-            <span className="absolute -top-4 -left-2 text-3xl">{userData.spotter === 'TSUNDERE' ? '😒' : userData.spotter === 'ANGEL' ? '🥰' : '🤬'}</span>
-            <p className="text-sm font-bold text-gray-800 ml-4">
-              {userData.spotter === 'TSUNDERE' ? "I guess you should start... Not that I care." 
-                : userData.spotter === 'ANGEL' ? "You're doing amazing! Let's do one more!" 
-                : "Get up lazy bones! Time to crush it!"}
+          <div className="bg-[var(--color-charcoal)] border border-[var(--color-blood)] border-opacity-20 px-4 py-4 rounded-none w-full text-center mb-8 relative">
+            <span className="absolute -top-5 -left-2 text-4xl">🤬</span>
+            <p className="text-sm font-bold text-[var(--color-bone)] ml-4 italic">
+              "Get up lazy bones! Time to crush it! No excuses!"
             </p>
           </div>
 
@@ -130,12 +128,12 @@ export default function DashboardPage() {
             <svg className="w-[300px] h-[300px] transform -rotate-90">
               <circle
                 cx="150" cy="150" r={radius}
-                stroke="#E5E7EB" strokeWidth="20" fill="transparent"
+                stroke="rgba(255,255,255,0.05)" strokeWidth="20" fill="transparent"
                 strokeLinecap="round"
               />
               <circle
                 cx="150" cy="150" r={radius}
-                stroke="var(--color-primary)" strokeWidth="20" fill="transparent"
+                stroke="var(--color-bronze)" strokeWidth="20" fill="transparent"
                 strokeLinecap="round"
                 style={{
                   strokeDasharray: circumference,
@@ -145,28 +143,27 @@ export default function DashboardPage() {
               />
             </svg>
             
-            <div className="absolute flex flex-col items-center justify-center text-center">
-              <span className="text-gray-400 text-sm font-bold uppercase tracking-widest mb-1">Today</span>
-              <span className="text-5xl font-black text-gray-800 mb-4">{todaySessions}<span className="text-2xl text-gray-400">/{sessionsPerDay}</span></span>
+            <div className="absolute flex flex-col items-center justify-center text-center mt-2">
+              <span className="text-[var(--color-ash)] text-xs font-bold uppercase tracking-widest mb-1">Today's Beating</span>
+              <span className="text-6xl font-display font-black text-[var(--color-bone)] mb-4">{todaySessions}<span className="text-3xl text-[var(--color-ash)]">/{sessionsPerDay}</span></span>
               
               <Link 
                 to="/session/manual-1" 
-                className="px-6 py-3 rounded-full text-white font-bold text-lg flex items-center gap-2 tap-scale shadow-lg shadow-green-200"
-                style={{ background: 'linear-gradient(135deg, #3CCF4E 0%, #189AB4 100%)' }}
+                className="px-6 py-3 rounded-none text-[var(--color-abyss)] bg-[var(--color-blood)] font-display font-bold uppercase tracking-widest text-lg flex items-center gap-2 tap-scale hover:bg-red-700 transition-colors"
               >
-                <span className="text-xl animate-bounce">⚡</span> Quick Start
+                <span className="text-xl">⚡</span> Quick Start
               </Link>
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4 mt-8">
-            <button onClick={handleShare} className="flex flex-col items-center justify-center p-4 bg-white rounded-2xl border border-gray-100 shadow-sm hover:border-blue-200 tap-scale">
-              <Share2 size={24} className="text-blue-500 mb-2" />
-              <span className="text-xs font-bold text-gray-600">Share Score</span>
+            <button onClick={handleShare} className="flex flex-col items-center justify-center p-4 bg-[var(--color-charcoal)] rounded-none border border-gray-800 hover:border-[var(--color-bronze)] tap-scale">
+              <Share2 size={24} className="text-[var(--color-bronze)] mb-2" />
+              <span className="text-xs font-bold text-[var(--color-bone)] uppercase tracking-wider">Share Glory</span>
             </button>
-            <button onClick={() => setShowFeedback(true)} className="flex flex-col items-center justify-center p-4 bg-white rounded-2xl border border-gray-100 shadow-sm hover:border-green-200 tap-scale">
-              <Activity size={24} className="text-green-500 mb-2" />
-              <span className="text-xs font-bold text-gray-600">Feedback</span>
+            <button onClick={() => setShowFeedback(true)} className="flex flex-col items-center justify-center p-4 bg-[var(--color-charcoal)] rounded-none border border-gray-800 hover:border-[var(--color-bronze)] tap-scale">
+              <Activity size={24} className="text-[var(--color-blood)] mb-2" />
+              <span className="text-xs font-bold text-[var(--color-bone)] uppercase tracking-wider">Feedback</span>
             </button>
           </div>
         </div>
@@ -175,42 +172,43 @@ export default function DashboardPage() {
       {/* ----------------- PROGRESS TAB ----------------- */}
       {activeTab === 'PROGRESS' && (
         <div className="flex-1 px-4 pt-8 animate-fade-in-up">
-          <h1 className="text-2xl font-bold mb-6">Your Progress</h1>
+          <h1 className="text-3xl font-display font-bold mb-6 text-[var(--color-bone)] uppercase tracking-wide">Your Glory</h1>
           
-          <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 mb-6 flex items-center gap-6">
-            <div className="flex-1">
-              <h3 className="text-gray-500 text-sm font-bold uppercase tracking-wider mb-1">Current Streak</h3>
-              <div className="text-4xl font-black text-gray-800 flex items-center gap-2">
-                🔥 {streak} <span className="text-lg text-gray-400 font-medium">Days</span>
+          <div className="bg-[var(--color-charcoal)] p-6 rounded-none border-l-4 border-[var(--color-bronze)] mb-6 flex items-center gap-6 relative overflow-hidden">
+            <div className="absolute top-0 right-0 opacity-5 text-8xl font-display text-[var(--color-bronze)] translate-x-4 -translate-y-4">STREAK</div>
+            <div className="flex-1 relative z-10">
+              <h3 className="text-[var(--color-ash)] text-sm font-bold uppercase tracking-wider mb-1">Current Streak</h3>
+              <div className="text-5xl font-display font-black text-[var(--color-bone)] flex items-baseline gap-2">
+                🔥 {streak} <span className="text-lg text-[var(--color-ash)] font-sans">Days</span>
               </div>
-              <p className="text-xs text-gray-400 mt-2">Keep the fire burning!</p>
+              <p className="text-xs text-[var(--color-blood)] font-bold uppercase tracking-widest mt-2">Keep the fire burning!</p>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-orange-50 to-red-50 p-6 rounded-3xl shadow-sm border border-orange-100 mb-6">
-            <h3 className="text-orange-800 font-bold mb-2 flex items-center gap-2">
+          <div className="bg-[var(--color-charcoal)] p-6 rounded-none border border-gray-800 mb-6 relative">
+            <h3 className="text-[var(--color-bone)] font-bold font-display uppercase tracking-wider mb-2 flex items-center gap-2">
               <span>🍩</span> Spoils of War
             </h3>
-            <p className="text-orange-900 text-sm mb-4">
-              You've burned an estimated <strong>{totalCalories} kcal</strong> so far. That's equivalent to:
+            <p className="text-[var(--color-ash)] text-sm mb-4">
+              You've burned an estimated <strong>{totalCalories} kcal</strong>. That's equivalent to:
             </p>
             <div className="flex items-center gap-4">
-              <div className="flex-1 bg-white/60 p-4 rounded-2xl text-center">
+              <div className="flex-1 bg-[var(--color-abyss)] p-4 rounded-none text-center border border-gray-800">
                 <span className="text-4xl block mb-2">🍩</span>
-                <span className="font-bold text-gray-800">{donuts}</span>
-                <span className="text-xs text-gray-500 block">Donuts</span>
+                <span className="font-display font-bold text-3xl text-[var(--color-bone)] block leading-none mb-1">{donuts}</span>
+                <span className="text-xs text-[var(--color-ash)] font-bold uppercase tracking-widest block">Donuts</span>
               </div>
-              <div className="flex-1 bg-white/60 p-4 rounded-2xl text-center">
+              <div className="flex-1 bg-[var(--color-abyss)] p-4 rounded-none text-center border border-gray-800">
                 <span className="text-4xl block mb-2">🍺</span>
-                <span className="font-bold text-gray-800">{beers}</span>
-                <span className="text-xs text-gray-500 block">Beers</span>
+                <span className="font-display font-bold text-3xl text-[var(--color-bone)] block leading-none mb-1">{beers}</span>
+                <span className="text-xs text-[var(--color-ash)] font-bold uppercase tracking-widest block">Beers</span>
               </div>
             </div>
           </div>
 
-          <div className="text-center py-10 opacity-50">
-            <span className="text-4xl grayscale">💪</span>
-            <p className="mt-4 font-bold text-gray-500">More charts coming soon!</p>
+          <div className="text-center py-10 opacity-30">
+            <span className="text-4xl grayscale">⚔️</span>
+            <p className="mt-4 font-bold text-[var(--color-bone)] uppercase tracking-widest">More carnage coming soon</p>
           </div>
         </div>
       )}
@@ -218,101 +216,101 @@ export default function DashboardPage() {
       {/* ----------------- SETTINGS TAB ----------------- */}
       {activeTab === 'SETTINGS' && (
         <div className="flex-1 px-4 pt-8 animate-fade-in-up">
-          <h1 className="text-2xl font-bold mb-6">Settings</h1>
+          <h1 className="text-3xl font-display font-bold mb-6 text-[var(--color-bone)] uppercase tracking-wide">Armory Settings</h1>
           
           <div className="pt-2">
-            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Onboarding Settings</h3>
+            <h3 className="text-xs font-bold text-[var(--color-blood)] uppercase tracking-widest mb-3">Battle Plan</h3>
             <div className="grid grid-cols-2 gap-3 mb-8">
-              <button onClick={() => navigate('/onboarding?step=1')} className="p-3 bg-white border border-gray-200 rounded-xl flex items-center gap-2 hover:border-blue-300 tap-scale text-left">
-                <span className="text-xl">🏋️</span>
-                <span className="font-bold text-sm text-gray-700">Equipment</span>
+              <button onClick={() => navigate('/onboarding?step=1')} className="p-3 bg-[var(--color-charcoal)] border border-gray-800 rounded-none flex items-center gap-3 hover:border-[var(--color-bronze)] tap-scale text-left">
+                <span className="text-xl">🛠️</span>
+                <span className="font-bold text-sm text-[var(--color-bone)] uppercase tracking-wider">Gear</span>
               </button>
-              <button onClick={() => navigate('/onboarding?step=2')} className="p-3 bg-white border border-gray-200 rounded-xl flex items-center gap-2 hover:border-blue-300 tap-scale text-left">
-                <span className="text-xl">💪</span>
-                <span className="font-bold text-sm text-gray-700">Muscles</span>
+              <button onClick={() => navigate('/onboarding?step=2')} className="p-3 bg-[var(--color-charcoal)] border border-gray-800 rounded-none flex items-center gap-3 hover:border-[var(--color-bronze)] tap-scale text-left">
+                <span className="text-xl">🎯</span>
+                <span className="font-bold text-sm text-[var(--color-bone)] uppercase tracking-wider">Targets</span>
               </button>
-              <button onClick={() => navigate('/onboarding?step=3')} className="p-3 bg-white border border-gray-200 rounded-xl flex items-center gap-2 hover:border-blue-300 tap-scale text-left">
+              <button onClick={() => navigate('/onboarding?step=3')} className="p-3 bg-[var(--color-charcoal)] border border-gray-800 rounded-none flex items-center gap-3 hover:border-[var(--color-bronze)] tap-scale text-left">
                 <span className="text-xl">⚡</span>
-                <span className="font-bold text-sm text-gray-700">Routine</span>
+                <span className="font-bold text-sm text-[var(--color-bone)] uppercase tracking-wider">Routine</span>
               </button>
-              <button onClick={() => navigate('/onboarding?step=4')} className="p-3 bg-white border border-gray-200 rounded-xl flex items-center gap-2 hover:border-blue-300 tap-scale text-left">
+              <button onClick={() => navigate('/onboarding?step=4')} className="p-3 bg-[var(--color-charcoal)] border border-gray-800 rounded-none flex items-center gap-3 hover:border-[var(--color-bronze)] tap-scale text-left">
                 <span className="text-xl">⏰</span>
-                <span className="font-bold text-sm text-gray-700">Time & Freq</span>
+                <span className="font-bold text-sm text-[var(--color-bone)] uppercase tracking-wider">Schedule</span>
               </button>
-              <button onClick={() => navigate('/onboarding?step=5')} className="p-3 bg-white border border-gray-200 rounded-xl flex items-center gap-2 hover:border-blue-300 tap-scale text-left">
-                <span className="text-xl">🤬</span>
-                <span className="font-bold text-sm text-gray-700">Spotter</span>
+              <button onClick={() => navigate('/onboarding?step=5')} className="p-3 bg-[var(--color-charcoal)] border border-gray-800 rounded-none flex items-center gap-3 hover:border-[var(--color-bronze)] tap-scale text-left">
+                <span className="text-xl">💀</span>
+                <span className="font-bold text-sm text-[var(--color-bone)] uppercase tracking-wider">Spotter</span>
               </button>
-              <button onClick={() => navigate('/onboarding?step=6')} className="p-3 bg-white border border-gray-200 rounded-xl flex items-center gap-2 hover:border-blue-300 tap-scale text-left">
-                <span className="text-xl">🔔</span>
-                <span className="font-bold text-sm text-gray-700">Alerts</span>
+              <button onClick={() => navigate('/onboarding?step=6')} className="p-3 bg-[var(--color-charcoal)] border border-gray-800 rounded-none flex items-center gap-3 hover:border-[var(--color-bronze)] tap-scale text-left">
+                <span className="text-xl">🚪</span>
+                <span className="font-bold text-sm text-[var(--color-bone)] uppercase tracking-wider">Alerts</span>
               </button>
             </div>
           </div>
           
           <div className="space-y-3">
-            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Account</h3>
-            <button onClick={handleSoftDelete} className="w-full p-4 flex items-center justify-center gap-3 text-red-500 bg-white shadow-sm rounded-xl border border-gray-100 hover:bg-red-50 transition-colors">
+            <h3 className="text-xs font-bold text-[var(--color-blood)] uppercase tracking-widest mb-3">Desertion</h3>
+            <button onClick={handleSoftDelete} className="w-full p-4 flex items-center justify-center gap-3 text-[var(--color-blood)] bg-[var(--color-charcoal)] rounded-none border border-gray-800 hover:border-[var(--color-blood)] transition-colors">
               <Trash2 size={20} />
-              <span className="font-bold">Delete Account</span>
+              <span className="font-bold uppercase tracking-wider">Surrender & Delete</span>
             </button>
-            <button onClick={handleLogout} className="w-full p-4 flex items-center justify-center gap-3 text-gray-600 bg-white shadow-sm rounded-xl border border-gray-100 hover:bg-gray-50 transition-colors">
+            <button onClick={handleLogout} className="w-full p-4 flex items-center justify-center gap-3 text-[var(--color-ash)] bg-[var(--color-charcoal)] rounded-none border border-gray-800 hover:text-[var(--color-bone)] transition-colors">
               <LogOut size={20} />
-              <span className="font-bold">Logout</span>
+              <span className="font-bold uppercase tracking-wider">Retreat (Logout)</span>
             </button>
           </div>
         </div>
       )}
 
       {/* ----------------- BOTTOM NAV ----------------- */}
-      <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white/80 backdrop-blur-md border-t border-gray-100 pb-safe z-40">
+      <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-[var(--color-charcoal)]/90 backdrop-blur-md border-t border-[var(--color-abyss)] pb-safe z-40">
         <div className="flex items-center justify-around p-2">
           <button 
             onClick={() => setActiveTab('HOME')} 
-            className={`flex flex-col items-center p-2 transition-colors ${activeTab === 'HOME' ? 'text-[var(--color-primary)]' : 'text-gray-400 hover:text-gray-600'}`}
+            className={`flex flex-col items-center p-2 transition-colors ${activeTab === 'HOME' ? 'text-[var(--color-bronze)]' : 'text-gray-500 hover:text-gray-300'}`}
           >
             <Home size={24} className="mb-1" />
-            <span className="text-[10px] font-bold">Home</span>
+            <span className="text-[10px] font-bold uppercase tracking-widest">Home</span>
           </button>
           <button 
             onClick={() => setActiveTab('PROGRESS')} 
-            className={`flex flex-col items-center p-2 transition-colors ${activeTab === 'PROGRESS' ? 'text-[var(--color-primary)]' : 'text-gray-400 hover:text-gray-600'}`}
+            className={`flex flex-col items-center p-2 transition-colors ${activeTab === 'PROGRESS' ? 'text-[var(--color-bronze)]' : 'text-gray-500 hover:text-gray-300'}`}
           >
             <BarChart2 size={24} className="mb-1" />
-            <span className="text-[10px] font-bold">Progress</span>
+            <span className="text-[10px] font-bold uppercase tracking-widest">Glory</span>
           </button>
           <button 
             onClick={() => setActiveTab('SETTINGS')} 
-            className={`flex flex-col items-center p-2 transition-colors ${activeTab === 'SETTINGS' ? 'text-[var(--color-primary)]' : 'text-gray-400 hover:text-gray-600'}`}
+            className={`flex flex-col items-center p-2 transition-colors ${activeTab === 'SETTINGS' ? 'text-[var(--color-bronze)]' : 'text-gray-500 hover:text-gray-300'}`}
           >
             <SettingsIcon size={24} className="mb-1" />
-            <span className="text-[10px] font-bold">Settings</span>
+            <span className="text-[10px] font-bold uppercase tracking-widest">Armory</span>
           </button>
         </div>
       </div>
 
       {/* Daily Feedback Bottom Sheet */}
       {showFeedback && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex flex-col justify-end">
-          <div className="bg-white rounded-t-3xl p-6 pb-12 animate-fade-in-up">
+        <div className="fixed inset-0 bg-black/80 z-50 flex flex-col justify-end">
+          <div className="bg-[var(--color-charcoal)] rounded-t-none p-6 pb-12 animate-fade-in-up border-t border-[var(--color-blood)] border-opacity-30">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-bold">How was your assault?</h2>
-              <button onClick={() => setShowFeedback(false)} className="text-gray-400 font-bold p-2">✕</button>
+              <h2 className="text-2xl font-display uppercase tracking-wider text-[var(--color-bone)] font-bold">How was your assault?</h2>
+              <button onClick={() => setShowFeedback(false)} className="text-[var(--color-ash)] hover:text-white font-bold p-2">✕</button>
             </div>
-            <p className="text-sm text-gray-500 mb-6">Your feedback will automatically adjust tomorrow's session difficulty (Progressive Overload).</p>
+            <p className="text-sm text-[var(--color-ash)] mb-6">Your feedback will automatically adjust tomorrow's session difficulty (Progressive Overload).</p>
             
             <div className="grid grid-cols-3 gap-3">
-              <button onClick={() => handleFeedback('easy')} className="p-4 rounded-2xl border border-gray-200 hover:bg-green-50 hover:border-green-300 font-bold text-green-700 flex flex-col items-center gap-2">
-                <span className="text-2xl">😎</span>
-                Easy
+              <button onClick={() => handleFeedback('easy')} className="p-4 rounded-none border border-gray-800 bg-[var(--color-abyss)] hover:border-[var(--color-bronze)] font-bold text-[var(--color-ash)] hover:text-[var(--color-bone)] flex flex-col items-center gap-2 transition-all">
+                <span className="text-2xl opacity-50 grayscale">😎</span>
+                <span className="uppercase text-xs tracking-widest">Too Easy</span>
               </button>
-              <button onClick={() => handleFeedback('good')} className="p-4 rounded-2xl border border-blue-200 bg-blue-50 font-bold text-blue-700 flex flex-col items-center gap-2 shadow-sm">
+              <button onClick={() => handleFeedback('good')} className="p-4 rounded-none border border-[var(--color-bronze)] bg-[var(--color-abyss)] font-bold text-[var(--color-bronze)] flex flex-col items-center gap-2 shadow-[0_0_15px_rgba(200,154,81,0.2)]">
                 <span className="text-2xl">🔥</span>
-                Good
+                <span className="uppercase text-xs tracking-widest">Bloody</span>
               </button>
-              <button onClick={() => handleFeedback('hard')} className="p-4 rounded-2xl border border-gray-200 hover:bg-red-50 hover:border-red-300 font-bold text-red-700 flex flex-col items-center gap-2">
-                <span className="text-2xl">🥵</span>
-                Hard
+              <button onClick={() => handleFeedback('hard')} className="p-4 rounded-none border border-gray-800 bg-[var(--color-abyss)] hover:border-[var(--color-blood)] font-bold text-[var(--color-ash)] hover:text-[var(--color-blood)] flex flex-col items-center gap-2 transition-all">
+                <span className="text-2xl grayscale">💀</span>
+                <span className="uppercase text-xs tracking-widest">Dead</span>
               </button>
             </div>
           </div>

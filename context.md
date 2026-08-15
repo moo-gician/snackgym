@@ -1,9 +1,10 @@
-# SnackGym 개발 컨텍스트 (Architecture & Rules)
+# B.E.A.S.T. 개발 컨텍스트 (Architecture & Rules)
 
 ## 1. 기술 스택
 - **프론트엔드**: Vite + React (TypeScript) + Tailwind CSS v4 (SPA 아키텍처) + Framer Motion (애니메이션)
 - **백엔드/DB**: Firebase Firestore (NoSQL) + Firebase Authentication (Google Auth)
 - **배포**: Vercel (snackgym.vercel.app)
+- **테마**: B.E.A.S.T. 300 Dark Theme (abyss, charcoal, bronze, blood)
 
 ---
 
@@ -48,3 +49,4 @@
 - **v0.1.0** (2026-08-12): Initial MVP Landing page + Google Auth deployed.
 - **v1.0.0** (2026-08-15): PRD 7차 최종 컨펌 완료 (피드백 팝업, 스킵 동결, 소프트 딜리트, 스누즈 확정). Phase 3 진입.
 - **v1.2.0** (2026-08-15): Phase 3-6 완료. 프론트엔드 전체 UI(온보딩, 대시보드, 세션) 및 파이어베이스 백엔드(Soft Delete, Cloud Functions 텔레그램 봇) Vercel 배포 트리거.
+- **v1.3.0** (2026-08-15): B.E.A.S.T. 300 Dark Theme 리팩토링 적용 완료 (디자인/카피 교체 및 랜딩페이지 라우팅 수정).

@@ -3,14 +3,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { CheckCircle2, Circle } from 'lucide-react';
 import { auth } from '../lib/firebase';
 import { recordSessionComplete } from '../lib/firestore';
-// @ts-ignore - using basic confetti or custom animation if needed.
-// For now we'll simulate confetti with CSS.
 
 export default function SessionPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [completed, setCompleted] = useState<Record<string, boolean>>({});
-  const [confetti, setConfetti] = useState<string | null>(null);
+  const [spark, setSpark] = useState<string | null>(null);
 
   // Mock data for MVP UI testing
   const exercises = [
@@ -20,8 +18,8 @@ export default function SessionPage() {
 
   const handleCheck = (exId: string) => {
     if (!completed[exId]) {
-      setConfetti(exId);
-      setTimeout(() => setConfetti(null), 1000);
+      setSpark(exId);
+      setTimeout(() => setSpark(null), 800);
     }
     setCompleted(prev => ({ ...prev, [exId]: !prev[exId] }));
   };
@@ -51,7 +49,7 @@ export default function SessionPage() {
 
   const handleFinish = async (isEarly: boolean) => {
     if (isEarly) {
-      if (!window.confirm("Unchecked exercises will be skipped. End session?")) {
+      if (!window.confirm("Cowardice recorded. Unchecked exercises will be skipped. Retreat?")) {
         return;
       }
     }
@@ -68,7 +66,7 @@ export default function SessionPage() {
   };
 
   const handleFullSkip = () => {
-    if (window.confirm("Skip entire session? (This will affect your completion stats)")) {
+    if (window.confirm("Skip entire session? Your spotter will remember this.")) {
       navigate('/dashboard');
     }
   };
@@ -76,15 +74,15 @@ export default function SessionPage() {
   const allCompleted = exercises.every(ex => completed[ex.id]);
 
   return (
-    <div className="min-h-screen pb-24 pt-8 px-4 flex flex-col max-w-md mx-auto relative bg-white">
+    <div className="min-h-screen pb-24 pt-8 px-4 flex flex-col max-w-md mx-auto relative bg-[var(--color-abyss)] text-[var(--color-ash)] font-sans">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">⚡ Compact Assault</h1>
-          <p className="text-sm text-gray-500">Session {id}</p>
+          <h1 className="text-3xl font-display font-bold uppercase tracking-wider text-[var(--color-bone)]">⚡ Compact Assault</h1>
+          <p className="text-sm font-bold uppercase tracking-widest text-[var(--color-blood)] mt-1">Session {id}</p>
         </div>
-        <button onClick={handleFullSkip} className="px-3 py-1.5 bg-gray-100 text-gray-600 rounded-lg text-sm font-medium hover:bg-gray-200">
-          Skip All
+        <button onClick={handleFullSkip} className="px-3 py-1.5 bg-transparent border border-gray-800 text-[var(--color-ash)] rounded-none text-xs font-bold uppercase tracking-widest hover:border-[var(--color-blood)] hover:text-[var(--color-blood)] transition-all">
+          Retreat
         </button>
       </div>
 
@@ -93,28 +91,28 @@ export default function SessionPage() {
           <div 
             key={ex.id}
             onClick={() => handleCheck(ex.id)}
-            className={`relative p-5 rounded-3xl border-2 transition-all cursor-pointer overflow-hidden ${
+            className={`relative p-5 rounded-none border transition-all cursor-pointer overflow-hidden ${
               completed[ex.id] 
-                ? 'border-[var(--color-primary)] bg-[#F0FCF2] scale-[0.98] opacity-60' 
-                : 'border-gray-100 bg-white hover:border-gray-200 shadow-sm'
+                ? 'border-[var(--color-bronze)] bg-[var(--color-abyss)] opacity-60 shadow-[0_0_10px_rgba(200,154,81,0.2)]' 
+                : 'border-gray-800 bg-[var(--color-charcoal)] hover:border-[var(--color-ash)]'
             }`}
           >
-            {confetti === ex.id && (
+            {spark === ex.id && (
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <span className="text-5xl animate-ping">🎉</span>
+                <span className="text-6xl animate-pulse">💥</span>
               </div>
             )}
             
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between relative z-10">
               <div>
-                <h3 className={`text-xl font-bold transition-all ${completed[ex.id] ? 'line-through text-gray-500' : 'text-gray-800'}`}>
+                <h3 className={`text-xl font-display font-bold uppercase tracking-wider transition-all ${completed[ex.id] ? 'line-through text-gray-600' : 'text-[var(--color-bone)]'}`}>
                   {ex.name}
                 </h3>
-                <p className="text-sm text-gray-500 mt-1 font-medium">
+                <p className={`text-sm mt-1 font-bold tracking-widest uppercase ${completed[ex.id] ? 'text-gray-700' : 'text-[var(--color-ash)]'}`}>
                   {ex.weight} / {ex.reps} reps
                 </p>
               </div>
-              <div className={`transition-transform duration-300 ${completed[ex.id] ? 'scale-110 text-[var(--color-primary)]' : 'text-gray-300'}`}>
+              <div className={`transition-transform duration-300 ${completed[ex.id] ? 'scale-110 text-[var(--color-bronze)]' : 'text-gray-700'}`}>
                 {completed[ex.id] ? <CheckCircle2 size={32} /> : <Circle size={32} />}
               </div>
             </div>
@@ -122,17 +120,17 @@ export default function SessionPage() {
         ))}
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-white via-white to-transparent">
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-[var(--color-abyss)] via-[var(--color-abyss)] to-transparent">
         <div className="max-w-md mx-auto">
           <button 
             onClick={() => handleFinish(!allCompleted)}
-            className={`w-full h-16 rounded-2xl font-bold text-lg flex items-center justify-center gap-2 tap-scale transition-all ${
+            className={`w-full h-16 rounded-none font-display font-bold text-xl uppercase tracking-widest flex items-center justify-center gap-2 tap-scale transition-all border ${
               allCompleted 
-                ? 'bg-[var(--color-primary)] text-white shadow-lg shadow-green-200' 
-                : 'bg-gray-800 text-white'
+                ? 'bg-[var(--color-bronze)] text-[var(--color-abyss)] border-[var(--color-bronze)] shadow-[0_0_20px_rgba(200,154,81,0.4)]' 
+                : 'bg-[var(--color-charcoal)] text-[var(--color-blood)] border-[var(--color-blood)] hover:bg-[var(--color-blood)] hover:text-[var(--color-abyss)]'
             }`}
           >
-            {allCompleted ? '🎉 Finish!' : 'Finish Early (Skip remaining)'}
+            {allCompleted ? '⚔️ Glory Achieved' : 'Retreat Early'}
           </button>
         </div>
       </div>

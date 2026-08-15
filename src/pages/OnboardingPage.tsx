@@ -290,14 +290,15 @@ export default function OnboardingPage() {
           )}
 
           {step === 4 && (
-            <div className="flex flex-col text-center">
-              <h1 className="font-display font-bold text-3xl md:text-4xl text-[var(--color-bone)] uppercase tracking-wide leading-tight text-center mb-2">WHEN DO I STRIKE YOU?</h1>
-              <p className="font-display font-bold text-[var(--color-bronze)] mt-2 mb-8 uppercase text-center text-sm tracking-widest">Establish the active duty window.</p>
+            <div className="flex flex-col text-left">
+              <div className="flex flex-col items-center mb-6">
+                <h1 className="font-display font-bold text-3xl md:text-4xl text-[var(--color-bone)] uppercase tracking-wide leading-tight text-center mb-2">STRIKE SCHEDULE</h1>
+                <p className="font-display font-bold text-[var(--color-bronze)] mt-2 uppercase text-center text-sm tracking-widest">Calibrate your weekly engagement.</p>
+              </div>
 
-              <div className="bg-[var(--color-charcoal)] p-6 rounded-none border border-gray-800 relative">
-                <div className="absolute top-0 right-0 w-2 h-2 bg-gray-800"></div>
-                <span className="font-display font-bold text-[var(--color-bronze)] mb-4 block uppercase tracking-widest text-sm">Active Duty Days</span>
-                <div className="flex justify-between gap-1">
+              <div className="bg-[var(--color-charcoal)] p-5 rounded-none border border-gray-800 relative mb-4">
+                <span className="font-display font-bold text-[var(--color-bronze)] mb-4 block uppercase tracking-widest text-[11px]">Active Duty Days</span>
+                <div className="grid grid-cols-7 gap-2">
                   {[
                     { day: 1, label: 'M' },
                     { day: 2, label: 'T' },
@@ -315,43 +316,69 @@ export default function OnboardingPage() {
                           if(navigator.vibrate) navigator.vibrate(20);
                           setActiveDays(prev => prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day].sort())
                         }}
-                        className={`w-10 h-10 rounded-none font-display font-bold text-lg flex items-center justify-center transition-all active:scale-[0.9] border ${
+                        className={`aspect-square flex items-center justify-center font-display font-bold text-lg rounded-none relative overflow-hidden transition-all active:scale-[0.9] border ${
                           isActive 
-                            ? 'bg-[var(--color-bronze)] text-[var(--color-abyss)] border-[var(--color-bronze)] shadow-[0_0_10px_rgba(200,154,81,0.5)]' 
-                            : 'bg-transparent text-[var(--color-ash)] border-gray-800 hover:border-[var(--color-bronze)] hover:text-[var(--color-bronze)]'
+                            ? 'bg-[var(--color-bronze)] text-[var(--color-abyss)] border-[var(--color-bronze)] shadow-[0_0_15px_rgba(200,154,81,0.3)]' 
+                            : 'bg-transparent text-[var(--color-ash)] border-gray-800 hover:border-[var(--color-bronze)]'
                         }`}
                       >
-                        {label}
+                        {isActive && <div className="absolute top-0 right-0 w-1.5 h-1.5 bg-[var(--color-abyss)] opacity-50"></div>}
+                        <span className="relative z-10">{label}</span>
                       </button>
                     );
                   })}
                 </div>
               </div>
 
-              <div className="flex gap-4 mt-4">
-                <div className="flex-1 bg-[var(--color-charcoal)] p-5 rounded-none border border-gray-800 flex flex-col items-center relative group hover:border-[var(--color-bronze)] transition-colors">
-                  <div className="absolute top-0 right-0 w-2 h-2 bg-gray-800 group-hover:bg-[var(--color-bronze)] transition-colors"></div>
-                  <span className="text-3xl mb-3 block opacity-80 group-hover:opacity-100 transition-opacity">🌅</span>
-                  <span className="font-display font-bold text-xs text-[var(--color-ash)] mb-2 uppercase tracking-widest group-hover:text-[var(--color-bronze)] transition-colors">Start Time</span>
-                  <input type="time" value={workStartTime} onChange={e => setWorkStartTime(e.target.value)} className="w-full text-center font-display font-bold text-2xl outline-none bg-transparent text-[var(--color-bone)]" />
-                </div>
-                <div className="flex-1 bg-[var(--color-charcoal)] p-5 rounded-none border border-gray-800 flex flex-col items-center relative group hover:border-[var(--color-bronze)] transition-colors">
-                  <div className="absolute top-0 right-0 w-2 h-2 bg-gray-800 group-hover:bg-[var(--color-bronze)] transition-colors"></div>
-                  <span className="text-3xl mb-3 block opacity-80 group-hover:opacity-100 transition-opacity">🌃</span>
-                  <span className="font-display font-bold text-xs text-[var(--color-ash)] mb-2 uppercase tracking-widest group-hover:text-[var(--color-bronze)] transition-colors">End Time</span>
-                  <input type="time" value={workEndTime} onChange={e => setWorkEndTime(e.target.value)} className="w-full text-center font-display font-bold text-2xl outline-none bg-transparent text-[var(--color-bone)]" />
+              <div className="bg-[var(--color-charcoal)] p-5 rounded-none border border-gray-800 relative mb-4">
+                <span className="font-display font-bold text-[var(--color-bronze)] mb-4 block uppercase tracking-widest text-[11px]">Engagement Window</span>
+                <div className="flex gap-4">
+                  <div className="flex-1 bg-[var(--color-abyss)] p-4 rounded-none border border-gray-800 flex flex-col items-center justify-center relative shadow-sm">
+                    <div className="absolute top-2 right-2 w-1.5 h-1.5 bg-[var(--color-bronze)]/40"></div>
+                    <input type="time" value={workStartTime} onChange={e => setWorkStartTime(e.target.value)} className="w-full text-center font-display font-bold text-3xl outline-none bg-transparent text-[var(--color-bone)] leading-none tracking-tighter" />
+                    <span className="font-display font-bold text-[10px] text-[var(--color-ash)] mt-2 uppercase tracking-widest">Commence</span>
+                  </div>
+                  <div className="flex-1 bg-[var(--color-abyss)] p-4 rounded-none border border-gray-800 flex flex-col items-center justify-center relative shadow-sm opacity-90">
+                    <div className="absolute top-2 right-2 w-1.5 h-1.5 bg-[var(--color-blood)]/40"></div>
+                    <input type="time" value={workEndTime} onChange={e => setWorkEndTime(e.target.value)} className="w-full text-center font-display font-bold text-3xl outline-none bg-transparent text-[var(--color-bone)] leading-none tracking-tighter" />
+                    <span className="font-display font-bold text-[10px] text-[var(--color-ash)] mt-2 uppercase tracking-widest">Ceasefire</span>
+                  </div>
                 </div>
               </div>
               
-              <div className="mt-4 bg-[var(--color-charcoal)] p-6 rounded-none border border-gray-800 flex flex-col items-center relative group hover:border-[var(--color-bronze)] transition-colors">
-                <div className="absolute top-0 right-0 w-2 h-2 bg-gray-800 group-hover:bg-[var(--color-bronze)] transition-colors"></div>
-                <span className="text-3xl mb-3 block opacity-80 group-hover:opacity-100 transition-opacity">🎯</span>
-                <span className="font-display font-bold text-xs text-[var(--color-ash)] mb-2 uppercase tracking-widest group-hover:text-[var(--color-bronze)] transition-colors">Daily Assault Quota</span>
-                <select value={sessionsPerDay} onChange={e => setSessionsPerDay(Number(e.target.value))} className="text-center font-display font-bold text-2xl outline-none bg-transparent w-full text-[var(--color-bone)] appearance-none cursor-pointer">
-                  <option value={4} className="bg-[var(--color-charcoal)]">4 TIMES / DAY</option>
-                  <option value={6} className="bg-[var(--color-charcoal)]">6 TIMES / DAY (SPARTAN)</option>
-                  <option value={8} className="bg-[var(--color-charcoal)]">8 TIMES / DAY (DEATH)</option>
-                </select>
+              <div className="bg-[var(--color-charcoal)] p-5 rounded-none border border-gray-800 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-3 h-3 bg-[var(--color-bronze)]"></div>
+                
+                <div className="flex justify-between items-end mb-2 relative z-10">
+                  <span className="font-display font-bold text-[var(--color-ash)] uppercase tracking-widest text-[11px]">Target Volume</span>
+                  <span className="font-display font-bold text-[var(--color-bronze)]">
+                    <span className="text-3xl">{sessionsPerDay}</span> 
+                    <span className="text-sm text-[var(--color-ash)] font-sans tracking-normal ml-1">x / day</span>
+                  </span>
+                </div>
+                
+                <div 
+                  className="flex gap-1 h-4 mt-2 cursor-pointer relative z-10 active:scale-[0.98] transition-transform" 
+                  onClick={() => {
+                    if (navigator.vibrate) navigator.vibrate(50);
+                    setSessionsPerDay(prev => prev === 8 ? 4 : prev + 2);
+                  }}
+                >
+                  {Array.from({length: 8}).map((_, i) => (
+                    <div key={i} className={`flex-1 ${i < sessionsPerDay ? 'bg-[var(--color-bronze)] shadow-[0_0_10px_rgba(200,154,81,0.5)]' : 'bg-[var(--color-abyss)] border border-gray-800 relative overflow-hidden'}`}>
+                      {i >= sessionsPerDay && (
+                        <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,rgba(255,255,255,0.05)_2px,rgba(255,255,255,0.05)_4px)]"></div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                
+                <div className="flex justify-between mt-3 text-[10px] font-display font-bold text-[var(--color-ash)] uppercase tracking-widest relative z-10">
+                  <span className="opacity-70">Tap to calibrate</span>
+                  <span className="text-[var(--color-bronze)]">
+                    {sessionsPerDay === 4 ? 'BASE' : sessionsPerDay === 6 ? 'SPARTAN' : 'DEATH'}
+                  </span>
+                </div>
               </div>
             </div>
           )}

@@ -1,0 +1,118 @@
+<!DOCTYPE html><html lang="en" style=""><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&amp;family=Oswald:wght@600;700&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: 'class', theme: { extend: { colors: { 'secondary-fixed-dim': '#ffb4aa', 'surface-container': '#1e1f26', 'on-secondary-fixed': '#410001', 'tertiary-fixed': '#e4e1e7', 'on-primary': '#432c00', 'surface-variant': '#33343c', 'inverse-on-surface': '#2f3037', 'surface-container-highest': '#33343c', 'on-secondary-container': '#ffd2cc', 'on-error-container': '#ffdad6', 'surface-bright': '#383940', 'secondary-container': '#c5000d', 'on-surface': '#e2e1eb', 'outline': '#9b8f7f', 'on-background': '#e2e1eb', 'surface': '#12131a', 'surface-container-lowest': '#0d0e14', 'tertiary': '#c8c5cb', 'surface-container-low': '#1a1b22', 'surface-dim': '#12131a', 'on-primary-fixed': '#281800', 'on-surface-variant': '#d3c4b3', 'on-error': '#690005', 'background': '#12131a', 'on-primary-fixed-variant': '#614000', 'inverse-primary': '#7d5713', 'on-secondary': '#690003', 'on-tertiary-fixed': '#1b1b1f', 'surface-tint': '#f0be71', 'on-secondary-fixed-variant': '#930007', 'on-primary-container': '#4e3300', 'primary': '#f0be71', 'on-tertiary-container': '#38383c', 'outline-variant': '#4f4538', 'on-tertiary': '#303034', 'secondary': '#ffb4aa', 'inverse-surface': '#e2e1eb', 'error': '#ffb4ab', 'primary-fixed-dim': '#f0be71', 'tertiary-fixed-dim': '#c8c5cb', 'primary-container': '#c89a51', 'surface-container-high': '#282a31', 'tertiary-container': '#a3a1a6', 'primary-fixed': '#ffddaf', 'error-container': '#93000a', 'secondary-fixed': '#ffdad5', 'on-tertiary-fixed-variant': '#47464b' }, borderRadius: { 'DEFAULT': '0.25rem', 'lg': '0.5rem', 'xl': '0.75rem', 'full': '9999px' }, spacing: { 'gutter': '16px', 'unit': '4px', 'stack-md': '24px', 'margin-mobile': '16px', 'margin-desktop': '48px', 'stack-sm': '8px', 'stack-lg': '48px' }, fontFamily: { 'label-sm': ['Inter'], 'body-md': ['Inter'], 'headline-md': ['Oswald'], 'label-bold': ['Oswald'], 'headline-lg': ['Oswald'], 'headline-xl': ['Oswald'], 'body-lg': ['Inter'], 'headline-lg-mobile': ['Oswald'] }, fontSize: { 'label-sm': ['12px', { lineHeight: '16px', fontWeight: '500' }], 'body-md': ['16px', { lineHeight: '24px', fontWeight: '400' }], 'headline-md': ['24px', { lineHeight: '28px', fontWeight: '600' }], 'label-bold': ['14px', { lineHeight: '16px', letterSpacing: '0.05em', fontWeight: '600' }], 'headline-lg': ['48px', { lineHeight: '48px', letterSpacing: '-0.01em', fontWeight: '700' }], 'headline-xl': ['72px', { lineHeight: '72px', letterSpacing: '-0.02em', fontWeight: '700' }], 'body-lg': ['18px', { lineHeight: '28px', fontWeight: '400' }], 'headline-lg-mobile': ['32px', { lineHeight: '36px', fontWeight: '700' }] } } } }</script><style>@layer base { body { @apply bg-surface text-on-surface antialiased; } .pb-safe { padding-bottom: env(safe-area-inset-bottom, 16px); } .pt-safe { padding-top: env(safe-area-inset-top, 16px); } } .onboarding-progress-segment { height: 4px; border-radius: 2px; flex: 1; transition: all 0.3s ease; } .segment-inactive { @apply bg-surface-container-highest; } .segment-active { @apply bg-primary shadow-[0_0_8px_rgba(240,190,113,0.4)]; } </style></head><body class="min-h-screen flex flex-col" style="background-color: rgb(10, 10, 12);"><header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-md pt-safe px-margin-mobile" style="background-color: rgba(10, 10, 12, 0.9);"><div class="h-14 flex items-center justify-between gap-4"><div class="w-10 h-10 flex items-center justify-center"><img src="https://lh3.googleusercontent.com/aida/AP1WRLvL3hsJ2y4za4DRON2I13kxqT-k84HauYfDzQw6W6u3cozHNVsMbONuPLoKkpVT9dK2a1_u0uo5vksj3dc0-FFdlJ-HgueDt5Cr7wA0Nbke59Hpo54CjjZVI1U9V7fLylSFWlbOuYQr89qYPV01DmM5z23_uMNsQEX5cTcUVnv7nVqkVilcjqh6NlXdPTs3E1aAlwUkt9IGCc1g546aHK--oY8-vDnNFeA2ALgnjZJX0QPTTSslf65rvyo" alt="B.E.A.S.T. Logo" class="w-full h-full object-contain"></div><span class="font-label-bold text-label-bold uppercase tracking-widest text-primary-container whitespace-nowrap">Armory Onboarding</span><div class="flex-grow flex items-center gap-2"><div class="onboarding-progress-segment segment-active"></div><div class="onboarding-progress-segment segment-active"></div><div class="onboarding-progress-segment segment-active"></div><div class="onboarding-progress-segment segment-active"></div><div class="onboarding-progress-segment segment-inactive"></div><div class="onboarding-progress-segment segment-inactive"></div></div><button class="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined">account_circle</span></button></div></header><main class="flex-grow flex flex-col pt-12 pb-24 px-margin-mobile"><div class="flex flex-col w-full gap-stack-lg animate-[fade-in_0.3s_ease-out]">
+<div class="flex flex-col gap-unit items-center">
+<h1 class="font-headline-md text-on-surface uppercase tracking-tight text-center text-4xl">STRIKE SCHEDULE</h1>
+<p class="font-headline-md text-primary-container uppercase text-center text-lg">Calibrate your weekly engagement.</p>
+</div>
+<section class="flex flex-col gap-stack-sm">
+<h2 class="font-label-bold text-outline uppercase tracking-widest text-[11px] mb-2">Active Duty Days</h2>
+<div class="grid grid-cols-7 gap-2">
+<!-- M -->
+<button class="aspect-square flex items-center justify-center font-headline-md text-on-primary bg-primary rounded-sm shadow-[0_0_15px_rgba(240,190,113,0.3)] relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-2 h-2 bg-inverse-primary/50"></div>
+<span class="relative z-10">M</span>
+<div class="absolute inset-0 bg-white/20 opacity-0 group-active:opacity-100 transition-opacity"></div>
+</button>
+<!-- T -->
+<button class="aspect-square flex items-center justify-center font-headline-md text-on-primary bg-primary rounded-sm shadow-[0_0_15px_rgba(240,190,113,0.3)] relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-2 h-2 bg-inverse-primary/50"></div>
+<span class="relative z-10">T</span>
+<div class="absolute inset-0 bg-white/20 opacity-0 group-active:opacity-100 transition-opacity"></div>
+</button>
+<!-- W -->
+<button class="aspect-square flex items-center justify-center font-headline-md text-on-primary bg-primary rounded-sm shadow-[0_0_15px_rgba(240,190,113,0.3)] relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-2 h-2 bg-inverse-primary/50"></div>
+<span class="relative z-10">W</span>
+<div class="absolute inset-0 bg-white/20 opacity-0 group-active:opacity-100 transition-opacity"></div>
+</button>
+<!-- T -->
+<button class="aspect-square flex items-center justify-center font-headline-md text-on-primary bg-primary rounded-sm shadow-[0_0_15px_rgba(240,190,113,0.3)] relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-2 h-2 bg-inverse-primary/50"></div>
+<span class="relative z-10">T</span>
+<div class="absolute inset-0 bg-white/20 opacity-0 group-active:opacity-100 transition-opacity"></div>
+</button>
+<!-- F -->
+<button class="aspect-square flex items-center justify-center font-headline-md text-on-primary bg-primary rounded-sm shadow-[0_0_15px_rgba(240,190,113,0.3)] relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-2 h-2 bg-inverse-primary/50"></div>
+<span class="relative z-10">F</span>
+<div class="absolute inset-0 bg-white/20 opacity-0 group-active:opacity-100 transition-opacity"></div>
+</button>
+<!-- S -->
+<button class="aspect-square flex items-center justify-center font-headline-md text-on-surface-variant bg-surface-container rounded-sm border border-outline-variant/30 relative overflow-hidden group hover:border-primary/50 transition-colors">
+<span class="relative z-10 opacity-50">S</span>
+<div class="absolute inset-0 bg-white/5 opacity-0 group-active:opacity-100 transition-opacity"></div>
+</button>
+<!-- S -->
+<button class="aspect-square flex items-center justify-center font-headline-md text-on-surface-variant bg-surface-container rounded-sm border border-outline-variant/30 relative overflow-hidden group hover:border-primary/50 transition-colors">
+<span class="relative z-10 opacity-50">S</span>
+<div class="absolute inset-0 bg-white/5 opacity-0 group-active:opacity-100 transition-opacity"></div>
+</button>
+</div>
+</section>
+<section class="flex flex-col gap-stack-sm">
+<h2 class="font-label-bold text-outline uppercase tracking-widest text-[11px] mb-2">Engagement Window</h2>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-surface-container border-t border-outline-variant/40 p-4 rounded-sm relative flex flex-col items-center justify-center gap-1 shadow-sm">
+<div class="absolute top-2 right-2 w-1.5 h-1.5 bg-primary/40"></div>
+
+<span class="font-headline-xl text-on-surface leading-none tracking-tighter">09<span class="text-primary/50">:</span>00</span>
+<span class="font-label-bold text-outline text-[10px] uppercase">Commence</span>
+</div>
+<div class="bg-surface-container border-t border-outline-variant/40 p-4 rounded-sm relative flex flex-col items-center justify-center gap-1 shadow-sm">
+<div class="absolute top-2 right-2 w-1.5 h-1.5 bg-secondary/40"></div>
+
+<span class="font-headline-xl text-on-surface leading-none tracking-tighter opacity-70">18<span class="text-primary/30">:</span>00</span>
+<span class="font-label-bold text-outline text-[10px] uppercase">Ceasefire</span>
+</div>
+</div>
+</section>
+<section class="bg-surface-container border-t border-outline-variant/40 rounded-sm p-5 shadow-md relative overflow-hidden">
+<div class="absolute top-0 right-0 w-3 h-3 bg-primary"></div>
+<div class="absolute -right-8 -bottom-8 opacity-5">
+<span class="material-symbols-outlined text-[120px]">my_location</span>
+</div>
+<div class="flex items-center gap-3 mb-6 relative z-10">
+<div class="w-10 h-10 rounded-sm bg-surface flex items-center justify-center border border-outline-variant/50">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: &quot;FILL&quot; 1;">track_changes</span>
+</div>
+<div>
+<h3 class="font-headline-md text-on-surface uppercase tracking-tight leading-none mb-1">Daily Assault Quota</h3>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-secondary-container/20 text-secondary border border-secondary/30 rounded-sm font-label-bold text-[10px] uppercase">
+          Spartan Level
+        </span>
+</div>
+</div>
+<div class="flex flex-col gap-2 relative z-10">
+<div class="flex justify-between items-end">
+<span class="font-body-md text-on-surface-variant">Target Volume</span>
+<span class="font-headline-md text-primary"><span class="text-3xl">6</span> <span class="text-sm text-outline font-body-md tracking-normal">x / day</span></span>
+</div>
+<div class="flex gap-1 h-3 mt-1">
+<div class="flex-1 bg-primary shadow-[0_0_10px_rgba(240,190,113,0.5)] rounded-l-sm"></div>
+<div class="flex-1 bg-primary shadow-[0_0_10px_rgba(240,190,113,0.5)]"></div>
+<div class="flex-1 bg-primary shadow-[0_0_10px_rgba(240,190,113,0.5)]"></div>
+<div class="flex-1 bg-primary shadow-[0_0_10px_rgba(240,190,113,0.5)]"></div>
+<div class="flex-1 bg-surface border border-outline-variant/50 relative overflow-hidden">
+<div class="absolute inset-0 bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,rgba(155,143,127,0.1)_2px,rgba(155,143,127,0.1)_4px)]"></div>
+</div>
+<div class="flex-1 bg-surface border border-outline-variant/50 rounded-r-sm relative overflow-hidden">
+<div class="absolute inset-0 bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,rgba(155,143,127,0.1)_2px,rgba(155,143,127,0.1)_4px)]"></div>
+</div>
+</div>
+<div class="flex justify-between mt-1">
+<span class="font-label-bold text-outline text-[10px]">CURRENT: 4</span>
+<span class="font-label-bold text-outline text-[10px]">MAX: 6</span>
+</div>
+</div>
+</section>
+</div>
+<style>
+  @keyframes fade-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style></main><footer class="fixed bottom-0 w-full bg-surface/90 backdrop-blur-md pb-safe px-margin-mobile border-t border-outline-variant/10 bg-transparent"><div class="h-20 flex items-center justify-center"><div class="flex items-center bg-surface-container/90 backdrop-blur-md rounded-full p-2 border border-outline-variant/10 shadow-lg w-full max-w-md mx-auto"><button class="flex-1 flex flex-col items-center justify-center gap-1 text-primary"><span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 1;">swords</span><span class="text-label-sm uppercase tracking-widest">Arena</span></button><button class="flex-1 flex flex-col items-center justify-center gap-1 text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined">history</span><span class="text-label-sm uppercase tracking-widest">History</span></button><button class="flex-1 flex flex-col items-center justify-center gap-1 text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined">settings</span><span class="text-label-sm uppercase tracking-widest">Settings</span></button></div></div></footer>
+
+
+
+</body></html>

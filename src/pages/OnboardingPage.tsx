@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { auth, db } from '../lib/firebase';
 import { saveOnboardingData } from '../lib/firestore';
@@ -40,7 +40,7 @@ export default function OnboardingPage() {
 
   const [workStartTime, setWorkStartTime] = useState(() => sessionStorage.getItem('ob_workStart') || '09:00');
   const [workEndTime, setWorkEndTime] = useState(() => sessionStorage.getItem('ob_workEnd') || '18:00');
-  const [sessionsPerDay, setSessionsPerDay] = useState(() => Number(sessionStorage.getItem('ob_sessions')) || 6);
+  const [targetInterval, setTargetInterval] = useState(() => Number(sessionStorage.getItem('ob_interval')) || 60);
   const [activeDays, setActiveDays] = useState<number[]>(() => {
     const saved = sessionStorage.getItem('ob_activeDays');
     return saved ? JSON.parse(saved) : [1, 2, 3, 4, 5]; // Mon-Fri default
@@ -96,6 +96,25 @@ export default function OnboardingPage() {
     setStep(s => Math.max(1, s - 1));
   };
 
+  const alarmTimes = useMemo(() => {
+    if (!workStartTime || !workEndTime) return [];
+    const [startH, startM] = workStartTime.split(':').map(Number);
+    const [endH, endM] = workEndTime.split(':').map(Number);
+    let currentMin = startH * 60 + startM;
+    let endMin = endH * 60 + endM;
+    if (endMin <= currentMin) endMin += 24 * 60; // Handle crossing midnight
+    
+    const times = [];
+    while (currentMin <= endMin) {
+      const h = Math.floor(currentMin / 60) % 24;
+      const hh = h.toString().padStart(2, '0');
+      const m = (currentMin % 60).toString().padStart(2, '0');
+      times.push(`${hh}:${m}`);
+      currentMin += targetInterval;
+    }
+    return times;
+  }, [workStartTime, workEndTime, targetInterval]);
+
   const completeOnboarding = async () => {
     const user = auth.currentUser;
     if (!user) {
@@ -110,7 +129,7 @@ export default function OnboardingPage() {
         course: course as any,
         workStartTime,
         workEndTime,
-        sessionsPerDay,
+        sessionsPerDay: alarmTimes.length > 0 ? alarmTimes.length : 1,
         activeDays,
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         spotter: spotter as any,
@@ -120,7 +139,7 @@ export default function OnboardingPage() {
       console.log("Onboarding data saved successfully!");
       
       // Cleanup session storage
-      ['ob_equipment', 'ob_muscles', 'ob_course', 'ob_workStart', 'ob_workEnd', 'ob_sessions', 'ob_activeDays', 'ob_spotter', 'ob_notif'].forEach(k => sessionStorage.removeItem(k));
+      ['ob_equipment', 'ob_muscles', 'ob_course', 'ob_workStart', 'ob_workEnd', 'ob_interval', 'ob_activeDays', 'ob_spotter', 'ob_notif'].forEach(k => sessionStorage.removeItem(k));
 
       if (notificationMethod === 'telegram') {
         const telegramUrl = `https://t.me/SnackGymBot?start=${user.uid}`;
@@ -358,13 +377,16 @@ export default function OnboardingPage() {
               <div className="bg-[var(--color-charcoal)] p-5 rounded-none border border-gray-800 relative overflow-hidden">
                 <div className={`absolute top-0 right-0 w-3 h-3 transition-colors duration-300 ${sessionsPerDay === 4 ? 'bg-[var(--color-bronze)]' : sessionsPerDay === 6 ? 'bg-orange-600' : 'bg-[var(--color-blood)]'}`}></div>
                 
-                <span className="font-display font-bold text-white mb-4 block uppercase tracking-widest text-sm md:text-base">Daily Assault Quota</span>
+              <div className="bg-[var(--color-charcoal)] p-5 rounded-none border border-gray-800 relative overflow-hidden flex flex-col">
+                <div className={`absolute top-0 right-0 w-3 h-3 transition-colors duration-300 ${targetInterval === 120 ? 'bg-[var(--color-bronze)]' : targetInterval === 60 ? 'bg-orange-600' : 'bg-[var(--color-blood)]'}`}></div>
+                
+                <span className="font-display font-bold text-white mb-4 block uppercase tracking-widest text-sm md:text-base">TARGET INTERVAL</span>
                 
                 <div className="flex justify-between items-end mb-2 relative z-10">
-                  <span className="font-display font-bold text-[var(--color-ash)] uppercase tracking-widest text-[11px]">Target Volume</span>
-                  <span className={`font-display font-bold transition-colors duration-300 ${sessionsPerDay === 4 ? 'text-[var(--color-bronze)]' : sessionsPerDay === 6 ? 'text-orange-500' : 'text-[var(--color-blood)]'}`}>
-                    <span className="text-3xl">{sessionsPerDay}</span> 
-                    <span className="text-sm text-[var(--color-ash)] font-sans tracking-normal ml-1">x / day</span>
+                  <span className="font-display font-bold text-[var(--color-ash)] uppercase tracking-widest text-[11px]">Interval</span>
+                  <span className={`font-display font-bold transition-colors duration-300 ${targetInterval === 120 ? 'text-[var(--color-bronze)]' : targetInterval === 60 ? 'text-orange-500' : 'text-[var(--color-blood)]'}`}>
+                    <span className="text-3xl">{targetInterval === 120 ? '2' : targetInterval === 60 ? '1' : '30'}</span> 
+                    <span className="text-sm text-[var(--color-ash)] font-sans tracking-normal ml-1">{targetInterval === 30 ? 'min' : 'hr'}</span>
                   </span>
                 </div>
                 
@@ -372,13 +394,14 @@ export default function OnboardingPage() {
                   className="flex gap-1 h-4 mt-2 cursor-pointer relative z-10 active:scale-[0.98] transition-transform" 
                   onClick={() => {
                     if (navigator.vibrate) navigator.vibrate(50);
-                    setSessionsPerDay(prev => prev === 8 ? 4 : prev + 2);
+                    setTargetInterval(prev => prev === 120 ? 60 : prev === 60 ? 30 : 120);
                   }}
                 >
-                  {Array.from({length: 8}).map((_, i) => {
-                    const isFilled = i < sessionsPerDay;
-                    const colorClass = sessionsPerDay === 4 ? 'bg-[var(--color-bronze)] shadow-[0_0_10px_rgba(200,154,81,0.5)]' :
-                                       sessionsPerDay === 6 ? 'bg-orange-600 shadow-[0_0_15px_rgba(234,88,12,0.5)]' :
+                  {Array.from({length: 3}).map((_, i) => {
+                    const activeCount = targetInterval === 120 ? 1 : targetInterval === 60 ? 2 : 3;
+                    const isFilled = i < activeCount;
+                    const colorClass = targetInterval === 120 ? 'bg-[var(--color-bronze)] shadow-[0_0_10px_rgba(200,154,81,0.5)]' :
+                                       targetInterval === 60 ? 'bg-orange-600 shadow-[0_0_15px_rgba(234,88,12,0.5)]' :
                                        'bg-[var(--color-blood)] shadow-[0_0_15px_rgba(197,0,13,0.8)]';
                     return (
                       <div key={i} className={`flex-1 transition-colors duration-300 ${isFilled ? colorClass : 'bg-[var(--color-abyss)] border border-gray-800 relative overflow-hidden'}`}>
@@ -390,11 +413,26 @@ export default function OnboardingPage() {
                   })}
                 </div>
                 
-                <div className="flex justify-between mt-3 text-[10px] font-display font-bold uppercase tracking-widest relative z-10">
+                <div className="flex justify-between mt-3 text-[10px] font-display font-bold uppercase tracking-widest relative z-10 mb-6">
                   <span className="text-[var(--color-ash)] opacity-70">Tap to calibrate</span>
-                  <span className={`transition-colors duration-300 ${sessionsPerDay === 4 ? 'text-[var(--color-bronze)]' : sessionsPerDay === 6 ? 'text-orange-500' : 'text-[var(--color-blood)]'}`}>
-                    {sessionsPerDay === 4 ? 'BASE' : sessionsPerDay === 6 ? 'SPARTAN' : 'DEATH'}
+                  <span className={`transition-colors duration-300 ${targetInterval === 120 ? 'text-[var(--color-bronze)]' : targetInterval === 60 ? 'text-orange-500' : 'text-[var(--color-blood)]'}`}>
+                    {targetInterval === 120 ? 'BASE' : targetInterval === 60 ? 'SPARTAN' : 'DEATH'}
                   </span>
+                </div>
+
+                {/* Alarm Times Grid */}
+                <div className="border-t border-gray-800 pt-4 mt-2 relative z-10">
+                  <span className="font-display font-bold text-[var(--color-ash)] mb-3 block uppercase tracking-widest text-[10px]">Estimated Strike Times ({alarmTimes.length}x)</span>
+                  <div className="flex flex-wrap gap-2">
+                    {alarmTimes.map(t => (
+                      <div key={t} className="px-2 py-1 bg-[var(--color-abyss)] border border-gray-800 text-[var(--color-bone)] font-display font-bold text-xs uppercase shadow-sm">
+                        {t}
+                      </div>
+                    ))}
+                    {alarmTimes.length === 0 && (
+                      <span className="text-xs text-[var(--color-blood)] font-display font-bold">Invalid Window</span>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>

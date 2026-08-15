@@ -151,10 +151,10 @@ export default function DashboardPage() {
               
               <Link 
                 to="/session/manual-1" 
-                className="px-8 py-4 rounded-full text-white font-bold text-lg flex items-center gap-2 tap-scale shadow-lg shadow-green-200"
+                className="px-6 py-3 rounded-full text-white font-bold text-lg flex items-center gap-2 tap-scale shadow-lg shadow-green-200"
                 style={{ background: 'linear-gradient(135deg, #3CCF4E 0%, #189AB4 100%)' }}
               >
-                <span className="text-2xl animate-bounce">⚡</span> Start
+                <span className="text-xl animate-bounce">⚡</span> Quick Start
               </Link>
             </div>
           </div>

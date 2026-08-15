@@ -348,88 +348,69 @@ export default function OnboardingPage() {
         {step === 6 && (
           <div className="space-y-6 flex flex-col items-center text-center pt-10">
             <h1 className="text-3xl font-bold mb-2">Almost Done!</h1>
-            <p className="text-[var(--color-text-muted)] text-sm mb-8">How should we notify you?</p>
+            <p className="text-[var(--color-text-muted)] text-sm">How should we notify you?</p>
 
             <div className="grid grid-cols-2 gap-4 w-full">
               <button 
                 onClick={() => setNotificationMethod('telegram')}
-                className={`group aspect-square rounded-3xl border flex items-center justify-center relative overflow-hidden transition-all ${
+                className={`group aspect-square rounded-3xl border flex flex-col items-center justify-center p-4 transition-all ${
                   notificationMethod === 'telegram' ? 'border-[#2AABEE] bg-[#E8F5FE]' : 'border-gray-200 bg-white hover:border-gray-300'
                 }`}
               >
-                <span className={`text-6xl transition-transform duration-300 ${notificationMethod === 'telegram' ? '-translate-y-3 scale-110' : 'group-hover:-translate-y-3 group-hover:scale-110'}`}>✈️</span>
-                <div className={`absolute bottom-4 w-full text-center transition-opacity duration-300 ${notificationMethod === 'telegram' ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
-                  <span className="font-bold text-sm text-[#2AABEE]">Telegram</span>
+                <span className={`text-6xl mb-2 transition-transform duration-300 ${notificationMethod === 'telegram' ? 'scale-110' : 'group-hover:scale-110'}`}>✈️</span>
+                <div className="w-full text-center">
+                  <span className={`font-bold text-sm ${notificationMethod === 'telegram' ? 'text-[#2AABEE]' : 'text-gray-500'}`}>Telegram</span>
                 </div>
               </button>
 
               <button 
                 onClick={() => setNotificationMethod('none')}
-                className={`group aspect-square rounded-3xl border flex items-center justify-center relative overflow-hidden transition-all ${
+                className={`group aspect-square rounded-3xl border flex flex-col items-center justify-center p-4 transition-all ${
                   notificationMethod === 'none' ? 'border-gray-400 bg-gray-50' : 'border-gray-200 bg-white hover:border-gray-300'
                 }`}
               >
-                <span className={`text-6xl transition-transform duration-300 ${notificationMethod === 'none' ? '-translate-y-3 scale-110' : 'group-hover:-translate-y-3 group-hover:scale-110'}`}>🔕</span>
-                <div className={`absolute bottom-4 w-full text-center transition-opacity duration-300 ${notificationMethod === 'none' ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
-                  <span className="font-bold text-sm text-gray-600">None (In-App)</span>
+                <span className={`text-6xl mb-2 transition-transform duration-300 ${notificationMethod === 'none' ? 'scale-110' : 'group-hover:scale-110'}`}>🔕</span>
+                <div className="w-full text-center">
+                  <span className={`font-bold text-sm ${notificationMethod === 'none' ? 'text-gray-600' : 'text-gray-500'}`}>In-App</span>
                 </div>
               </button>
-            </div>
-
-            <div className="w-full mt-12">
-              {notificationMethod === 'telegram' && (
-                <button
-                  onClick={completeOnboarding}
-                  className="w-full py-5 rounded-2xl text-white font-bold text-lg flex items-center justify-center gap-2 tap-scale"
-                  style={{ background: '#2AABEE', boxShadow: '0 8px 32px rgba(42, 171, 238, 0.4)' }}
-                >
-                  Connect Telegram
-                  <ArrowRight size={20} />
-                </button>
-              )}
-              
-              {notificationMethod === 'none' && (
-                <button
-                  onClick={completeOnboarding}
-                  className="w-full py-5 rounded-2xl text-white font-bold text-lg flex items-center justify-center gap-2 tap-scale btn-cta"
-                >
-                  Go to Dashboard
-                  <ArrowRight size={20} />
-                </button>
-              )}
             </div>
           </div>
         )}
       </div>
 
       {/* Navigation Footer */}
-      {step < 6 && (
-        <div className="fixed bottom-[68px] left-0 right-0 p-4 bg-gradient-to-t from-white via-white to-transparent z-30">
-          <div className="max-w-md mx-auto flex gap-4">
-            {step > 1 && (
-              <button 
-                onClick={prevStep}
-                className="w-14 h-14 rounded-2xl border-2 border-gray-200 flex items-center justify-center text-gray-500 tap-scale bg-white hover:bg-gray-50 transition-colors shadow-sm"
-              >
-                <ArrowLeft size={24} />
-              </button>
-            )}
-            
+      <div className="fixed bottom-[68px] left-0 right-0 p-4 bg-gradient-to-t from-white via-white to-transparent z-30 pointer-events-none">
+        <div className="max-w-md mx-auto flex gap-4 pointer-events-auto">
+          {step > 1 && (
             <button 
-              onClick={nextStep}
-              disabled={
-                (step === 2 && muscles.length === 0) ||
-                (step === 3 && !course) ||
-                (step === 4 && (!workStartTime || !workEndTime)) ||
-                (step === 5 && !spotter)
-              }
-              className="flex-1 h-14 rounded-2xl bg-[#1A2E1A] text-white font-bold flex items-center justify-center gap-2 tap-scale disabled:opacity-50 disabled:bg-gray-300 transition-all shadow-lg shadow-black/10"
+              onClick={prevStep}
+              className="w-14 h-14 rounded-2xl border-2 border-gray-200 flex items-center justify-center text-gray-500 tap-scale bg-white hover:bg-gray-50 transition-colors shadow-sm"
             >
-              Next <ArrowRight size={20} />
+              <ArrowLeft size={24} />
             </button>
-          </div>
+          )}
+          
+          <button 
+            onClick={step === 6 ? completeOnboarding : nextStep}
+            disabled={
+              (step === 2 && muscles.length === 0) ||
+              (step === 3 && !course) ||
+              (step === 4 && (!workStartTime || !workEndTime)) ||
+              (step === 5 && !spotter) ||
+              (step === 6 && !notificationMethod)
+            }
+            className={`flex-1 h-14 rounded-2xl text-white font-bold flex items-center justify-center gap-2 tap-scale disabled:opacity-50 disabled:bg-gray-300 transition-all shadow-lg ${
+              step === 6 && notificationMethod === 'telegram' ? 'bg-[#2AABEE] shadow-[#2AABEE]/30' : 'bg-[#1A2E1A] shadow-black/10'
+            }`}
+          >
+            {step === 6 
+              ? (notificationMethod === 'telegram' ? 'Connect Telegram' : 'Complete Setup') 
+              : 'Next'} 
+            <ArrowRight size={20} />
+          </button>
         </div>
-      )}
+      </div>
 
       {/* ----------------- BOTTOM NAV ----------------- */}
       <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white/80 backdrop-blur-md border-t border-gray-100 pb-safe z-40">

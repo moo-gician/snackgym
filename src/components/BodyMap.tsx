@@ -3,15 +3,17 @@ type BodyMapProps = {
   onChange: (muscles: string[]) => void;
 };
 
+// Organized by side and order from top to bottom
 const MUSCLES = [
-  { id: 'Shoulders', label: 'Shoulders', side: 'left', y: 34, offset: '18%' },
-  { id: 'Chest', label: 'Chest', side: 'right', y: 40, offset: '15%' },
-  { id: 'Back', label: 'Back', side: 'left', y: 46, offset: '18%' },
-  { id: 'Triceps', label: 'Triceps', side: 'right', y: 48, offset: '25%' },
-  { id: 'Biceps', label: 'Biceps', side: 'left', y: 52, offset: '23%' },
-  { id: 'Core', label: 'Core', side: 'right', y: 56, offset: '8%' },
-  { id: 'Glutes', label: 'Glutes', side: 'left', y: 64, offset: '12%' },
-  { id: 'Legs', label: 'Legs', side: 'right', y: 74, offset: '15%' },
+  { id: 'Shoulders', label: 'Shoulders', side: 'left' },
+  { id: 'Back', label: 'Back', side: 'left' },
+  { id: 'Biceps', label: 'Biceps', side: 'left' },
+  { id: 'Glutes', label: 'Glutes', side: 'left' },
+  
+  { id: 'Chest', label: 'Chest', side: 'right' },
+  { id: 'Triceps', label: 'Triceps', side: 'right' },
+  { id: 'Core', label: 'Core', side: 'right' },
+  { id: 'Legs', label: 'Legs', side: 'right' },
 ];
 
 export default function BodyMap({ selectedMuscles, onChange }: BodyMapProps) {
@@ -22,6 +24,27 @@ export default function BodyMap({ selectedMuscles, onChange }: BodyMapProps) {
     } else {
       onChange([...selectedMuscles, id]);
     }
+  };
+
+  const leftMuscles = MUSCLES.filter(m => m.side === 'left');
+  const rightMuscles = MUSCLES.filter(m => m.side === 'right');
+
+  const renderMuscleButton = (m: typeof MUSCLES[0]) => {
+    const isSelected = selectedMuscles.includes(m.id);
+    return (
+      <button 
+        key={m.id}
+        onClick={() => toggleMuscle(m.id)}
+        className={`pointer-events-auto group relative px-4 py-3 md:py-4 font-display font-bold text-xs md:text-sm uppercase tracking-widest rounded-none border transition-all active:scale-95 whitespace-nowrap flex items-center gap-2 ${
+          isSelected 
+            ? 'bg-[var(--color-blood)]/20 text-[var(--color-blood)] border-[var(--color-blood)]/50 shadow-[0_0_15px_rgba(197,0,13,0.2)]' 
+            : 'bg-[var(--color-charcoal)] text-[var(--color-ash)] border-gray-700 hover:border-gray-500 shadow-[0_0_10px_rgba(0,0,0,0.5)]'
+        }`}
+      >
+        {isSelected && <span className="w-2 h-2 bg-[var(--color-blood)] rounded-full animate-pulse"></span>}
+        {m.label}
+      </button>
+    );
   };
 
   return (
@@ -49,57 +72,20 @@ export default function BodyMap({ selectedMuscles, onChange }: BodyMapProps) {
           className="h-full object-contain drop-shadow-[0_0_15px_rgba(200,154,81,0.1)] z-10"
         />
 
-        {/* Overlay buttons and lines */}
-        {MUSCLES.map(m => {
-          const isSelected = selectedMuscles.includes(m.id);
-          const isLeft = m.side === 'left';
+        {/* Overlay buttons evenly spaced */}
+        <div className="absolute inset-0 flex justify-between px-2 py-4 pointer-events-none z-20">
           
-          return (
-            <div 
-              key={m.id}
-              className="absolute w-full px-2 pointer-events-none z-20 flex items-center"
-              style={{ top: `${m.y}%` }}
-            >
-              {isLeft ? (
-                <>
-                  <button 
-                    onClick={() => toggleMuscle(m.id)}
-                    className={`pointer-events-auto group relative px-4 py-2 font-display font-bold text-xs md:text-sm uppercase tracking-widest rounded-none border transition-all active:scale-95 whitespace-nowrap flex items-center gap-2 ${
-                      isSelected 
-                        ? 'bg-[var(--color-blood)]/20 text-[var(--color-blood)] border-[var(--color-blood)]/50 shadow-[0_0_15px_rgba(197,0,13,0.2)]' 
-                        : 'bg-[var(--color-charcoal)] text-[var(--color-ash)] border-gray-700 hover:border-gray-500 shadow-[0_0_10px_rgba(0,0,0,0.5)]'
-                    }`}
-                  >
-                    {isSelected && <span className="w-2 h-2 bg-[var(--color-blood)] rounded-full animate-pulse"></span>}
-                    {m.label}
-                  </button>
-                  <div 
-                    className={`flex-1 h-[1px] transition-colors duration-300 ${isSelected ? 'bg-[var(--color-blood)] shadow-[0_0_8px_rgba(197,0,13,0.5)]' : 'bg-gray-700'}`} 
-                    style={{ marginRight: `calc(50% - ${m.offset})` }} 
-                  />
-                </>
-              ) : (
-                <>
-                  <div 
-                    className={`flex-1 h-[1px] transition-colors duration-300 ${isSelected ? 'bg-[var(--color-blood)] shadow-[0_0_8px_rgba(197,0,13,0.5)]' : 'bg-gray-700'}`} 
-                    style={{ marginLeft: `calc(50% - ${m.offset})` }} 
-                  />
-                  <button 
-                    onClick={() => toggleMuscle(m.id)}
-                    className={`pointer-events-auto group relative px-4 py-2 font-display font-bold text-xs md:text-sm uppercase tracking-widest rounded-none border transition-all active:scale-95 whitespace-nowrap flex items-center gap-2 ${
-                      isSelected 
-                        ? 'bg-[var(--color-blood)]/20 text-[var(--color-blood)] border-[var(--color-blood)]/50 shadow-[0_0_15px_rgba(197,0,13,0.2)]' 
-                        : 'bg-[var(--color-charcoal)] text-[var(--color-ash)] border-gray-700 hover:border-gray-500 shadow-[0_0_10px_rgba(0,0,0,0.5)]'
-                    }`}
-                  >
-                    {isSelected && <span className="w-2 h-2 bg-[var(--color-blood)] rounded-full animate-pulse"></span>}
-                    {m.label}
-                  </button>
-                </>
-              )}
-            </div>
-          );
-        })}
+          {/* Left Column */}
+          <div className="flex flex-col justify-evenly items-start h-full w-1/2">
+            {leftMuscles.map(renderMuscleButton)}
+          </div>
+
+          {/* Right Column */}
+          <div className="flex flex-col justify-evenly items-end h-full w-1/2">
+            {rightMuscles.map(renderMuscleButton)}
+          </div>
+
+        </div>
       </div>
     </div>
   );

@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom'
-import { onAuthStateChanged } from 'firebase/auth'
+import { onAuthStateChanged, getRedirectResult } from 'firebase/auth'
 import type { User } from 'firebase/auth'
+import { doc, getDoc } from 'firebase/firestore'
 import { auth } from './lib/firebase'
+import { db } from './lib/firebase'
 import LandingPage from './pages/LandingPage'
 import OnboardingPage from './pages/OnboardingPage'
 import DashboardPage from './pages/DashboardPage'
@@ -15,18 +17,33 @@ function App() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    // 1. Handle redirect login results (for mobile iOS/Android)
+    getRedirectResult(auth).catch(console.error);
+
+    // 2. Listen to auth state
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser)
-      setLoading(false)
       
-      // Handle redirect after login (e.g. from Deep Link)
       if (currentUser) {
+        // Fetch user document to check onboarding status
+        try {
+          const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+          if (userDoc.exists() && userDoc.data()?.onboardingComplete) {
+            sessionStorage.setItem('is_onboarded', 'true');
+          } else {
+            sessionStorage.removeItem('is_onboarded');
+          }
+        } catch (e) {
+          console.error("Error fetching user status:", e);
+        }
+
         const redirectPath = sessionStorage.getItem('redirectPath')
         if (redirectPath) {
           sessionStorage.removeItem('redirectPath')
           navigate(redirectPath)
         }
       }
+      setLoading(false)
     })
     return unsubscribe
   }, [navigate])
@@ -51,11 +68,13 @@ function App() {
     return <LandingPage />
   }
 
+  const isOnboarded = sessionStorage.getItem('is_onboarded') === 'true';
+
   return (
     <Routes>
       {/* If logged in and at root, redirect to onboarding or dashboard */}
-      <Route path="/" element={<Navigate to="/onboarding" replace />} />
-      <Route path="/onboarding" element={<OnboardingPage />} />
+      <Route path="/" element={<Navigate to={isOnboarded ? "/dashboard" : "/onboarding"} replace />} />
+      <Route path="/onboarding" element={isOnboarded ? <Navigate to="/dashboard" replace /> : <OnboardingPage />} />
       
       {/* TODO: Create SessionPage & Dashboard */}
       <Route path="/session/:id" element={

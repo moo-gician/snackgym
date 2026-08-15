@@ -374,9 +374,7 @@ export default function OnboardingPage() {
                 </div>
               </div>
               
-              <div className="bg-[var(--color-charcoal)] p-5 rounded-none border border-gray-800 relative overflow-hidden">
-                <div className={`absolute top-0 right-0 w-3 h-3 transition-colors duration-300 ${sessionsPerDay === 4 ? 'bg-[var(--color-bronze)]' : sessionsPerDay === 6 ? 'bg-orange-600' : 'bg-[var(--color-blood)]'}`}></div>
-                
+
               <div className="bg-[var(--color-charcoal)] p-5 rounded-none border border-gray-800 relative overflow-hidden flex flex-col">
                 <div className={`absolute top-0 right-0 w-3 h-3 transition-colors duration-300 ${targetInterval === 120 ? 'bg-[var(--color-bronze)]' : targetInterval === 60 ? 'bg-orange-600' : 'bg-[var(--color-blood)]'}`}></div>
                 

@@ -141,7 +141,8 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="relative z-10 text-center pb-8 text-xs text-[var(--color-ash)] uppercase tracking-widest opacity-50">
+      <footer className="relative z-10 text-center pb-8 text-xs text-[var(--color-ash)] uppercase tracking-widest opacity-50 flex flex-col gap-2">
+        <p className="font-bold text-[var(--color-bone)]">B.E.A.S.T. (Brutal Extreme Assault Spartan Trainer)</p>
         <p>© 2026 B.E.A.S.T. · No Retreat, No Surrender</p>
       </footer>
     </div>

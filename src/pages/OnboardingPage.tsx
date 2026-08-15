@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { auth } from '../lib/firebase';
+import { auth, db } from '../lib/firebase';
 import { saveOnboardingData } from '../lib/firestore';
-import { ArrowRight, ArrowLeft } from 'lucide-react';
+import { doc, getDoc } from 'firebase/firestore';
+import { ArrowRight, ArrowLeft, Home, BarChart2, Settings as SettingsIcon } from 'lucide-react';
 import BodyMap from '../components/BodyMap';
 import { IconBodyweight, IconDumbbell, IconPullupBar, IconMat, IconBand, IconBarbell, IconBench } from '../components/EquipmentIcons';
 
@@ -49,6 +50,30 @@ export default function OnboardingPage() {
   const [notificationMethod, setNotificationMethod] = useState<NotificationMethod>(() => {
     return (sessionStorage.getItem('ob_notif') as NotificationMethod) || null;
   });
+
+  const [dataLoaded, setDataLoaded] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      if (user && !dataLoaded) {
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        if (userDoc.exists()) {
+          const data = userDoc.data();
+          if (data.equipment && data.equipment.length > 0) setEquipment(data.equipment);
+          if (data.targetMuscles && data.targetMuscles.length > 0) setMuscles(data.targetMuscles);
+          if (data.course) setCourse(data.course);
+          if (data.workStartTime) setWorkStartTime(data.workStartTime);
+          if (data.workEndTime) setWorkEndTime(data.workEndTime);
+          if (data.sessionsPerDay) setSessionsPerDay(data.sessionsPerDay);
+          if (data.activeDays) setActiveDays(data.activeDays);
+          if (data.spotter) setSpotter(data.spotter);
+          if (data.notificationMethod) setNotificationMethod(data.notificationMethod);
+        }
+        setDataLoaded(true);
+      }
+    });
+    return () => unsubscribe();
+  }, [dataLoaded]);
 
   useEffect(() => sessionStorage.setItem('ob_equipment', JSON.stringify(equipment)), [equipment]);
   useEffect(() => sessionStorage.setItem('ob_muscles', JSON.stringify(muscles)), [muscles]);
@@ -379,12 +404,12 @@ export default function OnboardingPage() {
 
       {/* Navigation Footer */}
       {step < 6 && (
-        <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-white via-white to-transparent">
+        <div className="fixed bottom-[68px] left-0 right-0 p-4 bg-gradient-to-t from-white via-white to-transparent z-30">
           <div className="max-w-md mx-auto flex gap-4">
             {step > 1 && (
               <button 
                 onClick={prevStep}
-                className="w-14 h-14 rounded-2xl border-2 border-gray-200 flex items-center justify-center text-gray-500 tap-scale bg-white hover:bg-gray-50 transition-colors"
+                className="w-14 h-14 rounded-2xl border-2 border-gray-200 flex items-center justify-center text-gray-500 tap-scale bg-white hover:bg-gray-50 transition-colors shadow-sm"
               >
                 <ArrowLeft size={24} />
               </button>
@@ -405,6 +430,33 @@ export default function OnboardingPage() {
           </div>
         </div>
       )}
+
+      {/* ----------------- BOTTOM NAV ----------------- */}
+      <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white/80 backdrop-blur-md border-t border-gray-100 pb-safe z-40">
+        <div className="flex items-center justify-around p-2">
+          <button 
+            onClick={() => navigate('/dashboard')} 
+            className="flex flex-col items-center p-2 transition-colors text-gray-400 hover:text-gray-600"
+          >
+            <Home size={24} className="mb-1" />
+            <span className="text-[10px] font-bold">Home</span>
+          </button>
+          <button 
+            onClick={() => navigate('/dashboard')} 
+            className="flex flex-col items-center p-2 transition-colors text-gray-400 hover:text-gray-600"
+          >
+            <BarChart2 size={24} className="mb-1" />
+            <span className="text-[10px] font-bold">Progress</span>
+          </button>
+          <button 
+            onClick={() => navigate('/dashboard')} 
+            className="flex flex-col items-center p-2 transition-colors text-[var(--color-primary)]"
+          >
+            <SettingsIcon size={24} className="mb-1" />
+            <span className="text-[10px] font-bold">Settings</span>
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

@@ -67,7 +67,7 @@ export default function OnboardingPage() {
           if (data.course) setCourse(data.course);
           if (data.workStartTime) setWorkStartTime(data.workStartTime);
           if (data.workEndTime) setWorkEndTime(data.workEndTime);
-          if (data.sessionsPerDay) setSessionsPerDay(data.sessionsPerDay);
+          if (data.sessionsPerDay) setTargetInterval(data.sessionsPerDay === 4 ? 120 : data.sessionsPerDay >= 8 ? 30 : 60);
           if (data.activeDays) setActiveDays(data.activeDays);
           if (data.spotter) setSpotter(data.spotter);
           if (data.notificationMethod) setNotificationMethod(data.notificationMethod);
@@ -83,7 +83,7 @@ export default function OnboardingPage() {
   useEffect(() => { if (course) sessionStorage.setItem('ob_course', course); }, [course]);
   useEffect(() => sessionStorage.setItem('ob_workStart', workStartTime), [workStartTime]);
   useEffect(() => sessionStorage.setItem('ob_workEnd', workEndTime), [workEndTime]);
-  useEffect(() => sessionStorage.setItem('ob_sessions', sessionsPerDay.toString()), [sessionsPerDay]);
+  useEffect(() => sessionStorage.setItem('ob_interval', targetInterval.toString()), [targetInterval]);
   useEffect(() => { if (spotter) sessionStorage.setItem('ob_spotter', spotter); }, [spotter]);
   useEffect(() => { if (notificationMethod) sessionStorage.setItem('ob_notif', notificationMethod); }, [notificationMethod]);
 

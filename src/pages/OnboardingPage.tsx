@@ -302,7 +302,7 @@ export default function OnboardingPage() {
               </div>
 
               <div className="bg-[var(--color-charcoal)] p-5 rounded-none border border-gray-800 relative mb-4">
-                <span className="font-display font-bold text-[var(--color-bronze)] mb-4 block uppercase tracking-widest text-[11px]">Active Duty Days</span>
+                <span className="font-display font-bold text-white mb-4 block uppercase tracking-widest text-sm md:text-base">Active Duty Days</span>
                 <div className="grid grid-cols-7 gap-2">
                   {[
                     { day: 1, label: 'M' },
@@ -336,7 +336,7 @@ export default function OnboardingPage() {
               </div>
 
               <div className="bg-[var(--color-charcoal)] p-5 rounded-none border border-gray-800 relative mb-4 overflow-hidden">
-                <span className="font-display font-bold text-[var(--color-bronze)] mb-4 block uppercase tracking-widest text-[11px]">Engagement Window</span>
+                <span className="font-display font-bold text-white mb-4 block uppercase tracking-widest text-sm md:text-base">Engagement Window</span>
                 <div className="flex flex-row justify-between gap-3 w-full">
                   <div className="flex-1 bg-[var(--color-abyss)] py-4 px-0 md:px-2 rounded-none border border-gray-800 flex flex-col items-center justify-center relative shadow-sm overflow-hidden min-w-0">
                     <div className="absolute top-2 right-2 w-1.5 h-1.5 bg-[var(--color-bronze)]/40"></div>
@@ -357,6 +357,8 @@ export default function OnboardingPage() {
               
               <div className="bg-[var(--color-charcoal)] p-5 rounded-none border border-gray-800 relative overflow-hidden">
                 <div className={`absolute top-0 right-0 w-3 h-3 transition-colors duration-300 ${sessionsPerDay === 4 ? 'bg-[var(--color-bronze)]' : sessionsPerDay === 6 ? 'bg-orange-600' : 'bg-[var(--color-blood)]'}`}></div>
+                
+                <span className="font-display font-bold text-white mb-4 block uppercase tracking-widest text-sm md:text-base">Daily Assault Quota</span>
                 
                 <div className="flex justify-between items-end mb-2 relative z-10">
                   <span className="font-display font-bold text-[var(--color-ash)] uppercase tracking-widest text-[11px]">Target Volume</span>

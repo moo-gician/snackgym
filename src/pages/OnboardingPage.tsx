@@ -4,7 +4,6 @@ import { auth, db } from '../lib/firebase';
 import { saveOnboardingData } from '../lib/firestore';
 import { doc, getDoc } from 'firebase/firestore';
 import BodyMap from '../components/BodyMap';
-import { IconBodyweight, IconDumbbell, IconPullupBar, IconMat, IconBand, IconBarbell, IconBench } from '../components/EquipmentIcons';
 
 type CourseType = 'MICRO' | 'COMPACT' | 'CIRCUIT' | null;
 type SpotterType = 'SPARTAN' | null;

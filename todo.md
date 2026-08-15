@@ -40,6 +40,10 @@
 - [x] Cloud Tasks 알람 디스패처 (스누즈 상태 확인 후 발송)
 - [x] Telegram API 스로틀링 큐 (초당 30건 제한 방어)
 
-## Phase 7: 네이티브 앱 및 런칭
-- [ ] PWA 최적화 및 앱스토어 준비
-- [ ] SEO / GEO 최적화 (`llms.txt` 배포)
+## Phase 7: 네이티브 앱 및 스토어 런칭 (장기 플랜)
+- [ ] PWA 기반 코드를 Capacitor 또는 React Native로 패키징
+- [ ] Google Play: 12인 14일 폐쇄 테스트 진행 (품앗이 커뮤니티 활용)
+- [ ] Google Play: Android 16 (API 36) AAB 빌드 제출
+- [ ] Apple App Store: 앱 심사용 데모 계정(우회 로그인) 구축
+- [ ] Apple App Store: 개인정보 처리방침 및 데이터 영양성분 라벨 작성
+- [ ] 공통: SEO / GEO 최적화 (`llms.txt` 배포) 및 마케팅 에셋 등록

@@ -6,7 +6,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import BodyMap from '../components/BodyMap';
 
 type CourseType = 'MICRO' | 'COMPACT' | 'CIRCUIT' | null;
-type SpotterType = 'SPARTAN' | null;
+type SpotterType = 'SPARTAN' | 'ANGEL' | null;
 type NotificationMethod = 'telegram' | 'none' | null;
 
 const TIME_OPTIONS = Array.from({length: 48}).map((_, i) => {
@@ -437,37 +437,71 @@ export default function OnboardingPage() {
           )}
 
           {step === 5 && (
-            <div className="flex flex-col text-center">
-              <h1 className="font-display font-bold text-3xl md:text-4xl text-[var(--color-bone)] uppercase tracking-wide leading-tight text-center mb-2">WHO IS DRAGGING YOU THROUGH HELL?</h1>
-              <p className="font-display font-bold text-[var(--color-bronze)] mt-2 mb-8 uppercase text-center text-sm tracking-widest">Select your Spotter Persona.</p>
-              
-              <div className="grid grid-cols-1 gap-4 pb-12">
+            <div className="flex flex-col">
+              <div className="flex flex-col gap-2 items-center text-center mb-8">
+                <h1 className="font-headline-lg text-[var(--color-bone)] uppercase tracking-tight text-center font-bold">WHO IS DRAGGING YOU THROUGH HELL?</h1>
+                <p className="font-headline-md text-[var(--color-bronze)] uppercase tracking-wider text-center">Select your AI tormentor.</p>
+              </div>
+
+              <div className="flex flex-col gap-6 pb-12">
                 {[
-                  { id: 'SPARTAN', emoji: '🤬', label: 'Spartan Spotter', subtitle: 'Ruthless. Brutal. Unforgiving.', quote: '"Get up, lazy bones! Time to crush it!"' }
+                  {
+                    id: 'SPARTAN',
+                    title: 'SPARTAN SPOTTER',
+                    subtitle: 'Ruthless. Brutal. Unforgiving.',
+                    quote: '"Get up, lazy bones! Time to crush it!"',
+                    img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD51FeObMtC6z6ZBtJD8p6aNUgd5xOxJmaxBhjMam0av-ygMXreK223xu94s9zt2p0xexAYJZAN4j31JplRuwrkCgLsWb8f83fxT7FPPVmbI5JuNU5V6i1OMfNdTD7agx2yArUXmxHdaESYc-KnNuwfRu_b86KMi9AsmxCZG_jUf5rrpUhP3VE8saA2CZO1DXeM24KLHR-xUTzAOY3yJ88F9Ct03InCCfqxmjaoHErs8D0xqnq108-0',
+                    color: 'var(--color-blood)'
+                  },
+                  {
+                    id: 'ANGEL',
+                    title: 'CLINICAL COACH',
+                    subtitle: 'Calm. Supportive. Professional.',
+                    quote: '"Let\'s focus on our form and make every rep count."',
+                    img: 'https://lh3.googleusercontent.com/aida/AP1WRLsgLJ5g1ZNVh3cr9hRsSh9ZhnLmi18eAgoHz6jKElc8qJxvVWWXyoexyBuLxYMGnxUzD79Vv3ZX0_AQbuFnybYHrW388DEZJI7dNH29gpNrPhM5bKy8zqT_ekVP-H-3N4GOhVkxX08YTD0JcoQYqKVAX2mZNddok0B824Pk_J-X1A-gJfUWbm37y-2LPOug20-VgstCroHrwLJVWb6tKGcmCbzr_YQ8jtiFzF-JmFeR_pQgfS6kFKvdkInvaPe2wiTtlI-ghEoLPQ',
+                    color: 'var(--color-bronze)'
+                  }
                 ].map(sp => (
-                  <div key={sp.id} className="flex flex-col gap-4">
-                    <button
-                      onClick={() => { if(navigator.vibrate) navigator.vibrate(50); setSpotter(sp.id as SpotterType); }}
-                      className={`group relative w-full h-40 rounded-none flex items-center justify-center border p-6 transition-all active:scale-[0.98] ${
-                        spotter === sp.id 
-                          ? 'border-[var(--color-blood)] bg-[var(--color-charcoal)] shadow-[0_0_20px_rgba(217,26,26,0.2)]' 
-                          : 'border-gray-800 bg-[var(--color-charcoal)] hover:border-[var(--color-blood)]'
-                      }`}
-                    >
-                      <div className={`absolute top-0 right-0 w-2 h-2 transition-colors ${spotter === sp.id ? 'bg-[var(--color-blood)]' : 'bg-gray-800 group-hover:bg-[var(--color-blood)]'}`}></div>
-                      <span className={`text-6xl mr-6 transition-transform duration-300 ${spotter === sp.id ? 'scale-110 drop-shadow-[0_0_15px_rgba(217,26,26,0.5)]' : 'group-hover:scale-110 grayscale group-hover:grayscale-0'}`}>
-                        {sp.emoji}
-                      </span>
-                      <div className="text-left flex flex-col w-full">
-                        <span className={`font-display font-bold text-2xl uppercase tracking-widest block mb-1 ${spotter === sp.id ? 'text-[var(--color-blood)]' : 'text-[var(--color-bone)] group-hover:text-[var(--color-blood)]'}`}>{sp.label}</span>
-                        <span className={`font-sans text-xs uppercase tracking-widest ${spotter === sp.id ? 'text-[var(--color-bone)]' : 'text-[var(--color-ash)]'}`}>{sp.subtitle}</span>
+                  <div 
+                    key={sp.id}
+                    onClick={() => { if(navigator.vibrate) navigator.vibrate(50); setSpotter(sp.id as SpotterType); }}
+                    className={`relative w-full rounded-xl bg-[var(--color-charcoal)] border overflow-hidden group cursor-pointer transition-all duration-300 active:scale-[0.98] ${
+                      spotter === sp.id ? 'border-[var(--color-blood)] shadow-[0_0_20px_rgba(217,26,26,0.3)]' : 'border-gray-800/30'
+                    }`}
+                  >
+                    <div className={`absolute top-0 right-0 w-4 h-4 border-l border-b rounded-bl-sm transition-colors duration-300 ${
+                      spotter === sp.id ? 'bg-[var(--color-blood)] border-[var(--color-blood)]' : 'bg-[var(--color-bronze)]/20 border-[var(--color-bronze)]/40 group-hover:bg-[var(--color-bronze)]'
+                    }`}></div>
+                    
+                    <div className="p-6 flex flex-col items-center gap-6 relative z-10">
+                      <div className={`w-32 h-32 rounded-full bg-[var(--color-abyss)] border-2 flex items-center justify-center transition-all duration-300 relative overflow-hidden ${
+                        spotter === sp.id ? 'border-[var(--color-blood)] shadow-[0_0_30px_rgba(217,26,26,0.5)]' : 'border-[var(--color-bronze)] shadow-[0_0_20px_rgba(200,154,81,0.3)] group-hover:shadow-[0_0_30px_rgba(200,154,81,0.5)]'
+                      }`}>
+                        <img alt={sp.title} className={`w-full h-full object-cover transition-transform duration-500 ${
+                          spotter === sp.id ? 'scale-110' : 'group-hover:scale-110 grayscale group-hover:grayscale-0'
+                        }`} src={sp.img} />
                       </div>
-                    </button>
-                    {spotter === sp.id && (
-                      <div className="p-4 bg-[var(--color-abyss)] border border-[var(--color-blood)]/30 text-sm font-sans italic text-[var(--color-blood)] animate-fade-in-up">
-                        {sp.quote}
+                      
+                      <div className="text-center flex flex-col gap-1">
+                        <h2 className={`font-headline-md uppercase tracking-wider transition-colors ${
+                          spotter === sp.id ? 'text-[var(--color-blood)]' : 'text-[var(--color-blood)]/80 group-hover:text-[var(--color-blood)]'
+                        }`}>{sp.title}</h2>
+                        <p className={`font-label-bold uppercase tracking-widest text-xs ${
+                          spotter === sp.id ? 'text-[var(--color-bone)]' : 'text-[var(--color-ash)]'
+                        }`}>{sp.subtitle}</p>
                       </div>
-                    )}
+                      
+                      <div className={`w-full p-3 rounded-lg border-l-2 relative overflow-hidden ${
+                        spotter === sp.id ? 'bg-[var(--color-abyss)] border-[var(--color-blood)]' : 'bg-[#0d0e14] border-[var(--color-blood)]/50'
+                      }`}>
+                        <div className={`absolute top-0 left-0 w-full h-full bg-[linear-gradient(45deg,transparent_25%,rgba(217,26,26,0.03)_50%,transparent_75%,transparent_100%)] bg-[length:20px_20px] pointer-events-none ${
+                          spotter === sp.id ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                        }`}></div>
+                        <p className={`font-body-md italic text-center relative z-10 ${
+                          spotter === sp.id ? 'text-[var(--color-bone)]' : 'text-[var(--color-ash)]'
+                        }`}>{sp.quote}</p>
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>

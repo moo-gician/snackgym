@@ -64,33 +64,35 @@ export default function BodyMap({ selectedMuscles, onChange }: BodyMapProps) {
                 <>
                   <button 
                     onClick={() => toggleMuscle(m.id)}
-                    className={`pointer-events-auto group relative px-4 py-2 font-display font-bold text-xs md:text-sm uppercase tracking-widest rounded-none border transition-all active:scale-95 whitespace-nowrap ${
+                    className={`pointer-events-auto group relative px-4 py-2 font-display font-bold text-xs md:text-sm uppercase tracking-widest rounded-none border transition-all active:scale-95 whitespace-nowrap flex items-center gap-2 ${
                       isSelected 
-                        ? 'bg-[var(--color-bronze)] text-[var(--color-abyss)] border-[var(--color-bronze)] shadow-[0_0_15px_rgba(200,154,81,0.4)]' 
+                        ? 'bg-[var(--color-blood)]/20 text-[var(--color-blood)] border-[var(--color-blood)]/50 shadow-[0_0_15px_rgba(197,0,13,0.2)]' 
                         : 'bg-[var(--color-charcoal)] text-[var(--color-ash)] border-gray-700 hover:border-gray-500 shadow-[0_0_10px_rgba(0,0,0,0.5)]'
                     }`}
                   >
+                    {isSelected && <span className="w-2 h-2 bg-[var(--color-blood)] rounded-full animate-pulse"></span>}
                     {m.label}
                   </button>
                   <div 
-                    className={`flex-1 h-[1px] transition-colors duration-300 ${isSelected ? 'bg-[var(--color-bronze)]' : 'bg-gray-700'}`} 
+                    className={`flex-1 h-[1px] transition-colors duration-300 ${isSelected ? 'bg-[var(--color-blood)] shadow-[0_0_8px_rgba(197,0,13,0.5)]' : 'bg-gray-700'}`} 
                     style={{ marginRight: `calc(50% - ${m.offset})` }} 
                   />
                 </>
               ) : (
                 <>
                   <div 
-                    className={`flex-1 h-[1px] transition-colors duration-300 ${isSelected ? 'bg-[var(--color-bronze)]' : 'bg-gray-700'}`} 
+                    className={`flex-1 h-[1px] transition-colors duration-300 ${isSelected ? 'bg-[var(--color-blood)] shadow-[0_0_8px_rgba(197,0,13,0.5)]' : 'bg-gray-700'}`} 
                     style={{ marginLeft: `calc(50% - ${m.offset})` }} 
                   />
                   <button 
                     onClick={() => toggleMuscle(m.id)}
-                    className={`pointer-events-auto group relative px-4 py-2 font-display font-bold text-xs md:text-sm uppercase tracking-widest rounded-none border transition-all active:scale-95 whitespace-nowrap ${
+                    className={`pointer-events-auto group relative px-4 py-2 font-display font-bold text-xs md:text-sm uppercase tracking-widest rounded-none border transition-all active:scale-95 whitespace-nowrap flex items-center gap-2 ${
                       isSelected 
-                        ? 'bg-[var(--color-bronze)] text-[var(--color-abyss)] border-[var(--color-bronze)] shadow-[0_0_15px_rgba(200,154,81,0.4)]' 
+                        ? 'bg-[var(--color-blood)]/20 text-[var(--color-blood)] border-[var(--color-blood)]/50 shadow-[0_0_15px_rgba(197,0,13,0.2)]' 
                         : 'bg-[var(--color-charcoal)] text-[var(--color-ash)] border-gray-700 hover:border-gray-500 shadow-[0_0_10px_rgba(0,0,0,0.5)]'
                     }`}
                   >
+                    {isSelected && <span className="w-2 h-2 bg-[var(--color-blood)] rounded-full animate-pulse"></span>}
                     {m.label}
                   </button>
                 </>
@@ -98,20 +100,6 @@ export default function BodyMap({ selectedMuscles, onChange }: BodyMapProps) {
             </div>
           );
         })}
-      </div>
-
-      {/* Selected Tags Below */}
-      <div className="mt-8 flex flex-wrap gap-2 justify-center z-10 relative px-4">
-        {selectedMuscles.length === 0 ? (
-          <span className="text-sm text-gray-500 italic font-medium">Tap muscle groups to select...</span>
-        ) : (
-          selectedMuscles.map(m => (
-            <div key={m} className="bg-[var(--color-blood)]/20 text-[var(--color-blood)] px-3 py-1.5 font-display font-bold text-sm uppercase rounded-sm flex items-center gap-2 border border-[var(--color-blood)]/40 shadow-sm">
-              <span className="w-2 h-2 bg-[var(--color-blood)] rounded-full animate-pulse"></span>
-              {m}
-            </div>
-          ))
-        )}
       </div>
     </div>
   );

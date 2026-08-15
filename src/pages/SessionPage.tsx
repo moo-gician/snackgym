@@ -31,14 +31,12 @@ export default function SessionPage() {
       }
     }
     // TODO: Save to Firestore
-    alert("Session complete! Returning to dashboard.");
     navigate('/dashboard');
   };
 
   const handleFullSkip = () => {
     if (window.confirm("Skip entire session? (This will affect your completion stats)")) {
       // TODO: Save skip status to Firestore
-      alert("Session skipped.");
       navigate('/dashboard');
     }
   };

@@ -70,7 +70,7 @@ export default function DashboardPage() {
   };
 
   const handleShare = () => {
-    const text = "🤬 Spartan Spotter: \"This lazy one just lifted 12kg dumbbells. Let's see how long this lasts. Who's in? [SnackGym Link]\"";
+    const text = `🤬 Spartan Spotter: "This lazy one just lifted 12kg dumbbells. Let's see how long this lasts. Who's in? [B.E.A.S.T. Link]"`;
     navigator.clipboard.writeText(text);
     alert("Copied to clipboard! Share it on Slack/Teams.");
   };
@@ -103,7 +103,7 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between mb-6">
             <div>
               <h1 className="text-2xl font-bold">Hello, {user?.displayName?.split(' ')[0] || 'User'}</h1>
-              <p className="text-sm text-gray-500">Ready for a snack?</p>
+              <p className="text-sm text-gray-500">Ready for your daily beating?</p>
             </div>
             <button 
               onClick={toggleSnooze}
@@ -189,7 +189,7 @@ export default function DashboardPage() {
 
           <div className="bg-gradient-to-br from-orange-50 to-red-50 p-6 rounded-3xl shadow-sm border border-orange-100 mb-6">
             <h3 className="text-orange-800 font-bold mb-2 flex items-center gap-2">
-              <span>🍩</span> Snack Conversion
+              <span>🍩</span> Spoils of War
             </h3>
             <p className="text-orange-900 text-sm mb-4">
               You've burned an estimated <strong>{totalCalories} kcal</strong> so far. That's equivalent to:
@@ -296,7 +296,7 @@ export default function DashboardPage() {
         <div className="fixed inset-0 bg-black/50 z-50 flex flex-col justify-end">
           <div className="bg-white rounded-t-3xl p-6 pb-12 animate-fade-in-up">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-bold">How was today's snack?</h2>
+              <h2 className="text-xl font-bold">How was your assault?</h2>
               <button onClick={() => setShowFeedback(false)} className="text-gray-400 font-bold p-2">✕</button>
             </div>
             <p className="text-sm text-gray-500 mb-6">Your feedback will automatically adjust tomorrow's session difficulty (Progressive Overload).</p>

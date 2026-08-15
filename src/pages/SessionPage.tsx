@@ -80,7 +80,7 @@ export default function SessionPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">⚡ Compact Snack</h1>
+          <h1 className="text-2xl font-bold text-gray-800">⚡ Compact Assault</h1>
           <p className="text-sm text-gray-500">Session {id}</p>
         </div>
         <button onClick={handleFullSkip} className="px-3 py-1.5 bg-gray-100 text-gray-600 rounded-lg text-sm font-medium hover:bg-gray-200">

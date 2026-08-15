@@ -8,7 +8,7 @@
   "auth": {
     "providers": {
       "googleSignIn": {
-        "oAuthBrandDisplayName": "SnackGym",
+        "oAuthBrandDisplayName": "B.E.A.S.T.",
         "supportEmail": "moohyeong.lee@gmail.com"
       }
     }

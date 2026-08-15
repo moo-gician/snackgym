@@ -206,7 +206,7 @@ export default function OnboardingPage() {
               >
                 <span className={`text-6xl mb-3 transition-transform duration-300 ${course === 'MICRO' ? 'scale-110' : 'group-hover:scale-110'}`}>⚡</span>
                 <div className="text-center flex flex-col">
-                  <span className={`font-bold text-lg ${course === 'MICRO' ? 'text-[var(--color-primary)]' : 'text-gray-800'}`}>Micro Snack (1-2m)</span>
+                  <span className={`font-bold text-lg ${course === 'MICRO' ? 'text-[var(--color-primary)]' : 'text-gray-800'}`}>Micro Assault (1-2m)</span>
                   <span className="text-xs text-gray-500">1 set. Right at your desk.</span>
                 </div>
               </button>

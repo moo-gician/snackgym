@@ -68,7 +68,7 @@ export default function LandingPage() {
       <nav className="relative z-10 flex items-center justify-between px-6 py-5 max-w-5xl mx-auto">
         <div className="flex items-center gap-2">
           <span className="text-2xl">🏋️</span>
-          <span className="text-xl font-bold" style={{ color: '#1A2E1A' }}>SnackGym</span>
+          <span className="text-xl font-bold" style={{ color: '#1A2E1A' }}>B.E.A.S.T.</span>
         </div>
         <button
           id="nav-login-btn"
@@ -132,7 +132,7 @@ export default function LandingPage() {
       <section className="relative z-10 px-6 py-16 max-w-5xl mx-auto">
         <h2 className="text-center text-3xl font-bold mb-12 animate-fade-in-up delay-200"
           style={{ color: '#1A2E1A' }}>
-          Why <span style={{ color: '#3CCF4E' }}>SnackGym</span>?
+          Why <span style={{ color: '#3CCF4E' }}>B.E.A.S.T.</span>?
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {missionSteps.map((step, i) => (
@@ -201,7 +201,7 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer className="relative z-10 text-center pb-8 text-xs" style={{ color: '#7A9E7A' }}>
-        <p>© 2026 SnackGym · Pump Up Your Energy</p>
+        <p>© 2026 B.E.A.S.T. · No Retreat, No Surrender</p>
       </footer>
     </div>
   )

@@ -1,24 +1,49 @@
 # SnackGym 개발 컨텍스트 (Architecture & Rules)
 
-## 기술 스택
-- **프론트엔드**: Vite + React (TypeScript) + Tailwind CSS (SPA 아키텍처)
-- **백엔드**: Firebase Firestore (Database) + Cloud Functions (Backend Logic) + Cloud Tasks (Job Queue) + Firebase Authentication (Auth)
-- **배포 (Deployment)**: 프론트엔드는 Vercel을 통해 글로벌 에지 네트워크에 배포하여 빠른 로딩 보장. 백엔드는 Firebase 서버리스 활용.
+## 1. 기술 스택
+- **프론트엔드**: Vite + React (TypeScript) + Tailwind CSS v4 (SPA 아키텍처) + Framer Motion (애니메이션)
+- **백엔드/DB**: Firebase Firestore (NoSQL) + Firebase Authentication (Google Auth)
+- **배포**: Vercel (snackgym.vercel.app)
 
-## 데이터베이스 스키마 (Firestore NoSQL)
-- **이중 아키텍처 (1MB 제한 방어 및 요금 최적화)**
-  - `users/{userId}`: 유저 프로필, `next_notification_time`, `telegram_chat_id` 등
-  - `daily_workout_sessions/{userId}_{YYYYMMDD}`: 하루 합산 통계 (총 소모 칼로리, 누적 세션 수 등 1차 데이터)
-  - `daily_workout_sessions/{docId}/logs/{logId}`: 상세 운동 수행 이력 및 텔레그램 메시지 로그 서브 컬렉션 (무제한 확장 대비용 2차 데이터)
+---
 
-## 알림 아키텍처 (이벤트 기반 스케줄링)
-- **State-based Dispatch (상태 기반)**: 유저 이벤트 발생 시 Firestore 유저 문서의 `next_notification_time` 필드만 업데이트.
-- **스로틀링 (Throttling)**: 대규모 알람 시 텔레그램 초당 30건 API 리밋 방어를 위해 Cloud Tasks 디스패처에 스로틀링 로직 필수 구현.
+## 2. 핵심 UX 결정 사항 (2026-08-15 확정)
 
-## 보안 규칙
-- **텔레그램 Bot API 격리**: 브라우저 클라이언트에서 텔레그램 API 직접 호출 금지. 100% Cloud Functions를 거쳐야 함.
-- **토큰 은닉**: Bot Token은 반드시 Firebase Secret Manager를 통해 환경 변수로 주입.
-- **OTP Handshake**: 텔레그램 봇 매핑(디프링크) 시 구글 Auth 유저임을 증명하는 5분 만료 일회성 해시 토큰 필수 생성 및 검증.
+### 마찰 제로 (Zero Friction) 철학
+1. **일일 1회 피드백 (Progressive Overload)**: 매 세션 수동 스피너 조작을 없애고, 퇴근길 대시보드에서 딱 1번 "쉬움/적당/어려움"을 묻고 시스템이 내일 중량을 자동 조절함.
+2. **부분 완료 및 전체 스킵**: 바쁠 땐 세션의 1개만 체크하고 조기 종료 가능. 미체크 또는 스킵한 운동은 상태 동결(Status Quo) 처리되며, "Skip Rate" 통계로 누적.
+3. **폴백(Fallback) 방어**: 선택한 기구와 부위가 매칭되지 않을 시, 백그라운드에 상시 켜져 있는 '맨몸'으로 자동 대체.
+4. **스누즈(Snooze)**: 연차/공휴일에 알림을 끄고 싶다면 대시보드의 `[오늘 알림 끄기]` 토글 한 번으로 해결.
+
+### 텔레그램 연동 아키텍처
+- **일방향(Outbound Only) 알림**: 웹앱 세션 딥링크가 담긴 스포터 메시지 발송.
+- **연동 딥링크**: `t.me/SnackGymBot?start=uid` 방식을 사용하여 핀 번호 입력 마찰 제거. 이메일 또는 알림 끄기 대안도 제공.
+- **스포터 멘트**: 스파르타, 츤데레, 엔젤 3종.
+
+---
+
+## 3. 데이터베이스 스키마 (Firestore NoSQL)
+
+### `users/{uid}`
+```ts
+{
+  uid, displayName, email, photoURL, createdAt,
+  onboardingComplete: boolean,
+  is_active: boolean,           // Soft Delete (회원 탈퇴 처리용)
+  equipment: string[],          // ['bodyweight', 'dumbbell', ...] (bodyweight는 상시 포함)
+  targetMuscles: string[],
+  course_length: number,        // 1(Micro), 3(Compact), 6(Short Circuit)
+  work_start_time: string,      // '09:00'
+  work_end_time: string,        // '18:00'
+  spotter: 'spartan' | 'tsundere' | 'angel',
+  notification_method: 'telegram' | 'email' | 'none',
+  telegram_chat_id: string | null,
+  snooze_until: Timestamp | null, // 당일 알림 끄기용
+}
+```
+
+---
 
 ## [Version History]
-- **v0.1.0** (2026-08-12): Initial deployment — Landing page (Summer Forest Morning theme, English copy) + Google Auth + Firebase Firestore initialized. Deployed via Vercel + GitHub (habitmon-app-v1 project).
+- **v0.1.0** (2026-08-12): Initial MVP Landing page + Google Auth deployed.
+- **v1.0.0** (2026-08-15): PRD 7차 최종 컨펌 완료 (피드백 팝업, 스킵 동결, 소프트 딜리트, 스누즈 확정). Phase 3 진입.

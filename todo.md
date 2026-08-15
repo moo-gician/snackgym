@@ -1,27 +1,45 @@
 # SnackGym 태스크 백로그 (TODO)
 
-## Phase 1: MVP 구현
-- [x] **프로젝트 세팅 (Frontend & Backend)**
-  - [x] Vite + React (TypeScript) + Tailwind CSS 기반 웹앱 보일러플레이트 세팅
-  - [x] Firebase(Firestore, Cloud Functions, Auth) 프로젝트 초기화 및 환경 변수 구성
-- [/] **웹앱 UI 및 인증 구현**
-  - [x] 미션이 반영된 랜딩페이지 퍼블리싱 (영어 버전, Summer Forest Morning 테마)
-  - [x] 구글 Auth 로그인 연동 (랜딩페이지 진입점)
-  - [ ] 온보딩 (보유 기구 및 부위 선택) 화면 구현
-  - [ ] 카드 뒤집기(Flip) 방식의 싱글 뷰 듀얼 바디 맵 UI 개발
-- [ ] **텔레그램 봇 연동 & 보안**
-  - [ ] 텔레그램 Bot API 셋업 및 토큰 Secret Manager 격리
-  - [ ] OTP Handshake: 웹앱에서 OTP 토큰 생성 -> 디프링크 파라미터 전달 -> Cloud Functions에서 토큰 검증 및 유저 매핑
-- [ ] **Firestore 데이터 아키텍처**
-  - [ ] 이중 아키텍처 구성: 당일 합산 통계는 `daily_workout_sessions`에, 상세 로그는 `logs` 서브 컬렉션에 저장하는 CRUD 로직
-  - [ ] 유저 이벤트 발생 시 `next_notification_time` 갱신 로직 구현
-- [ ] **Cloud Tasks 스로틀링 알람 디스패처**
-  - [ ] `next_notification_time` 기반 단일 큐 배치 워커 설계
-  - [ ] 텔레그램 API 전송 제한 방어를 위한 속도 제한 스로틀링(Throttling Queue) 알고리즘 구현
-- [ ] **E2E 테스트 시나리오**
-  - [ ] 타인의 OTP 토큰 임의 변경 시 텔레그램 계정 하이재킹 차단 테스트
-  - [ ] 대규모 알람 발송 시 Cloud Tasks 스로틀링 지연 발송 테스트
+## Phase 1: MVP 구현 (완료)
+- [x] Vite + React (TypeScript) + Tailwind CSS v4 보일러플레이트 세팅
+- [x] Firebase Auth + Firestore 초기화 및 연동
+- [x] 미션 기반 랜딩페이지 퍼블리싱 (영어, Summer Forest Morning 테마)
+- [x] 구글 로그인 연동 (Firebase Auth)
+- [x] Vercel 배포 연동 (snackgym.vercel.app)
+- [x] OnboardingPage 5단계 상태 관리(State Machine) 훅 및 라우팅 작성
+- [x] 페이지 새로고침 시 이탈 방지를 위한 `sessionStorage` 연동
 
-## Phase 2: Capacitor 래핑 (Future)
-- [ ] Capacitor 설치 및 웹앱 네이티브 패키징
-- [ ] 로컬 푸시 알림(Local Notification) 플러그인 연동 및 텔레그램 서버 리스 구조 전환
+---
+
+## Phase 3: 온보딩 단계별 UI/UX 컴포넌트 개발 (진행 중)
+- [ ] Step 0: Landing & Auth (면책 조항 텍스트 추가)
+- [ ] Step 1: Equipment (장비 체크박스 그리드)
+- [ ] Step 2: BodyMap (전/후면 3D 플립 카드 및 SVG 인터랙션)
+- [ ] Step 3: SessionCourse & Time (코스 + 출퇴근/횟수 스피너 동시 선택 UI)
+- [ ] Step 4: Spotter (3인의 스포터 페르소나 선택 UI)
+- [ ] Step 5: 알림 매체 선택 (Telegram 딥링크 / Email / 인앱 스킵 옵션)
+- [ ] Step 6: PWA 유도 및 웰컴 멘트
+
+## Phase 4: Firebase Auth 및 백엔드 스키마 구축
+- [ ] 텔레그램 연동 시 `?start=uid` 딥링크 매핑
+- [ ] `completeOnboarding` 시 Firestore `users` 하위에 데이터 저장
+- [ ] 설정(⚙️) 창에 계정 탈퇴(`is_active=false` Soft Delete) 기능 구현
+
+## Phase 5: 대시보드 및 리텐션 방어 MVP 구현
+- [ ] Dashboard UI: '지금 바로 1분 스낵하기 ⚡' (자율 세션) 및 고정 웰컴 멘트
+- [ ] Dashboard UI: 사내 메신저 클립보드 복사(자랑하기 3인칭 텍스트) 버튼
+- [ ] Dashboard UI: 공휴일/연차 알림 끄기 (Snooze 💤) 토글
+- [ ] Dashboard UI: 퇴근길 일일 1회 난이도 피드백 (Progressive Overload 바텀시트)
+- [ ] Session UI: 마찰 제로 체크리스트 및 애니메이션 (Confetti, 취소선)
+- [ ] Session UI: 전체 스킵 및 조기 종료 버튼 연동
+
+---
+
+## Phase 6: 텔레그램 봇 & 알람 엔진 (백엔드 로직)
+- [ ] Bot Token → Firebase Secret Manager 등록
+- [ ] Cloud Tasks 알람 디스패처 (스누즈 상태 확인 후 발송)
+- [ ] Telegram API 스로틀링 큐 (초당 30건 제한 방어)
+
+## Phase 7: 네이티브 앱 및 런칭
+- [ ] PWA 최적화 및 앱스토어 준비
+- [ ] SEO / GEO 최적화 (`llms.txt` 배포)

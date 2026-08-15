@@ -4,14 +4,14 @@ type BodyMapProps = {
 };
 
 const MUSCLES = [
-  { id: 'Shoulders', label: 'Shoulders', side: 'left', y: 15, offset: '15%' },
-  { id: 'Chest', label: 'Chest', side: 'right', y: 25, offset: '15%' },
-  { id: 'Back', label: 'Back', side: 'left', y: 35, offset: '20%' },
-  { id: 'Biceps', label: 'Biceps', side: 'left', y: 45, offset: '25%' },
+  { id: 'Shoulders', label: 'Shoulders', side: 'left', y: 34, offset: '18%' },
+  { id: 'Chest', label: 'Chest', side: 'right', y: 40, offset: '15%' },
+  { id: 'Back', label: 'Back', side: 'left', y: 46, offset: '18%' },
   { id: 'Triceps', label: 'Triceps', side: 'right', y: 48, offset: '25%' },
-  { id: 'Core', label: 'Core', side: 'right', y: 58, offset: '12%' },
-  { id: 'Glutes', label: 'Glutes', side: 'left', y: 65, offset: '15%' },
-  { id: 'Legs', label: 'Legs', side: 'right', y: 78, offset: '15%' },
+  { id: 'Biceps', label: 'Biceps', side: 'left', y: 52, offset: '23%' },
+  { id: 'Core', label: 'Core', side: 'right', y: 56, offset: '8%' },
+  { id: 'Glutes', label: 'Glutes', side: 'left', y: 64, offset: '12%' },
+  { id: 'Legs', label: 'Legs', side: 'right', y: 74, offset: '15%' },
 ];
 
 export default function BodyMap({ selectedMuscles, onChange }: BodyMapProps) {

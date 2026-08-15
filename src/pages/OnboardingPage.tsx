@@ -4,6 +4,7 @@ import { auth } from '../lib/firebase';
 import { saveOnboardingData } from '../lib/firestore';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
 import BodyMap from '../components/BodyMap';
+import { IconBodyweight, IconDumbbell, IconPullupBar, IconMat, IconBand, IconBarbell, IconBench } from '../components/EquipmentIcons';
 
 type CourseType = 'MICRO' | 'COMPACT' | 'CIRCUIT' | null;
 type SpotterType = 'SPARTAN' | 'TSUNDERE' | 'ANGEL' | null;
@@ -108,24 +109,40 @@ export default function OnboardingPage() {
           <div className="space-y-6">
             <h1 className="text-3xl font-bold">주변 장비를<br/>체크해주세요</h1>
             <p className="text-[var(--color-text-muted)]">없어도 괜찮아요. 맨몸 루틴이 상시 준비되어 있습니다.</p>
-            <div className="grid grid-cols-2 gap-3 mt-8">
-              {['맨몸', '덤벨', '철봉', '매트', '밴드', '바벨', '벤치'].map(eq => (
-                <button
-                  key={eq}
-                  disabled={eq === '맨몸'}
-                  onClick={() => setEquipment(prev => 
-                    prev.includes(eq) ? prev.filter(i => i !== eq) : [...prev, eq]
-                  )}
-                  className={`p-4 rounded-2xl border text-left tap-scale transition-colors ${
-                    equipment.includes(eq) 
-                      ? 'border-[var(--color-primary)] bg-[#F0FCF2] text-[var(--color-text-heading)]'
-                      : 'border-gray-200 bg-white hover:border-gray-300'
-                  } ${eq === '맨몸' ? 'opacity-90' : ''}`}
-                >
-                  <span className="font-medium">{eq}</span>
-                  {eq === '맨몸' && <span className="block text-xs text-[var(--color-primary)] mt-1 font-bold">상시 활성화</span>}
-                </button>
-              ))}
+            <div className="grid grid-cols-2 gap-4 mt-8">
+              {[
+                { id: '맨몸', Icon: IconBodyweight, label: '맨몸 (항상)' },
+                { id: '덤벨', Icon: IconDumbbell, label: '덤벨' },
+                { id: '철봉', Icon: IconPullupBar, label: '철봉' },
+                { id: '매트', Icon: IconMat, label: '매트' },
+                { id: '밴드', Icon: IconBand, label: '밴드' },
+                { id: '바벨', Icon: IconBarbell, label: '바벨' },
+                { id: '벤치', Icon: IconBench, label: '벤치' },
+              ].map(item => {
+                const eq = item.id;
+                const isSelected = equipment.includes(eq);
+                return (
+                  <button
+                    key={eq}
+                    disabled={eq === '맨몸'}
+                    onClick={() => setEquipment(prev => 
+                      prev.includes(eq) ? prev.filter(i => i !== eq) : [...prev, eq]
+                    )}
+                    className={`p-5 rounded-3xl border flex flex-col items-center justify-center text-center tap-scale transition-all ${
+                      isSelected 
+                        ? 'border-[var(--color-primary)] bg-[#F0FCF2] text-[var(--color-primary)] shadow-sm'
+                        : 'border-gray-200 bg-white hover:border-gray-300 text-gray-500 hover:text-gray-800'
+                    } ${eq === '맨몸' ? 'opacity-90' : ''}`}
+                  >
+                    <div className="mb-3">
+                      <item.Icon />
+                    </div>
+                    <span className={`font-bold text-sm ${isSelected ? 'text-[var(--color-primary)]' : 'text-gray-700'}`}>
+                      {item.label}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
           </div>
         )}

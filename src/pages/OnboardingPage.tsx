@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../lib/firebase';
+import { saveOnboardingData } from '../lib/firestore';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
+import BodyMap from '../components/BodyMap';
 
 type CourseType = 'MICRO' | 'COMPACT' | 'CIRCUIT' | null;
-type SpotterType = 'SPARTAN' | 'TSUNDERE' | 'ANGEL' | 'PRO' | null;
+type SpotterType = 'SPARTAN' | 'TSUNDERE' | 'ANGEL' | null;
+type NotificationMethod = 'telegram' | 'email' | 'none' | null;
 
 export default function OnboardingPage() {
   const navigate = useNavigate();
@@ -13,7 +16,8 @@ export default function OnboardingPage() {
   // Persisted state via sessionStorage to prevent loss on refresh
   const [equipment, setEquipment] = useState<string[]>(() => {
     const saved = sessionStorage.getItem('ob_equipment');
-    return saved ? JSON.parse(saved) : [];
+    const parsed = saved ? JSON.parse(saved) : [];
+    return parsed.includes('맨몸') ? parsed : ['맨몸', ...parsed];
   });
   
   const [muscles, setMuscles] = useState<string[]>(() => {
@@ -24,51 +28,72 @@ export default function OnboardingPage() {
   const [course, setCourse] = useState<CourseType>(() => {
     return (sessionStorage.getItem('ob_course') as CourseType) || null;
   });
-  
+
+  const [workStartTime, setWorkStartTime] = useState(() => sessionStorage.getItem('ob_workStart') || '09:00');
+  const [workEndTime, setWorkEndTime] = useState(() => sessionStorage.getItem('ob_workEnd') || '18:00');
+  const [sessionsPerDay, setSessionsPerDay] = useState(() => Number(sessionStorage.getItem('ob_sessions')) || 6);
+
   const [spotter, setSpotter] = useState<SpotterType>(() => {
     return (sessionStorage.getItem('ob_spotter') as SpotterType) || null;
   });
 
-  useEffect(() => {
-    sessionStorage.setItem('ob_equipment', JSON.stringify(equipment));
-  }, [equipment]);
+  const [notificationMethod, setNotificationMethod] = useState<NotificationMethod>(() => {
+    return (sessionStorage.getItem('ob_notif') as NotificationMethod) || null;
+  });
 
-  useEffect(() => {
-    sessionStorage.setItem('ob_muscles', JSON.stringify(muscles));
-  }, [muscles]);
+  useEffect(() => sessionStorage.setItem('ob_equipment', JSON.stringify(equipment)), [equipment]);
+  useEffect(() => sessionStorage.setItem('ob_muscles', JSON.stringify(muscles)), [muscles]);
+  useEffect(() => { if (course) sessionStorage.setItem('ob_course', course); }, [course]);
+  useEffect(() => sessionStorage.setItem('ob_workStart', workStartTime), [workStartTime]);
+  useEffect(() => sessionStorage.setItem('ob_workEnd', workEndTime), [workEndTime]);
+  useEffect(() => sessionStorage.setItem('ob_sessions', sessionsPerDay.toString()), [sessionsPerDay]);
+  useEffect(() => { if (spotter) sessionStorage.setItem('ob_spotter', spotter); }, [spotter]);
+  useEffect(() => { if (notificationMethod) sessionStorage.setItem('ob_notif', notificationMethod); }, [notificationMethod]);
 
-  useEffect(() => {
-    if (course) sessionStorage.setItem('ob_course', course);
-  }, [course]);
-
-  useEffect(() => {
-    if (spotter) sessionStorage.setItem('ob_spotter', spotter);
-  }, [spotter]);
-
-  const nextStep = () => setStep(s => Math.min(5, s + 1));
+  const nextStep = () => setStep(s => Math.min(6, s + 1));
   const prevStep = () => setStep(s => Math.max(1, s - 1));
 
   const completeOnboarding = async () => {
-    // 1. Ensure user is logged in
     const user = auth.currentUser;
     if (!user) {
       alert("로그인이 필요합니다.");
       return;
     }
     
-    // TODO: Save to Firestore
-    console.log("Saving to Firestore...", { equipment, muscles, course, spotter });
-    
-    // 2. Generate Telegram deep link
-    const telegramUrl = `https://t.me/SnackGymBot?start=${user.uid}`;
-    window.location.href = telegramUrl; // 텔레그램으로 순간이동
+    try {
+      await saveOnboardingData(user.uid, {
+        equipment,
+        targetMuscles: muscles,
+        course: course as any,
+        workStartTime,
+        workEndTime,
+        sessionsPerDay,
+        spotter: spotter as any,
+        notificationMethod: notificationMethod as any
+      });
+      
+      console.log("Onboarding data saved successfully!");
+      
+      // Cleanup session storage
+      ['ob_equipment', 'ob_muscles', 'ob_course', 'ob_workStart', 'ob_workEnd', 'ob_sessions', 'ob_spotter', 'ob_notif'].forEach(k => sessionStorage.removeItem(k));
+
+      if (notificationMethod === 'telegram') {
+        const telegramUrl = `https://t.me/SnackGymBot?start=${user.uid}`;
+        window.location.href = telegramUrl;
+      } else {
+        navigate('/dashboard');
+      }
+    } catch (error) {
+      console.error("Failed to save onboarding data:", error);
+      alert("데이터 저장 중 오류가 발생했습니다. 다시 시도해주세요.");
+    }
   };
 
   return (
-    <div className="min-h-screen pb-20 pt-8 px-4 flex flex-col max-w-md mx-auto">
+    <div className="min-h-screen pb-24 pt-8 px-4 flex flex-col max-w-md mx-auto">
       {/* Progress Bar */}
       <div className="flex gap-2 mb-8">
-        {[1, 2, 3, 4, 5].map((idx) => (
+        {[1, 2, 3, 4, 5, 6].map((idx) => (
           <div 
             key={idx}
             className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
@@ -82,12 +107,12 @@ export default function OnboardingPage() {
         {step === 1 && (
           <div className="space-y-6">
             <h1 className="text-3xl font-bold">주변 장비를<br/>체크해주세요</h1>
-            <p className="text-[var(--color-text-muted)]">없어도 괜찮아요. 맨몸 루틴이 준비되어 있습니다.</p>
-            {/* TODO: Equipment Grid */}
+            <p className="text-[var(--color-text-muted)]">없어도 괜찮아요. 맨몸 루틴이 상시 준비되어 있습니다.</p>
             <div className="grid grid-cols-2 gap-3 mt-8">
-              {['덤벨', '철봉', '매트', '밴드', '바벨', '벤치'].map(eq => (
+              {['맨몸', '덤벨', '철봉', '매트', '밴드', '바벨', '벤치'].map(eq => (
                 <button
                   key={eq}
+                  disabled={eq === '맨몸'}
                   onClick={() => setEquipment(prev => 
                     prev.includes(eq) ? prev.filter(i => i !== eq) : [...prev, eq]
                   )}
@@ -95,9 +120,10 @@ export default function OnboardingPage() {
                     equipment.includes(eq) 
                       ? 'border-[var(--color-primary)] bg-[#F0FCF2] text-[var(--color-text-heading)]'
                       : 'border-gray-200 bg-white hover:border-gray-300'
-                  }`}
+                  } ${eq === '맨몸' ? 'opacity-90' : ''}`}
                 >
                   <span className="font-medium">{eq}</span>
+                  {eq === '맨몸' && <span className="block text-xs text-[var(--color-primary)] mt-1 font-bold">상시 활성화</span>}
                 </button>
               ))}
             </div>
@@ -107,20 +133,18 @@ export default function OnboardingPage() {
         {step === 2 && (
           <div className="space-y-6">
             <h1 className="text-3xl font-bold">강화하고 싶은<br/>부위를 골라주세요</h1>
-            <p className="text-[var(--color-text-muted)]">선택하지 않은 부위는 운동에서 배제됩니다.</p>
-            {/* TODO: 3D Flip SVG BodyMap */}
-            <div className="h-80 w-full glass-card rounded-3xl flex items-center justify-center mt-8">
-              <span className="text-[var(--color-text-muted)]">Interactive Body Map Area</span>
+            <p className="text-[var(--color-text-muted)]">선택하지 않은 부위는 패시브 가드(보호)가 발동됩니다.</p>
+            <div className="mt-8">
+              <BodyMap selectedMuscles={muscles} onChange={setMuscles} />
             </div>
-            <button onClick={() => setMuscles(['가슴', '등'])} className="text-sm underline text-blue-500">임시 부위 선택 테스트 (가슴, 등)</button>
           </div>
         )}
 
         {step === 3 && (
           <div className="space-y-6">
-            <h1 className="text-3xl font-bold">나의 스낵 코스<br/>선택하기</h1>
+            <h1 className="text-3xl font-bold">나의 스낵 코스와<br/>알림 설정</h1>
             
-            <div className="space-y-4 mt-8">
+            <div className="space-y-4 mt-6">
               <button 
                 onClick={() => setCourse('MICRO')}
                 className={`w-full text-left p-5 rounded-2xl border hover-lift transition-colors ${
@@ -131,7 +155,7 @@ export default function OnboardingPage() {
                   <span className="text-2xl">⚡</span>
                   <h3 className="font-bold text-lg">마이크로 스낵 (1~2분)</h3>
                 </div>
-                <p className="text-sm text-[var(--color-text-body)]">자리에서 일어날 필요 없이 딱 1세트만 속전속결로 끝내고 복귀합니다.</p>
+                <p className="text-sm text-[var(--color-text-body)]">의자 위에서 딱 1세트만 속전속결로 끝냅니다.</p>
               </button>
 
               <button 
@@ -149,7 +173,7 @@ export default function OnboardingPage() {
                   <span className="text-2xl">🔥</span>
                   <h3 className="font-bold text-lg">컴팩트 타겟 (3~5분)</h3>
                 </div>
-                <p className="text-sm text-[var(--color-text-body)]">쉬는 시간 0초. 2개 운동을 교차로 수행하여 짧은 시간에 펌핑을 극대화합니다.</p>
+                <p className="text-sm text-[var(--color-text-body)]">쉬는 시간 0초. 2개 운동을 교차 세트로 수행하여 펌핑을 극대화합니다.</p>
               </button>
 
               <button 
@@ -162,8 +186,30 @@ export default function OnboardingPage() {
                   <span className="text-2xl">👑</span>
                   <h3 className="font-bold text-lg">숏 서킷 (6~10분)</h3>
                 </div>
-                <p className="text-sm text-[var(--color-text-body)]">다양한 운동을 순환하며 온몸의 에너지를 완벽하게 충전합니다.</p>
+                <p className="text-sm text-[var(--color-text-body)]">다차원 운동을 순환하며 에너지를 완벽하게 충전합니다.</p>
               </button>
+            </div>
+
+            <div className="mt-8 p-5 bg-gray-50 rounded-2xl border border-gray-100">
+              <h3 className="font-bold text-base mb-4 text-[var(--color-text-heading)]">업무 시간 및 알림 횟수</h3>
+              <div className="flex gap-4 mb-4">
+                <div className="flex-1">
+                  <label className="block text-xs text-gray-500 mb-1">출근 시간</label>
+                  <input type="time" value={workStartTime} onChange={e => setWorkStartTime(e.target.value)} className="w-full p-3 rounded-xl border border-gray-200 bg-white focus:outline-none focus:border-[var(--color-primary)]" />
+                </div>
+                <div className="flex-1">
+                  <label className="block text-xs text-gray-500 mb-1">퇴근 시간</label>
+                  <input type="time" value={workEndTime} onChange={e => setWorkEndTime(e.target.value)} className="w-full p-3 rounded-xl border border-gray-200 bg-white focus:outline-none focus:border-[var(--color-primary)]" />
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs text-gray-500 mb-1">목표 횟수 (시스템 자동 분배)</label>
+                <select value={sessionsPerDay} onChange={e => setSessionsPerDay(Number(e.target.value))} className="w-full p-3 rounded-xl border border-gray-200 bg-white focus:outline-none focus:border-[var(--color-primary)]">
+                  <option value={4}>하루 4회</option>
+                  <option value={6}>하루 6회 (권장)</option>
+                  <option value={8}>하루 8회</option>
+                </select>
+              </div>
             </div>
           </div>
         )}
@@ -172,22 +218,21 @@ export default function OnboardingPage() {
           <div className="space-y-6">
             <h1 className="text-3xl font-bold">담당 스포터<br/>지정하기</h1>
             <p className="text-[var(--color-text-muted)]">나의 의지를 불태워줄 파트너를 고르세요.</p>
-            {/* TODO: Spotter Selection Cards */}
             <div className="grid grid-cols-2 gap-4 mt-8">
-              {['SPARTAN', 'TSUNDERE', 'ANGEL', 'PRO'].map(sp => (
+              {['SPARTAN', 'TSUNDERE', 'ANGEL'].map(sp => (
                 <button
                   key={sp}
                   onClick={() => setSpotter(sp as SpotterType)}
-                  className={`aspect-square rounded-3xl flex flex-col items-center justify-center border tap-scale ${
+                  className={`aspect-[3/4] rounded-3xl flex flex-col items-center justify-center border tap-scale ${
                     spotter === sp 
-                      ? 'border-[var(--color-primary)] bg-[#F0FCF2] glow-hover' 
+                      ? 'border-[var(--color-primary)] bg-[#F0FCF2] shadow-sm' 
                       : 'border-gray-200 bg-white hover:border-gray-300'
                   }`}
                 >
-                  <span className="text-4xl mb-2">
-                    {sp === 'SPARTAN' ? '🤬' : sp === 'TSUNDERE' ? '😒' : sp === 'ANGEL' ? '🥰' : '📋'}
+                  <span className="text-5xl mb-4">
+                    {sp === 'SPARTAN' ? '🤬' : sp === 'TSUNDERE' ? '😒' : '🥰'}
                   </span>
-                  <span className="font-bold text-sm">{sp}</span>
+                  <span className="font-bold text-sm text-gray-800">{sp === 'SPARTAN' ? '스파르타 교관' : sp === 'TSUNDERE' ? '츤데레 조교' : '엔젤 코치'}</span>
                 </button>
               ))}
             </div>
@@ -195,35 +240,100 @@ export default function OnboardingPage() {
         )}
 
         {step === 5 && (
+          <div className="space-y-6">
+            <h1 className="text-3xl font-bold">알림 수단<br/>선택하기</h1>
+            <p className="text-[var(--color-text-muted)]">회사 보안망을 뚫는 텔레그램 연동을 추천합니다.</p>
+            
+            <div className="space-y-4 mt-8">
+              <button 
+                onClick={() => setNotificationMethod('telegram')}
+                className={`w-full text-left p-5 rounded-2xl border hover-lift transition-colors relative ${
+                  notificationMethod === 'telegram' ? 'border-[#2AABEE] bg-[#E8F5FE]' : 'border-gray-200 bg-white'
+                }`}
+              >
+                {notificationMethod === 'telegram' && <div className="absolute top-4 right-5 text-[#2AABEE]">✓</div>}
+                <div className="font-bold text-lg text-[#2AABEE]">텔레그램 (추천)</div>
+                <p className="text-sm text-gray-600 mt-1">사내 메신저처럼 눈치 보지 않고 안전하게 알림 수신</p>
+              </button>
+
+              <button 
+                onClick={() => setNotificationMethod('email')}
+                className={`w-full text-left p-5 rounded-2xl border hover-lift transition-colors relative ${
+                  notificationMethod === 'email' ? 'border-[var(--color-primary)] bg-[#F0FCF2]' : 'border-gray-200 bg-white'
+                }`}
+              >
+                {notificationMethod === 'email' && <div className="absolute top-4 right-5 text-[var(--color-primary)]">✓</div>}
+                <div className="font-bold text-lg text-gray-800">이메일 알림</div>
+                <p className="text-sm text-gray-600 mt-1">지정한 구글 이메일로 링크 수신</p>
+              </button>
+
+              <button 
+                onClick={() => setNotificationMethod('none')}
+                className={`w-full text-left p-5 rounded-2xl border hover-lift transition-colors relative ${
+                  notificationMethod === 'none' ? 'border-gray-400 bg-gray-50' : 'border-gray-200 bg-white'
+                }`}
+              >
+                {notificationMethod === 'none' && <div className="absolute top-4 right-5 text-gray-600">✓</div>}
+                <div className="font-bold text-lg text-gray-600">알림 끄기 (인앱 전용)</div>
+                <p className="text-sm text-gray-500 mt-1">알림 없이 원할 때만 앱에 직접 들어와서 진행</p>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {step === 6 && (
           <div className="space-y-6 flex flex-col items-center text-center pt-10">
             <h1 className="text-3xl font-bold mb-4">준비 완료!</h1>
-            <p className="text-[var(--color-text-body)] mb-12">
-              이제 텔레그램을 연결하여<br/>스낵짐 알림을 받아보세요.
-            </p>
             
-            <button
-              onClick={completeOnboarding}
-              className="w-full py-5 rounded-2xl text-white font-bold text-lg flex items-center justify-center gap-2 tap-scale"
-              style={{
-                background: 'linear-gradient(135deg, #3CCF4E 0%, #189AB4 100%)',
-                boxShadow: '0 8px 32px rgba(60, 207, 78, 0.4)'
-              }}
-            >
-              스포터와 악수하기
-              <ArrowRight size={20} />
-            </button>
+            {notificationMethod === 'telegram' && (
+              <>
+                <p className="text-[var(--color-text-body)] mb-12">
+                  마지막으로 스포터와 악수하고<br/>알림을 켜보세요.
+                </p>
+                <button
+                  onClick={completeOnboarding}
+                  className="w-full py-5 rounded-2xl text-white font-bold text-lg flex items-center justify-center gap-2 tap-scale"
+                  style={{ background: '#2AABEE', boxShadow: '0 8px 32px rgba(42, 171, 238, 0.4)' }}
+                >
+                  텔레그램 시작하기
+                  <ArrowRight size={20} />
+                </button>
+              </>
+            )}
+            
+            {notificationMethod !== 'telegram' && (
+              <>
+                <div className="glass-card p-6 rounded-2xl mb-12 w-full text-left">
+                  <p className="font-bold text-lg mb-2 text-[var(--color-primary)] flex items-center gap-2">
+                    <span>💡</span> 홈 화면에 앱 추가하기 (PWA)
+                  </p>
+                  <p className="text-sm text-gray-600 leading-relaxed">
+                    브라우저 하단의 <strong>[공유]</strong> 아이콘을 누르고<br/>
+                    <strong>[홈 화면에 추가]</strong>를 선택하면<br/>
+                    일반 앱처럼 빠르고 편하게 쓸 수 있습니다!
+                  </p>
+                </div>
+                <button
+                  onClick={completeOnboarding}
+                  className="w-full py-5 rounded-2xl text-white font-bold text-lg flex items-center justify-center gap-2 tap-scale btn-cta"
+                >
+                  대시보드로 이동
+                  <ArrowRight size={20} />
+                </button>
+              </>
+            )}
           </div>
         )}
       </div>
 
       {/* Navigation Footer */}
-      {step < 5 && (
+      {step < 6 && (
         <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-white via-white to-transparent">
           <div className="max-w-md mx-auto flex gap-4">
             {step > 1 && (
               <button 
                 onClick={prevStep}
-                className="w-14 h-14 rounded-2xl border-2 border-gray-200 flex items-center justify-center text-gray-500 tap-scale bg-white"
+                className="w-14 h-14 rounded-2xl border-2 border-gray-200 flex items-center justify-center text-gray-500 tap-scale bg-white hover:bg-gray-50 transition-colors"
               >
                 <ArrowLeft size={24} />
               </button>
@@ -234,9 +344,10 @@ export default function OnboardingPage() {
               disabled={
                 (step === 2 && muscles.length === 0) ||
                 (step === 3 && !course) ||
-                (step === 4 && !spotter)
+                (step === 4 && !spotter) ||
+                (step === 5 && !notificationMethod)
               }
-              className="flex-1 h-14 rounded-2xl bg-[#1A2E1A] text-white font-bold flex items-center justify-center gap-2 tap-scale disabled:opacity-50 disabled:bg-gray-300"
+              className="flex-1 h-14 rounded-2xl bg-[#1A2E1A] text-white font-bold flex items-center justify-center gap-2 tap-scale disabled:opacity-50 disabled:bg-gray-300 transition-all shadow-lg shadow-black/10"
             >
               다음 <ArrowRight size={20} />
             </button>

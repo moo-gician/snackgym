@@ -5,6 +5,7 @@ import type { User } from 'firebase/auth'
 import { auth } from './lib/firebase'
 import LandingPage from './pages/LandingPage'
 import OnboardingPage from './pages/OnboardingPage'
+import DashboardPage from './pages/DashboardPage'
 import './index.css'
 
 function App() {
@@ -64,12 +65,7 @@ function App() {
         </div>
       } />
       
-      <Route path="/dashboard" element={
-        <div className="p-8 text-center">
-          <h2 className="text-2xl font-bold mb-4">Welcome, {user.displayName}</h2>
-          <p>Dashboard coming soon...</p>
-        </div>
-      } />
+      <Route path="/dashboard" element={<DashboardPage />} />
       
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>

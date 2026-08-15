@@ -118,6 +118,10 @@ export default function LandingPage() {
             {loading ? 'Connecting...' : 'Continue with Google — Free'}
           </button>
         </div>
+        
+        <p className="mt-4 text-xs animate-fade-in-up delay-400 opacity-70" style={{ color: '#4A6741' }}>
+          로그인 시 <strong>[이용약관 및 부상 면책 조항]</strong>에 동의하는 것으로 간주합니다.<br/>본 앱의 운동 가이드를 수행함에 있어 발생하는 부상 책임은 사용자 본인에게 있습니다.
+        </p>
 
         <p className="mt-4 text-sm animate-fade-in-up delay-400" style={{ color: '#7A9E7A' }}>
           No signup fee · No quotas · No pressure 🌱
@@ -190,6 +194,9 @@ export default function LandingPage() {
           <span>🌿</span>
           {loading ? 'Connecting...' : 'Start Free with Google'}
         </button>
+        <p className="mt-4 text-xs opacity-70" style={{ color: '#4A6741' }}>
+          로그인 시 [이용약관 및 부상 면책 조항]에 동의하는 것으로 간주합니다.
+        </p>
       </section>
 
       {/* Footer */}

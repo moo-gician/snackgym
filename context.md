@@ -47,3 +47,4 @@
 ## [Version History]
 - **v0.1.0** (2026-08-12): Initial MVP Landing page + Google Auth deployed.
 - **v1.0.0** (2026-08-15): PRD 7차 최종 컨펌 완료 (피드백 팝업, 스킵 동결, 소프트 딜리트, 스누즈 확정). Phase 3 진입.
+- **v1.2.0** (2026-08-15): Phase 3-6 완료. 프론트엔드 전체 UI(온보딩, 대시보드, 세션) 및 파이어베이스 백엔드(Soft Delete, Cloud Functions 텔레그램 봇) Vercel 배포 트리거.

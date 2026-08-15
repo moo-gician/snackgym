@@ -15,6 +15,11 @@ export type UserProfile = {
   notificationMethod: 'telegram' | 'email' | 'none';
   activeDays: number[];
   timezone: string;
+  totalCalories?: number;
+  todaySessions?: number;
+  currentStreak?: number;
+  lastWorkoutDate?: string;
+  snooze_until?: string | null;
   updatedAt: string;
 };
 
@@ -44,6 +49,55 @@ export async function deactivateUser(uid: string) {
   const userRef = doc(db, 'users', uid);
   await updateDoc(userRef, {
     is_active: false,
+    updatedAt: new Date().toISOString()
+  });
+}
+
+/**
+ * 세션 완료 시 유저의 칼로리, 스트릭, 오늘 달성 횟수를 업데이트합니다.
+ */
+export async function recordSessionComplete(uid: string, earnedCalories: number) {
+  const { getDoc } = await import('firebase/firestore');
+  const userRef = doc(db, 'users', uid);
+  const userSnap = await getDoc(userRef);
+  
+  if (!userSnap.exists()) return;
+  
+  const data = userSnap.data() as Partial<UserProfile>;
+  
+  // 현재 유저의 로컬 날짜 기준 (YYYY-MM-DD)
+  const now = new Date();
+  const todayDate = now.toLocaleDateString('en-CA'); // 'YYYY-MM-DD'
+  
+  const yesterday = new Date(now);
+  yesterday.setDate(yesterday.getDate() - 1);
+  const yesterdayDate = yesterday.toLocaleDateString('en-CA');
+
+  let {
+    totalCalories = 0,
+    todaySessions = 0,
+    currentStreak = 0,
+    lastWorkoutDate = ''
+  } = data;
+
+  totalCalories += earnedCalories;
+
+  if (lastWorkoutDate === todayDate) {
+    todaySessions += 1;
+  } else if (lastWorkoutDate === yesterdayDate) {
+    todaySessions = 1;
+    currentStreak += 1;
+  } else {
+    // 며칠 쉬었거나 완전 처음인 경우
+    todaySessions = 1;
+    currentStreak = 1; // 오늘부터 다시 1일
+  }
+
+  await updateDoc(userRef, {
+    totalCalories,
+    todaySessions,
+    currentStreak,
+    lastWorkoutDate: todayDate,
     updatedAt: new Date().toISOString()
   });
 }

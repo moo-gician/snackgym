@@ -178,12 +178,12 @@ export default function OnboardingPage() {
             <div className="grid grid-cols-1 gap-4 mt-8">
               <button 
                 onClick={() => setCourse('MICRO')}
-                className={`group w-full h-32 rounded-3xl border flex items-center justify-center relative overflow-hidden transition-all ${
+                className={`group w-full h-40 rounded-3xl border flex flex-col items-center justify-center p-4 transition-all ${
                   course === 'MICRO' ? 'border-[var(--color-primary)] bg-[#F0FCF2] shadow-sm' : 'border-gray-200 bg-white hover:border-gray-300'
                 }`}
               >
-                <span className={`text-6xl transition-transform duration-300 ${course === 'MICRO' ? '-translate-y-4 scale-110' : 'group-hover:-translate-y-4 group-hover:scale-110'}`}>⚡</span>
-                <div className={`absolute bottom-4 w-full text-center transition-opacity duration-300 flex flex-col ${course === 'MICRO' ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
+                <span className={`text-6xl mb-3 transition-transform duration-300 ${course === 'MICRO' ? 'scale-110' : 'group-hover:scale-110'}`}>⚡</span>
+                <div className="text-center flex flex-col">
                   <span className={`font-bold text-lg ${course === 'MICRO' ? 'text-[var(--color-primary)]' : 'text-gray-800'}`}>Micro Snack (1-2m)</span>
                   <span className="text-xs text-gray-500">1 set. Right at your desk.</span>
                 </div>
@@ -191,12 +191,12 @@ export default function OnboardingPage() {
 
               <button 
                 onClick={() => setCourse('COMPACT')}
-                className={`group w-full h-32 rounded-3xl border flex items-center justify-center relative overflow-hidden transition-all ${
+                className={`group w-full h-40 rounded-3xl border flex flex-col items-center justify-center p-4 transition-all ${
                   course === 'COMPACT' ? 'border-[var(--color-primary)] bg-[#F0FCF2] shadow-sm' : 'border-gray-200 bg-white hover:border-gray-300'
                 }`}
               >
-                <span className={`text-6xl transition-transform duration-300 ${course === 'COMPACT' ? '-translate-y-4 scale-110' : 'group-hover:-translate-y-4 group-hover:scale-110'}`}>🔥</span>
-                <div className={`absolute bottom-4 w-full text-center transition-opacity duration-300 flex flex-col ${course === 'COMPACT' ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
+                <span className={`text-6xl mb-3 transition-transform duration-300 ${course === 'COMPACT' ? 'scale-110' : 'group-hover:scale-110'}`}>🔥</span>
+                <div className="text-center flex flex-col">
                   <span className={`font-bold text-lg ${course === 'COMPACT' ? 'text-[var(--color-primary)]' : 'text-gray-800'}`}>Compact Target (3-5m)</span>
                   <span className="text-xs text-gray-500">0 rest. Max pump.</span>
                 </div>
@@ -204,12 +204,12 @@ export default function OnboardingPage() {
 
               <button 
                 onClick={() => setCourse('CIRCUIT')}
-                className={`group w-full h-32 rounded-3xl border flex items-center justify-center relative overflow-hidden transition-all ${
+                className={`group w-full h-40 rounded-3xl border flex flex-col items-center justify-center p-4 transition-all ${
                   course === 'CIRCUIT' ? 'border-[var(--color-primary)] bg-[#F0FCF2] shadow-sm' : 'border-gray-200 bg-white hover:border-gray-300'
                 }`}
               >
-                <span className={`text-6xl transition-transform duration-300 ${course === 'CIRCUIT' ? '-translate-y-4 scale-110' : 'group-hover:-translate-y-4 group-hover:scale-110'}`}>👑</span>
-                <div className={`absolute bottom-4 w-full text-center transition-opacity duration-300 flex flex-col ${course === 'CIRCUIT' ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
+                <span className={`text-6xl mb-3 transition-transform duration-300 ${course === 'CIRCUIT' ? 'scale-110' : 'group-hover:scale-110'}`}>👑</span>
+                <div className="text-center flex flex-col">
                   <span className={`font-bold text-lg ${course === 'CIRCUIT' ? 'text-[var(--color-primary)]' : 'text-gray-800'}`}>Short Circuit (6-10m)</span>
                   <span className="text-xs text-gray-500">Full body recharge loop.</span>
                 </div>
@@ -294,21 +294,29 @@ export default function OnboardingPage() {
                 <button
                   key={sp.id}
                   onClick={() => setSpotter(sp.id as SpotterType)}
-                  className={`group aspect-[3/4] rounded-3xl flex flex-col items-center justify-center border relative overflow-hidden transition-all ${
+                  className={`group aspect-[3/4] rounded-3xl flex flex-col items-center justify-center border transition-all ${
                     spotter === sp.id 
                       ? 'border-[var(--color-primary)] bg-[#F0FCF2] shadow-sm' 
                       : 'border-gray-200 bg-white hover:border-gray-300'
                   }`}
                 >
-                  <span className={`text-6xl transition-transform duration-300 ${spotter === sp.id ? '-translate-y-3 scale-110' : 'group-hover:-translate-y-3 group-hover:scale-110'}`}>
+                  <span className={`text-6xl mb-2 transition-transform duration-300 ${spotter === sp.id ? 'scale-110' : 'group-hover:scale-110'}`}>
                     {sp.emoji}
                   </span>
-                  <div className={`absolute bottom-4 left-0 w-full text-center transition-opacity duration-300 ${spotter === sp.id ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
+                  <div className="w-full text-center">
                     <span className={`font-bold text-sm ${spotter === sp.id ? 'text-[var(--color-primary)]' : 'text-gray-500'}`}>{sp.label}</span>
                   </div>
                 </button>
               ))}
             </div>
+
+            {spotter && (
+              <div className="mt-6 p-4 bg-gray-50 rounded-2xl border border-gray-100 text-sm italic text-gray-600 animate-fade-in-up">
+                {spotter === 'SPARTAN' && `"Get up, lazy bones! Time to crush it! 🤬"`}
+                {spotter === 'TSUNDERE' && `"It's time to work out... Not that I care if you get fit. 😒"`}
+                {spotter === 'ANGEL' && `"You're doing great! Keep it up! Let's do a quick session! 🥰"`}
+              </div>
+            )}
           </div>
         )}
 

@@ -38,7 +38,7 @@ export default function BodyMap({ selectedMuscles, onChange }: BodyMapProps) {
         className={`pointer-events-auto group relative px-4 py-3 md:py-4 font-display font-bold text-xs md:text-sm uppercase tracking-widest rounded-none border transition-all active:scale-95 whitespace-nowrap flex items-center gap-2 ${
           isSelected 
             ? 'bg-[var(--color-blood)]/20 text-[var(--color-blood)] border-[var(--color-blood)]/50 shadow-[0_0_15px_rgba(197,0,13,0.2)]' 
-            : 'bg-[var(--color-charcoal)] text-[var(--color-ash)] border-gray-700 hover:border-gray-500 shadow-[0_0_10px_rgba(0,0,0,0.5)]'
+            : 'bg-[var(--color-charcoal)] text-white border-gray-700 hover:border-gray-500 shadow-[0_0_10px_rgba(0,0,0,0.5)]'
         }`}
       >
         {isSelected && <span className="w-2 h-2 bg-[var(--color-blood)] rounded-full animate-pulse"></span>}

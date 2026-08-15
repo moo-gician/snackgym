@@ -95,10 +95,29 @@ exports.alarmDispatcher = functions.pubsub.schedule("*/30 * * * *").onRun(async 
       const userData = doc.data();
       const chatId = userData.telegram_chat_id;
       
+      const userTz = userData.timezone || "America/New_York";
+      
       // 스누즈(Snooze) 체크 로직
       if (userData.snooze_until) {
-        const snoozeDate = userData.snooze_until.toDate();
+        let snoozeDate;
+        if (typeof userData.snooze_until.toDate === 'function') {
+          snoozeDate = userData.snooze_until.toDate();
+        } else {
+          snoozeDate = new Date(userData.snooze_until);
+        }
         if (now < snoozeDate) return; // 아직 스누즈 중
+      }
+
+      // 요일(Active Days) 체크 로직
+      if (userData.activeDays && Array.isArray(userData.activeDays)) {
+        const dayFormatter = new Intl.DateTimeFormat('en-US', { timeZone: userTz, weekday: 'short' });
+        const weekdayStr = dayFormatter.format(now);
+        const dayMapping = { "Sun": 0, "Mon": 1, "Tue": 2, "Wed": 3, "Thu": 4, "Fri": 5, "Sat": 6 };
+        const localDayNum = dayMapping[weekdayStr];
+        
+        if (!userData.activeDays.includes(localDayNum)) {
+          return; // 오늘은 활성화된 요일이 아님
+        }
       }
 
       if (chatId) {

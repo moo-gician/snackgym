@@ -13,6 +13,8 @@ export type UserProfile = {
   sessionsPerDay: number;
   spotter: 'SPARTAN' | 'TSUNDERE' | 'ANGEL';
   notificationMethod: 'telegram' | 'email' | 'none';
+  activeDays: number[];
+  timezone: string;
   updatedAt: string;
 };
 

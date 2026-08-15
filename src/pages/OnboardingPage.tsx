@@ -37,6 +37,10 @@ export default function OnboardingPage() {
   const [workStartTime, setWorkStartTime] = useState(() => sessionStorage.getItem('ob_workStart') || '09:00');
   const [workEndTime, setWorkEndTime] = useState(() => sessionStorage.getItem('ob_workEnd') || '18:00');
   const [sessionsPerDay, setSessionsPerDay] = useState(() => Number(sessionStorage.getItem('ob_sessions')) || 6);
+  const [activeDays, setActiveDays] = useState<number[]>(() => {
+    const saved = sessionStorage.getItem('ob_activeDays');
+    return saved ? JSON.parse(saved) : [1, 2, 3, 4, 5]; // Mon-Fri default
+  });
 
   const [spotter, setSpotter] = useState<SpotterType>(() => {
     return (sessionStorage.getItem('ob_spotter') as SpotterType) || null;
@@ -52,6 +56,7 @@ export default function OnboardingPage() {
   useEffect(() => sessionStorage.setItem('ob_workStart', workStartTime), [workStartTime]);
   useEffect(() => sessionStorage.setItem('ob_workEnd', workEndTime), [workEndTime]);
   useEffect(() => sessionStorage.setItem('ob_sessions', sessionsPerDay.toString()), [sessionsPerDay]);
+  useEffect(() => sessionStorage.setItem('ob_activeDays', JSON.stringify(activeDays)), [activeDays]);
   useEffect(() => { if (spotter) sessionStorage.setItem('ob_spotter', spotter); }, [spotter]);
   useEffect(() => { if (notificationMethod) sessionStorage.setItem('ob_notif', notificationMethod); }, [notificationMethod]);
 
@@ -73,6 +78,8 @@ export default function OnboardingPage() {
         workStartTime,
         workEndTime,
         sessionsPerDay,
+        activeDays,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         spotter: spotter as any,
         notificationMethod: notificationMethod as any
       });
@@ -80,7 +87,7 @@ export default function OnboardingPage() {
       console.log("Onboarding data saved successfully!");
       
       // Cleanup session storage
-      ['ob_equipment', 'ob_muscles', 'ob_course', 'ob_workStart', 'ob_workEnd', 'ob_sessions', 'ob_spotter', 'ob_notif'].forEach(k => sessionStorage.removeItem(k));
+      ['ob_equipment', 'ob_muscles', 'ob_course', 'ob_workStart', 'ob_workEnd', 'ob_sessions', 'ob_activeDays', 'ob_spotter', 'ob_notif'].forEach(k => sessionStorage.removeItem(k));
 
       if (notificationMethod === 'telegram') {
         const telegramUrl = `https://t.me/SnackGym_Supporter_Bot?start=${user.uid}`;
@@ -213,10 +220,42 @@ export default function OnboardingPage() {
 
         {step === 4 && (
           <div className="space-y-6 text-center">
-            <h1 className="text-3xl font-bold">Work Hours</h1>
-            <p className="text-[var(--color-text-muted)] text-sm">Alarms will only fire during these hours.</p>
+            <h1 className="text-3xl font-bold">Schedule & Hours</h1>
+            <p className="text-[var(--color-text-muted)] text-sm">When should we push you to workout?</p>
 
-            <div className="flex gap-4 mt-8">
+            <div className="mt-8 bg-white p-5 rounded-3xl border border-gray-200">
+              <span className="text-xs font-bold text-gray-400 mb-3 block uppercase tracking-wider">Active Days</span>
+              <div className="flex justify-between gap-1">
+                {[
+                  { day: 1, label: 'M' },
+                  { day: 2, label: 'T' },
+                  { day: 3, label: 'W' },
+                  { day: 4, label: 'T' },
+                  { day: 5, label: 'F' },
+                  { day: 6, label: 'S' },
+                  { day: 0, label: 'S' }
+                ].map(({ day, label }) => {
+                  const isActive = activeDays.includes(day);
+                  return (
+                    <button
+                      key={day}
+                      onClick={() => setActiveDays(prev => 
+                        prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day].sort()
+                      )}
+                      className={`w-10 h-10 rounded-full font-bold text-sm flex items-center justify-center transition-all tap-scale ${
+                        isActive 
+                          ? 'bg-[var(--color-primary)] text-white shadow-md shadow-green-200' 
+                          : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="flex gap-4 mt-6">
               <div className="flex-1 bg-white p-5 rounded-3xl border border-gray-200 flex flex-col items-center">
                 <span className="text-4xl mb-4 block">🌅</span>
                 <span className="text-xs font-bold text-gray-400 mb-1 uppercase tracking-wider">Start</span>

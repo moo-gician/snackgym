@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { auth } from '../lib/firebase';
+import { db, auth } from '../lib/firebase';
 import { signOut } from 'firebase/auth';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { deactivateUser } from '../lib/firestore';
 import { Settings, LogOut, Trash2, Share2, Activity } from 'lucide-react';
 
@@ -9,6 +10,37 @@ export default function DashboardPage() {
   const navigate = useNavigate();
   const user = auth.currentUser;
   const [showSettings, setShowSettings] = useState(false);
+  const [isSnoozed, setIsSnoozed] = useState(false);
+
+  useEffect(() => {
+    async function fetchSnooze() {
+      if (user && showSettings) {
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        const data = userDoc.data();
+        if (data?.snooze_until) {
+          const snoozeTime = new Date(data.snooze_until).getTime();
+          setIsSnoozed(snoozeTime > Date.now());
+        }
+      }
+    }
+    fetchSnooze();
+  }, [user, showSettings]);
+
+  const toggleSnooze = async () => {
+    if (!user) return;
+    const newState = !isSnoozed;
+    setIsSnoozed(newState);
+    
+    let snooze_until = null;
+    if (newState) {
+      // Set to 23:59:59 of current local day
+      const now = new Date();
+      now.setHours(23, 59, 59, 999);
+      snooze_until = now.toISOString();
+    }
+    
+    await updateDoc(doc(db, 'users', user.uid), { snooze_until });
+  };
 
   const handleLogout = async () => {
     await signOut(auth);
@@ -97,8 +129,11 @@ export default function DashboardPage() {
             <div className="space-y-4">
               <div className="p-4 bg-gray-50 rounded-xl flex items-center justify-between">
                 <span className="font-medium text-gray-700">Snooze alarms for today 💤</span>
-                {/* Placeholder Toggle (Checked state) */}
-                <div className="w-12 h-6 bg-[var(--color-primary)] rounded-full flex justify-end p-0.5 cursor-pointer">
+                {/* Toggle Switch */}
+                <div 
+                  onClick={toggleSnooze}
+                  className={`w-12 h-6 rounded-full flex p-0.5 cursor-pointer transition-colors ${isSnoozed ? 'bg-[var(--color-primary)] justify-end' : 'bg-gray-300 justify-start'}`}
+                >
                   <div className="w-5 h-5 bg-white rounded-full shadow-sm"></div>
                 </div>
               </div>

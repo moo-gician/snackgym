@@ -9,6 +9,11 @@ type CourseType = 'MICRO' | 'COMPACT' | 'CIRCUIT' | null;
 type SpotterType = 'SPARTAN' | null;
 type NotificationMethod = 'telegram' | 'none' | null;
 
+const TIME_OPTIONS = Array.from({length: 48}).map((_, i) => {
+  const h = Math.floor(i / 2).toString().padStart(2, '0');
+  const m = (i % 2 === 0) ? '00' : '30';
+  return `${h}:${m}`;
+});
 export default function OnboardingPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -330,28 +335,32 @@ export default function OnboardingPage() {
                 </div>
               </div>
 
-              <div className="bg-[var(--color-charcoal)] p-5 rounded-none border border-gray-800 relative mb-4">
+              <div className="bg-[var(--color-charcoal)] p-5 rounded-none border border-gray-800 relative mb-4 overflow-hidden">
                 <span className="font-display font-bold text-[var(--color-bronze)] mb-4 block uppercase tracking-widest text-[11px]">Engagement Window</span>
-                <div className="flex gap-4">
-                  <div className="flex-1 bg-[var(--color-abyss)] p-4 rounded-none border border-gray-800 flex flex-col items-center justify-center relative shadow-sm">
+                <div className="flex flex-row justify-between gap-3 w-full">
+                  <div className="flex-1 bg-[var(--color-abyss)] py-4 px-0 md:px-2 rounded-none border border-gray-800 flex flex-col items-center justify-center relative shadow-sm overflow-hidden min-w-0">
                     <div className="absolute top-2 right-2 w-1.5 h-1.5 bg-[var(--color-bronze)]/40"></div>
-                    <input type="time" value={workStartTime} onChange={e => setWorkStartTime(e.target.value)} className="w-full text-center font-display font-bold text-3xl outline-none bg-transparent text-[var(--color-bone)] leading-none tracking-tighter" />
+                    <select value={workStartTime} onChange={e => setWorkStartTime(e.target.value)} className="w-full text-center font-display font-bold text-3xl md:text-4xl outline-none bg-transparent text-[var(--color-bone)] leading-none tracking-tighter appearance-none cursor-pointer">
+                      {TIME_OPTIONS.map(time => <option key={time} value={time} className="bg-[var(--color-charcoal)] text-lg">{time}</option>)}
+                    </select>
                     <span className="font-display font-bold text-[10px] text-[var(--color-ash)] mt-2 uppercase tracking-widest">Commence</span>
                   </div>
-                  <div className="flex-1 bg-[var(--color-abyss)] p-4 rounded-none border border-gray-800 flex flex-col items-center justify-center relative shadow-sm opacity-90">
+                  <div className="flex-1 bg-[var(--color-abyss)] py-4 px-0 md:px-2 rounded-none border border-gray-800 flex flex-col items-center justify-center relative shadow-sm opacity-90 overflow-hidden min-w-0">
                     <div className="absolute top-2 right-2 w-1.5 h-1.5 bg-[var(--color-blood)]/40"></div>
-                    <input type="time" value={workEndTime} onChange={e => setWorkEndTime(e.target.value)} className="w-full text-center font-display font-bold text-3xl outline-none bg-transparent text-[var(--color-bone)] leading-none tracking-tighter" />
+                    <select value={workEndTime} onChange={e => setWorkEndTime(e.target.value)} className="w-full text-center font-display font-bold text-3xl md:text-4xl outline-none bg-transparent text-[var(--color-bone)] leading-none tracking-tighter appearance-none cursor-pointer">
+                      {TIME_OPTIONS.map(time => <option key={time} value={time} className="bg-[var(--color-charcoal)] text-lg">{time}</option>)}
+                    </select>
                     <span className="font-display font-bold text-[10px] text-[var(--color-ash)] mt-2 uppercase tracking-widest">Ceasefire</span>
                   </div>
                 </div>
               </div>
               
               <div className="bg-[var(--color-charcoal)] p-5 rounded-none border border-gray-800 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-3 h-3 bg-[var(--color-bronze)]"></div>
+                <div className={`absolute top-0 right-0 w-3 h-3 transition-colors duration-300 ${sessionsPerDay === 4 ? 'bg-[var(--color-bronze)]' : sessionsPerDay === 6 ? 'bg-orange-600' : 'bg-[var(--color-blood)]'}`}></div>
                 
                 <div className="flex justify-between items-end mb-2 relative z-10">
                   <span className="font-display font-bold text-[var(--color-ash)] uppercase tracking-widest text-[11px]">Target Volume</span>
-                  <span className="font-display font-bold text-[var(--color-bronze)]">
+                  <span className={`font-display font-bold transition-colors duration-300 ${sessionsPerDay === 4 ? 'text-[var(--color-bronze)]' : sessionsPerDay === 6 ? 'text-orange-500' : 'text-[var(--color-blood)]'}`}>
                     <span className="text-3xl">{sessionsPerDay}</span> 
                     <span className="text-sm text-[var(--color-ash)] font-sans tracking-normal ml-1">x / day</span>
                   </span>
@@ -364,18 +373,24 @@ export default function OnboardingPage() {
                     setSessionsPerDay(prev => prev === 8 ? 4 : prev + 2);
                   }}
                 >
-                  {Array.from({length: 8}).map((_, i) => (
-                    <div key={i} className={`flex-1 ${i < sessionsPerDay ? 'bg-[var(--color-bronze)] shadow-[0_0_10px_rgba(200,154,81,0.5)]' : 'bg-[var(--color-abyss)] border border-gray-800 relative overflow-hidden'}`}>
-                      {i >= sessionsPerDay && (
-                        <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,rgba(255,255,255,0.05)_2px,rgba(255,255,255,0.05)_4px)]"></div>
-                      )}
-                    </div>
-                  ))}
+                  {Array.from({length: 8}).map((_, i) => {
+                    const isFilled = i < sessionsPerDay;
+                    const colorClass = sessionsPerDay === 4 ? 'bg-[var(--color-bronze)] shadow-[0_0_10px_rgba(200,154,81,0.5)]' :
+                                       sessionsPerDay === 6 ? 'bg-orange-600 shadow-[0_0_15px_rgba(234,88,12,0.5)]' :
+                                       'bg-[var(--color-blood)] shadow-[0_0_15px_rgba(197,0,13,0.8)]';
+                    return (
+                      <div key={i} className={`flex-1 transition-colors duration-300 ${isFilled ? colorClass : 'bg-[var(--color-abyss)] border border-gray-800 relative overflow-hidden'}`}>
+                        {!isFilled && (
+                          <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,rgba(255,255,255,0.05)_2px,rgba(255,255,255,0.05)_4px)]"></div>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
                 
-                <div className="flex justify-between mt-3 text-[10px] font-display font-bold text-[var(--color-ash)] uppercase tracking-widest relative z-10">
-                  <span className="opacity-70">Tap to calibrate</span>
-                  <span className="text-[var(--color-bronze)]">
+                <div className="flex justify-between mt-3 text-[10px] font-display font-bold uppercase tracking-widest relative z-10">
+                  <span className="text-[var(--color-ash)] opacity-70">Tap to calibrate</span>
+                  <span className={`transition-colors duration-300 ${sessionsPerDay === 4 ? 'text-[var(--color-bronze)]' : sessionsPerDay === 6 ? 'text-orange-500' : 'text-[var(--color-blood)]'}`}>
                     {sessionsPerDay === 4 ? 'BASE' : sessionsPerDay === 6 ? 'SPARTAN' : 'DEATH'}
                   </span>
                 </div>

@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 type BodyMapProps = {
   selectedMuscles: string[];
   onChange: (muscles: string[]) => void;

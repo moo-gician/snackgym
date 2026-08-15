@@ -8,6 +8,7 @@ import { db } from './lib/firebase'
 import LandingPage from './pages/LandingPage'
 import OnboardingPage from './pages/OnboardingPage'
 import DashboardPage from './pages/DashboardPage'
+import SessionPage from './pages/SessionPage'
 import './index.css'
 
 function App() {
@@ -77,12 +78,7 @@ function App() {
       <Route path="/onboarding" element={<OnboardingPage />} />
       
       {/* TODO: Create SessionPage & Dashboard */}
-      <Route path="/session/:id" element={
-        <div className="p-8 text-center">
-          <h2 className="text-2xl font-bold mb-4">Session View</h2>
-          <p>Session ID: {location.pathname.split('/').pop()}</p>
-        </div>
-      } />
+      <Route path="/session/:id" element={<SessionPage />} />
       
       <Route path="/dashboard" element={<DashboardPage />} />
       

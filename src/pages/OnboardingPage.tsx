@@ -143,7 +143,7 @@ export default function OnboardingPage() {
       <div className="flex-1 animate-fade-in-up">
         {step === 1 && (
           <div className="space-y-6 text-center">
-            <h1 className="text-3xl font-bold mb-6">Scan your armory 🛠️</h1>
+            <h1 className="text-3xl font-bold mb-6">What weapons are we using? 🛠️</h1>
             <div className="grid grid-cols-2 gap-4 mt-8">
               {[
                 { id: 'Bodyweight', Icon: IconBodyweight, label: 'Bodyweight' },
@@ -186,7 +186,7 @@ export default function OnboardingPage() {
 
         {step === 2 && (
           <div className="space-y-6 text-center">
-            <h1 className="text-3xl font-bold mb-6">Mark your targets 🎯</h1>
+            <h1 className="text-3xl font-bold mb-6">What are we destroying today? 🎯</h1>
             <div className="mt-8">
               <BodyMap selectedMuscles={muscles} onChange={setMuscles} />
             </div>
@@ -195,7 +195,7 @@ export default function OnboardingPage() {
 
         {step === 3 && (
           <div className="space-y-6 text-center">
-            <h1 className="text-3xl font-bold mb-6">Select your dose of pain ⚡</h1>
+            <h1 className="text-3xl font-bold mb-6">How long can you survive? ⚡</h1>
             
             <div className="grid grid-cols-1 gap-4 mt-8">
               <button 
@@ -242,7 +242,7 @@ export default function OnboardingPage() {
 
         {step === 4 && (
           <div className="space-y-6 text-center">
-            <h1 className="text-3xl font-bold mb-6">Schedule your assault ⏰</h1>
+            <h1 className="text-3xl font-bold mb-6">When do I strike you? ⏰</h1>
 
             <div className="mt-8 bg-white p-5 rounded-3xl border border-gray-200">
               <span className="text-xs font-bold text-gray-400 mb-3 block uppercase tracking-wider">Active Days</span>
@@ -303,7 +303,7 @@ export default function OnboardingPage() {
 
         {step === 5 && (
           <div className="space-y-6 text-center">
-            <h1 className="text-3xl font-bold mb-6">Choose your executioner 💀</h1>
+            <h1 className="text-3xl font-bold mb-6">Who is dragging you through hell? 💀</h1>
             
             <div className="grid grid-cols-3 gap-3 mt-8">
               {[
@@ -342,7 +342,7 @@ export default function OnboardingPage() {
 
         {step === 6 && (
           <div className="space-y-6 flex flex-col items-center text-center pt-10">
-            <h1 className="text-3xl font-bold mb-6">Locked and Loaded 🚪</h1>
+            <h1 className="text-3xl font-bold mb-6">No retreat! 🚪</h1>
 
             <div className="grid grid-cols-2 gap-4 w-full">
               <button 

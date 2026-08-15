@@ -31,7 +31,7 @@ export default function LandingPage() {
       <header className="fixed top-0 inset-x-0 z-50 bg-[var(--color-abyss)]/90 backdrop-blur-xl border-b border-[var(--color-bronze)]/20">
         <div className="h-16 px-6 max-w-5xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-2xl drop-shadow-[0_0_8px_rgba(200,154,81,0.5)]">💀</span>
+            <img src="https://lh3.googleusercontent.com/aida/AP1WRLvL3hsJ2y4za4DRON2I13kxqT-k84HauYfDzQw6W6u3cozHNVsMbONuPLoKkpVT9dK2a1_u0uo5vksj3dc0-FFdlJ-HgueDt5Cr7wA0Nbke59Hpo54CjjZVI1U9V7fLylSFWlbOuYQr89qYPV01DmM5z23_uMNsQEX5cTcUVnv7nVqkVilcjqh6NlXdPTs3E1aAlwUkt9IGCc1g546aHK--oY8-vDnNFeA2ALgnjZJX0QPTTSslf65rvyo" alt="BEAST Logo" className="w-8 h-8 object-contain rounded-sm drop-shadow-[0_0_8px_rgba(200,154,81,0.5)]" />
             <span className="font-display font-bold text-xl uppercase tracking-widest text-[var(--color-bronze)]">B.E.A.S.T.</span>
           </div>
           <button
@@ -48,16 +48,16 @@ export default function LandingPage() {
         {/* Hero Section */}
         <section className="relative w-full min-h-[85vh] flex flex-col items-center justify-end px-6 pb-24 pt-16">
           {/* Background Image */}
-          <div className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat border-b border-[var(--color-bronze)]/30" 
+          <div className="absolute inset-0 z-0 bg-cover bg-top bg-no-repeat border-b border-[var(--color-bronze)]/30" 
             style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida/AP1WRLuYqZC1aoFbz0Y8r-fW67HW8hAQ11A98HDm2piHhnNm2-kLaX3Mz66Qtv_gtaqPf8sl5gARe5MA3NefkqouGx0JHh_E-4irJgSQxYbnzZg5nh0KiVuM9z8w0z577CEzpyw3GqnQ4CcKzucYFHaxIPW6-mrbX92nKSkjkn9Kiir5D54c72h6AXM8jQejc9WXTF4AbL5UWrDfBS-DFN5mYGRuRHJZGSvB52uM_DdsxQpbHyVMF1aavg6YeVw')" }}>
             {/* Gradient Overlays for readability */}
             <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-abyss)] via-[var(--color-abyss)]/80 to-transparent"></div>
-            <div className="absolute inset-0 bg-gradient-to-b from-[var(--color-abyss)]/80 via-transparent to-transparent"></div>
+            <div className="absolute inset-0 bg-gradient-to-b from-[var(--color-abyss)]/40 via-transparent to-transparent"></div>
             <div className="absolute inset-0 bg-[var(--color-bronze)]/5 mix-blend-overlay"></div>
           </div>
 
           {/* Content */}
-          <div className="relative z-10 w-full flex flex-col items-center text-center max-w-lg mx-auto">
+          <div className="relative z-10 w-full flex flex-col items-center text-center max-w-lg mx-auto mt-[35vh]">
             {/* Headline */}
             <h1 className="font-display font-bold text-[64px] leading-[60px] md:text-[80px] md:leading-[80px] text-[var(--color-bone)] uppercase mb-10 flex flex-col items-center drop-shadow-2xl animate-fade-in-up">
               <span className="block text-[var(--color-bone)]">BLOOD.</span>

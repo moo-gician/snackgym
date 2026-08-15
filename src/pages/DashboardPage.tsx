@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { auth } from '../lib/firebase';
 import { signOut } from 'firebase/auth';
 import { deactivateUser } from '../lib/firestore';
-import { Settings, LogOut, Trash2, Share2, Activity, RotateCcw } from 'lucide-react';
+import { Settings, LogOut, Trash2, Share2, Activity } from 'lucide-react';
 
 export default function DashboardPage() {
   const navigate = useNavigate();
@@ -103,20 +103,46 @@ export default function DashboardPage() {
                 </div>
               </div>
 
-              <button onClick={() => navigate('/onboarding')} className="w-full p-4 flex items-center gap-3 text-blue-600 hover:bg-blue-50 rounded-xl transition-colors">
-                <RotateCcw size={20} />
-                <span className="font-medium">Restart Onboarding (Change Equipment)</span>
-              </button>
+              <div className="pt-4">
+                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Onboarding Settings</h3>
+                <div className="grid grid-cols-2 gap-3">
+                  <button onClick={() => navigate('/onboarding?step=1')} className="p-3 bg-white border border-gray-200 rounded-xl flex items-center gap-2 hover:border-blue-300 tap-scale text-left">
+                    <span className="text-xl">🏋️</span>
+                    <span className="font-bold text-sm text-gray-700">Equipment</span>
+                  </button>
+                  <button onClick={() => navigate('/onboarding?step=2')} className="p-3 bg-white border border-gray-200 rounded-xl flex items-center gap-2 hover:border-blue-300 tap-scale text-left">
+                    <span className="text-xl">💪</span>
+                    <span className="font-bold text-sm text-gray-700">Muscles</span>
+                  </button>
+                  <button onClick={() => navigate('/onboarding?step=3')} className="p-3 bg-white border border-gray-200 rounded-xl flex items-center gap-2 hover:border-blue-300 tap-scale text-left">
+                    <span className="text-xl">⚡</span>
+                    <span className="font-bold text-sm text-gray-700">Routine</span>
+                  </button>
+                  <button onClick={() => navigate('/onboarding?step=4')} className="p-3 bg-white border border-gray-200 rounded-xl flex items-center gap-2 hover:border-blue-300 tap-scale text-left">
+                    <span className="text-xl">⏰</span>
+                    <span className="font-bold text-sm text-gray-700">Time & Freq</span>
+                  </button>
+                  <button onClick={() => navigate('/onboarding?step=5')} className="p-3 bg-white border border-gray-200 rounded-xl flex items-center gap-2 hover:border-blue-300 tap-scale text-left">
+                    <span className="text-xl">🤬</span>
+                    <span className="font-bold text-sm text-gray-700">Spotter</span>
+                  </button>
+                  <button onClick={() => navigate('/onboarding?step=6')} className="p-3 bg-white border border-gray-200 rounded-xl flex items-center gap-2 hover:border-blue-300 tap-scale text-left">
+                    <span className="text-xl">🔔</span>
+                    <span className="font-bold text-sm text-gray-700">Alerts</span>
+                  </button>
+                </div>
+              </div>
               
-              <button onClick={handleLogout} className="w-full p-4 flex items-center gap-3 text-gray-700 hover:bg-gray-50 rounded-xl transition-colors">
-                <LogOut size={20} />
-                <span className="font-medium">Logout</span>
-              </button>
-              
-              <button onClick={handleSoftDelete} className="w-full p-4 flex items-center gap-3 text-red-500 hover:bg-red-50 rounded-xl transition-colors mt-8">
-                <Trash2 size={20} />
-                <span className="font-medium">Delete Account</span>
-              </button>
+              <div className="pt-6 space-y-2">
+                <button onClick={handleSoftDelete} className="w-full p-4 flex items-center justify-center gap-3 text-red-500 hover:bg-red-50 rounded-xl transition-colors border border-transparent">
+                  <Trash2 size={20} />
+                  <span className="font-bold">Delete Account</span>
+                </button>
+                <button onClick={handleLogout} className="w-full p-4 flex items-center justify-center gap-3 text-gray-500 hover:bg-gray-100 rounded-xl transition-colors border border-gray-200">
+                  <LogOut size={20} />
+                  <span className="font-bold">Logout</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { auth } from '../lib/firebase';
 import { saveOnboardingData } from '../lib/firestore';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
@@ -12,7 +12,9 @@ type NotificationMethod = 'telegram' | 'email' | 'none' | null;
 
 export default function OnboardingPage() {
   const navigate = useNavigate();
-  const [step, setStep] = useState(1);
+  const [searchParams] = useSearchParams();
+  const initialStep = parseInt(searchParams.get('step') || '1', 10);
+  const [step, setStep] = useState(initialStep);
   
   // Persisted state via sessionStorage to prevent loss on refresh
   const [equipment, setEquipment] = useState<string[]>(() => {

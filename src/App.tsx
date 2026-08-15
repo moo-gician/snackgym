@@ -74,7 +74,7 @@ function App() {
     <Routes>
       {/* If logged in and at root, redirect to onboarding or dashboard */}
       <Route path="/" element={<Navigate to={isOnboarded ? "/dashboard" : "/onboarding"} replace />} />
-      <Route path="/onboarding" element={isOnboarded ? <Navigate to="/dashboard" replace /> : <OnboardingPage />} />
+      <Route path="/onboarding" element={<OnboardingPage />} />
       
       {/* TODO: Create SessionPage & Dashboard */}
       <Route path="/session/:id" element={

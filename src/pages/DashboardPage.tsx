@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { auth } from '../lib/firebase';
 import { signOut } from 'firebase/auth';
 import { deactivateUser } from '../lib/firestore';
-import { Settings, LogOut, Trash2, Share2, Activity } from 'lucide-react';
+import { Settings, LogOut, Trash2, Share2, Activity, RotateCcw } from 'lucide-react';
 
 export default function DashboardPage() {
   const navigate = useNavigate();
@@ -102,6 +102,11 @@ export default function DashboardPage() {
                   <div className="w-5 h-5 bg-white rounded-full shadow-sm"></div>
                 </div>
               </div>
+
+              <button onClick={() => navigate('/onboarding')} className="w-full p-4 flex items-center gap-3 text-blue-600 hover:bg-blue-50 rounded-xl transition-colors">
+                <RotateCcw size={20} />
+                <span className="font-medium">Restart Onboarding (Change Equipment)</span>
+              </button>
               
               <button onClick={handleLogout} className="w-full p-4 flex items-center gap-3 text-gray-700 hover:bg-gray-50 rounded-xl transition-colors">
                 <LogOut size={20} />

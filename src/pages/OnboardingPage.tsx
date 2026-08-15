@@ -215,47 +215,75 @@ export default function OnboardingPage() {
               <h1 className="font-display font-bold text-3xl md:text-4xl text-[var(--color-bone)] uppercase tracking-wide leading-tight text-center mb-2">HOW LONG CAN YOU SURVIVE?</h1>
               <p className="font-display font-bold text-[var(--color-bronze)] mt-2 mb-8 uppercase text-center text-sm tracking-widest">Calibrate the intensity of your suffering.</p>
               
-              <div className="grid grid-cols-1 gap-4 pb-12">
+              <div className="flex flex-col gap-4 flex-grow pb-12 w-full max-w-md mx-auto">
+                {/* Option 1: MICRO */}
                 <button 
                   onClick={() => { if(navigator.vibrate) navigator.vibrate(50); setCourse('MICRO'); }}
-                  className={`group relative w-full h-36 rounded-none border flex items-center p-6 transition-all active:scale-[0.98] ${
-                    course === 'MICRO' ? 'border-[var(--color-blood)] bg-[var(--color-charcoal)] shadow-[0_0_20px_rgba(217,26,26,0.2)]' : 'border-gray-800 bg-[var(--color-charcoal)] hover:border-[var(--color-blood)]'
+                  className={`group relative w-full text-left bg-[var(--color-charcoal)] p-5 overflow-hidden transition-all active:scale-[0.98] ${
+                    course === 'MICRO' ? 'border-2 border-[var(--color-bronze)] shadow-[0_0_15px_rgba(200,154,81,0.3)]' : 'border border-gray-800 hover:border-[var(--color-bronze)]/50 hover:shadow-[0_0_15px_rgba(200,154,81,0.1)]'
                   }`}
                 >
-                  <div className={`absolute top-0 right-0 w-2 h-2 transition-colors ${course === 'MICRO' ? 'bg-[var(--color-blood)]' : 'bg-gray-800 group-hover:bg-[var(--color-blood)]'}`}></div>
-                  <span className={`text-5xl mr-6 transition-transform duration-300 ${course === 'MICRO' ? 'scale-110 drop-shadow-[0_0_15px_rgba(217,26,26,0.5)]' : 'group-hover:scale-110 grayscale group-hover:grayscale-0'}`}>⚡</span>
-                  <div className="text-left flex flex-col">
-                    <span className={`font-display font-bold text-xl md:text-2xl uppercase tracking-widest ${course === 'MICRO' ? 'text-[var(--color-blood)]' : 'text-[var(--color-bone)] group-hover:text-[var(--color-blood)]'}`}>Micro Assault</span>
-                    <span className="font-sans text-xs text-[var(--color-ash)] uppercase tracking-widest mt-1">1-2m. 1 set. Max effort.</span>
+                  <div className={`absolute top-0 right-0 w-3 h-3 border-l-2 border-b-2 border-[var(--color-charcoal)] transition-colors ${course === 'MICRO' ? 'bg-[var(--color-bronze)]' : 'bg-transparent group-hover:bg-[var(--color-bronze)]/50'}`}></div>
+                  
+                  <div className="flex justify-between items-center relative z-10">
+                    <h2 className={`font-display font-bold text-2xl uppercase tracking-widest ${course === 'MICRO' ? 'text-[var(--color-bronze)]' : 'text-[var(--color-bone)] group-hover:text-[var(--color-bronze)]'}`}>
+                      Micro Assault
+                    </h2>
+                    <span className="font-display font-bold text-[var(--color-ash)] bg-[var(--color-abyss)] px-3 py-1.5 text-sm uppercase tracking-widest border border-gray-800">
+                      1-2m
+                    </span>
                   </div>
+
+                  {/* Scanline effect for selected */}
+                  {course === 'MICRO' && (
+                    <div className="absolute inset-0 bg-[linear-gradient(rgba(200,154,81,0.05)_1px,transparent_1px)] bg-[size:100%_4px] opacity-50 pointer-events-none"></div>
+                  )}
                 </button>
 
+                {/* Option 2: COMPACT */}
                 <button 
                   onClick={() => { if(navigator.vibrate) navigator.vibrate(50); setCourse('COMPACT'); }}
-                  className={`group relative w-full h-36 rounded-none border flex items-center p-6 transition-all active:scale-[0.98] ${
-                    course === 'COMPACT' ? 'border-[var(--color-blood)] bg-[var(--color-charcoal)] shadow-[0_0_20px_rgba(217,26,26,0.2)]' : 'border-gray-800 bg-[var(--color-charcoal)] hover:border-[var(--color-blood)]'
+                  className={`group relative w-full text-left bg-[var(--color-charcoal)] p-5 overflow-hidden transition-all active:scale-[0.98] ${
+                    course === 'COMPACT' ? 'border-2 border-[var(--color-bronze)] shadow-[0_0_15px_rgba(200,154,81,0.3)]' : 'border border-gray-800 hover:border-[var(--color-bronze)]/50 hover:shadow-[0_0_15px_rgba(200,154,81,0.1)]'
                   }`}
                 >
-                  <div className={`absolute top-0 right-0 w-2 h-2 transition-colors ${course === 'COMPACT' ? 'bg-[var(--color-blood)]' : 'bg-gray-800 group-hover:bg-[var(--color-blood)]'}`}></div>
-                  <span className={`text-5xl mr-6 transition-transform duration-300 ${course === 'COMPACT' ? 'scale-110 drop-shadow-[0_0_15px_rgba(217,26,26,0.5)]' : 'group-hover:scale-110 grayscale group-hover:grayscale-0'}`}>🔥</span>
-                  <div className="text-left flex flex-col">
-                    <span className={`font-display font-bold text-xl md:text-2xl uppercase tracking-widest ${course === 'COMPACT' ? 'text-[var(--color-blood)]' : 'text-[var(--color-bone)] group-hover:text-[var(--color-blood)]'}`}>Compact Target</span>
-                    <span className="font-sans text-xs text-[var(--color-ash)] uppercase tracking-widest mt-1">3-5m. 0 rest. Max pump.</span>
+                  <div className={`absolute top-0 right-0 w-3 h-3 border-l-2 border-b-2 border-[var(--color-charcoal)] transition-colors ${course === 'COMPACT' ? 'bg-[var(--color-bronze)]' : 'bg-transparent group-hover:bg-[var(--color-bronze)]/50'}`}></div>
+                  
+                  <div className="flex justify-between items-center relative z-10">
+                    <h2 className={`font-display font-bold text-2xl uppercase tracking-widest ${course === 'COMPACT' ? 'text-[var(--color-bronze)]' : 'text-[var(--color-bone)] group-hover:text-[var(--color-bronze)]'}`}>
+                      Compact Target
+                    </h2>
+                    <span className="font-display font-bold text-[var(--color-ash)] bg-[var(--color-abyss)] px-3 py-1.5 text-sm uppercase tracking-widest border border-gray-800">
+                      3-5m
+                    </span>
                   </div>
+
+                  {course === 'COMPACT' && (
+                    <div className="absolute inset-0 bg-[linear-gradient(rgba(200,154,81,0.05)_1px,transparent_1px)] bg-[size:100%_4px] opacity-50 pointer-events-none"></div>
+                  )}
                 </button>
 
+                {/* Option 3: CIRCUIT */}
                 <button 
                   onClick={() => { if(navigator.vibrate) navigator.vibrate(50); setCourse('CIRCUIT'); }}
-                  className={`group relative w-full h-36 rounded-none border flex items-center p-6 transition-all active:scale-[0.98] ${
-                    course === 'CIRCUIT' ? 'border-[var(--color-blood)] bg-[var(--color-charcoal)] shadow-[0_0_20px_rgba(217,26,26,0.2)]' : 'border-gray-800 bg-[var(--color-charcoal)] hover:border-[var(--color-blood)]'
+                  className={`group relative w-full text-left bg-[var(--color-charcoal)] p-5 overflow-hidden transition-all active:scale-[0.98] ${
+                    course === 'CIRCUIT' ? 'border-2 border-[var(--color-bronze)] shadow-[0_0_15px_rgba(200,154,81,0.3)]' : 'border border-gray-800 hover:border-[var(--color-bronze)]/50 hover:shadow-[0_0_15px_rgba(200,154,81,0.1)]'
                   }`}
                 >
-                  <div className={`absolute top-0 right-0 w-2 h-2 transition-colors ${course === 'CIRCUIT' ? 'bg-[var(--color-blood)]' : 'bg-gray-800 group-hover:bg-[var(--color-blood)]'}`}></div>
-                  <span className={`text-5xl mr-6 transition-transform duration-300 ${course === 'CIRCUIT' ? 'scale-110 drop-shadow-[0_0_15px_rgba(217,26,26,0.5)]' : 'group-hover:scale-110 grayscale group-hover:grayscale-0'}`}>👑</span>
-                  <div className="text-left flex flex-col">
-                    <span className={`font-display font-bold text-xl md:text-2xl uppercase tracking-widest ${course === 'CIRCUIT' ? 'text-[var(--color-blood)]' : 'text-[var(--color-bone)] group-hover:text-[var(--color-blood)]'}`}>Short Circuit</span>
-                    <span className="font-sans text-xs text-[var(--color-ash)] uppercase tracking-widest mt-1">6-10m. Full body loop.</span>
+                  <div className={`absolute top-0 right-0 w-3 h-3 border-l-2 border-b-2 border-[var(--color-charcoal)] transition-colors ${course === 'CIRCUIT' ? 'bg-[var(--color-bronze)]' : 'bg-transparent group-hover:bg-[var(--color-bronze)]/50'}`}></div>
+                  
+                  <div className="flex justify-between items-center relative z-10">
+                    <h2 className={`font-display font-bold text-2xl uppercase tracking-widest ${course === 'CIRCUIT' ? 'text-[var(--color-bronze)]' : 'text-[var(--color-bone)] group-hover:text-[var(--color-bronze)]'}`}>
+                      Short Circuit
+                    </h2>
+                    <span className="font-display font-bold text-[var(--color-ash)] bg-[var(--color-abyss)] px-3 py-1.5 text-sm uppercase tracking-widest border border-gray-800">
+                      6-10m
+                    </span>
                   </div>
+
+                  {course === 'CIRCUIT' && (
+                    <div className="absolute inset-0 bg-[linear-gradient(rgba(200,154,81,0.05)_1px,transparent_1px)] bg-[size:100%_4px] opacity-50 pointer-events-none"></div>
+                  )}
                 </button>
               </div>
             </div>

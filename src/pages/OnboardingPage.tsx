@@ -79,7 +79,7 @@ export default function OnboardingPage() {
       ['ob_equipment', 'ob_muscles', 'ob_course', 'ob_workStart', 'ob_workEnd', 'ob_sessions', 'ob_spotter', 'ob_notif'].forEach(k => sessionStorage.removeItem(k));
 
       if (notificationMethod === 'telegram') {
-        const telegramUrl = `https://t.me/SnackGymBot?start=${user.uid}`;
+        const telegramUrl = `https://t.me/SnackGym_Supporter_Bot?start=${user.uid}`;
         window.location.href = telegramUrl;
       } else {
         navigate('/dashboard');

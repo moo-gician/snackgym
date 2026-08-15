@@ -186,7 +186,7 @@ export default function OnboardingPage() {
 
         {step === 2 && (
           <div className="space-y-6 text-center">
-            <h1 className="text-3xl font-bold mb-6">Any sore muscles?</h1>
+            <h1 className="text-3xl font-bold mb-6">What do you want to pump?</h1>
             <div className="mt-8">
               <BodyMap selectedMuscles={muscles} onChange={setMuscles} />
             </div>

@@ -55,3 +55,4 @@
 - **v1.6.0** (2026-08-16): Dynamic Split & Custom Exercise Pool 알고리즘 (Armory Onboarding & Session Generation) 통합 완료.
 - **v1.6.1** (2026-08-16): Split Strategy 필터링 및 할당 로직 버그 픽스, Armory UI 스크롤 개선 및 세션 당 운동 개수 시간 기준 현실화(1분/개).
 - **v1.6.2** (2026-08-16): Onboarding Bottom Nav 이탈 시 자동 저장(Auto-save) 로직 구현 및 과금 최적화(단일 Write 패턴) 검증 완료.
+- **v1.7.0** (2026-08-16): Achievement 탭 고도화. Daily/Weekly/Monthly 데이터 분리, Spoils UI 3열 확장, Rank 및 Streak UI 2분할 컴팩트화 완료.

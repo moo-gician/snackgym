@@ -47,6 +47,11 @@
 - [x] DashboardPage: Daily Beating Ring (bronze) 및 텍스트 톤앤매너 전면 스파르타화
 - [x] SessionPage: 핏빛 불꽃 애니메이션(💥) 추가 및 폰트 계층화(Oswald & Inter)
 
+## Phase 6.6: Achievement 탭 고도화 (완료)
+- [x] 일/주/월간 데이터(today, weekly, monthly calories) 분리 및 저장 로직 구현
+- [x] Spoils of War UI 분할 (Donuts, Beers, Pizzas)
+- [x] Rank 및 Streak 화면 2분할 컴팩트화 및 Next Goal 제시
+
 ## Phase 7: 네이티브 앱 및 스토어 런칭 (장기 플랜)
 - [ ] PWA 기반 코드를 Capacitor 또는 React Native로 패키징
 - [ ] Google Play: 12인 14일 폐쇄 테스트 진행 (품앗이 커뮤니티 활용)

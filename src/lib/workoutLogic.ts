@@ -42,7 +42,7 @@ export function generateCustomPool(
     // Equipment check
     if (ex.equipment !== 'Bodyweight' && !equipment.includes(ex.equipment)) return false;
     // Muscle check
-    if (targetMuscles.length > 0 && !targetMuscles.includes(ex.muscleGroup) && !ex.isStretch) return false;
+    if (targetMuscles.length > 0 && !targetMuscles.includes(ex.muscleGroup)) return false;
     return true;
   });
 

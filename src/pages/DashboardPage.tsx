@@ -454,21 +454,28 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            <div className="bg-[var(--color-charcoal)] p-6 rounded-none border-t border-[var(--color-bronze)] mb-6 relative overflow-hidden flex flex-col items-center text-center">
-              <div className="absolute top-0 right-0 opacity-5 text-[10rem] font-display text-[var(--color-bronze)] translate-x-4 -translate-y-4 pointer-events-none">RANK</div>
-              <h3 className="text-[var(--color-ash)] text-xs font-bold uppercase tracking-widest mb-2">Current Rank</h3>
-              <div className={`text-4xl sm:text-5xl font-display font-black uppercase tracking-wider mb-4 ${rank.color}`}>
-                {rank.title}
+            <div className="grid grid-cols-2 gap-4 mb-4">
+              <div className="bg-[var(--color-charcoal)] p-4 rounded-none border border-gray-800 flex flex-col justify-center relative overflow-hidden">
+                <div className="absolute top-0 right-0 opacity-5 text-6xl font-display text-[var(--color-bronze)] translate-x-2 -translate-y-2 pointer-events-none">STREAK</div>
+                <h3 className="text-[var(--color-ash)] text-xs font-bold uppercase tracking-widest mb-1 relative z-10">Current Streak</h3>
+                <div className="text-3xl font-display font-black text-[var(--color-bone)] flex items-baseline gap-1 relative z-10">
+                  🔥 {streak} <span className="text-xs text-[var(--color-ash)] font-sans">Days</span>
+                </div>
               </div>
               
-              <div className="bg-[var(--color-abyss)] border border-gray-800 px-4 py-3 w-full rounded-none">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-[var(--color-ash)] text-xs font-bold uppercase tracking-wider">Current Streak</span>
-                  <span className="text-xl font-display font-bold text-[var(--color-bone)]">🔥 {streak} <span className="text-xs text-[var(--color-ash)] font-sans">Days</span></span>
+              <div className="bg-[var(--color-charcoal)] p-4 rounded-none border border-gray-800 flex flex-col justify-center relative overflow-hidden text-right">
+                <div className="absolute top-0 left-0 opacity-5 text-6xl font-display text-[var(--color-bronze)] -translate-x-2 -translate-y-2 pointer-events-none">RANK</div>
+                <h3 className="text-[var(--color-ash)] text-xs font-bold uppercase tracking-widest mb-1 relative z-10">Rank</h3>
+                <div className={`text-xl sm:text-2xl font-display font-black uppercase tracking-wider relative z-10 ${rank.color}`}>
+                  {rank.title}
                 </div>
-                <div className="w-full h-px bg-gray-800 mb-2"></div>
-                <p className="text-xs font-bold uppercase tracking-widest text-[var(--color-bronze)]">{rank.nextGoal}</p>
               </div>
+            </div>
+            
+            <div className="bg-[var(--color-charcoal)] border-l-2 border-[var(--color-bronze)] px-4 py-3 mb-6 relative">
+              <p className="text-xs font-bold uppercase tracking-widest text-[var(--color-ash)]">
+                Next Goal: <span className="text-[var(--color-bronze)]">{rank.nextGoal}</span>
+              </p>
             </div>
 
             <div className="bg-[var(--color-charcoal)] p-4 sm:p-6 rounded-none border border-gray-800 mb-6 relative">

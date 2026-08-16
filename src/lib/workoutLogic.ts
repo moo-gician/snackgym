@@ -21,7 +21,7 @@ export function calculateSplitStrategy(
     return '2-Split (Push/Core)';
   }
 
-  if (sessionsPerDay >= 4 && numMuscles >= 4) {
+  if (sessionsPerDay >= 3 && numMuscles >= 4) {
     return '3-Split (Push/Pull/Legs)';
   } else if (sessionsPerDay <= 2 && numMuscles >= 4) {
     return '2-Split (Upper/Lower)';

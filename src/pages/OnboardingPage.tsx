@@ -6,7 +6,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import BodyMap from '../components/BodyMap';
 
 type CourseType = 'MICRO' | 'COMPACT' | 'CIRCUIT' | null;
-type SpotterType = 'SPARTAN' | 'ANGEL' | null;
+type SpotterType = 'SPARTAN' | 'DRILL_SERGEANT' | null;
 type NotificationMethod = 'telegram' | 'none' | null;
 
 const TIME_OPTIONS = Array.from({length: 48}).map((_, i) => {
@@ -451,54 +451,85 @@ export default function OnboardingPage() {
                     subtitle: 'Ruthless. Brutal. Unforgiving.',
                     quote: '"Get up, lazy bones! Time to crush it!"',
                     img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD51FeObMtC6z6ZBtJD8p6aNUgd5xOxJmaxBhjMam0av-ygMXreK223xu94s9zt2p0xexAYJZAN4j31JplRuwrkCgLsWb8f83fxT7FPPVmbI5JuNU5V6i1OMfNdTD7agx2yArUXmxHdaESYc-KnNuwfRu_b86KMi9AsmxCZG_jUf5rrpUhP3VE8saA2CZO1DXeM24KLHR-xUTzAOY3yJ88F9Ct03InCCfqxmjaoHErs8D0xqnq108-0',
-                    color: 'var(--color-blood)'
+                    color: 'var(--color-blood)',
+                    disabled: false
                   },
                   {
-                    id: 'ANGEL',
-                    title: 'CLINICAL COACH',
-                    subtitle: 'Calm. Supportive. Professional.',
-                    quote: '"Let\'s focus on our form and make every rep count."',
-                    img: 'https://lh3.googleusercontent.com/aida/AP1WRLsgLJ5g1ZNVh3cr9hRsSh9ZhnLmi18eAgoHz6jKElc8qJxvVWWXyoexyBuLxYMGnxUzD79Vv3ZX0_AQbuFnybYHrW388DEZJI7dNH29gpNrPhM5bKy8zqT_ekVP-H-3N4GOhVkxX08YTD0JcoQYqKVAX2mZNddok0B824Pk_J-X1A-gJfUWbm37y-2LPOug20-VgstCroHrwLJVWb6tKGcmCbzr_YQ8jtiFzF-JmFeR_pQgfS6kFKvdkInvaPe2wiTtlI-ghEoLPQ',
-                    color: 'var(--color-bronze)'
+                    id: 'DRILL_SERGEANT',
+                    title: 'DRILL SERGEANT',
+                    subtitle: 'Aggressive. Loud. Demanding.',
+                    quote: '"Drop down and give me 50, maggot!"',
+                    img: '/drill_sergeant.jpg',
+                    color: 'var(--color-ash)',
+                    disabled: true
                   }
                 ].map(sp => (
                   <div 
                     key={sp.id}
-                    onClick={() => { if(navigator.vibrate) navigator.vibrate(50); setSpotter(sp.id as SpotterType); }}
-                    className={`relative w-full rounded-xl bg-[var(--color-charcoal)] border overflow-hidden group cursor-pointer transition-all duration-300 active:scale-[0.98] ${
-                      spotter === sp.id ? 'border-[var(--color-blood)] shadow-[0_0_20px_rgba(217,26,26,0.3)]' : 'border-gray-800/30'
+                    onClick={() => { 
+                      if(sp.disabled) return;
+                      if(navigator.vibrate) navigator.vibrate(50); 
+                      setSpotter(sp.id as SpotterType); 
+                    }}
+                    className={`relative w-full rounded-xl bg-[var(--color-charcoal)] border overflow-hidden group transition-all duration-300 ${
+                      sp.disabled
+                        ? 'opacity-60 grayscale cursor-not-allowed border-gray-800'
+                        : spotter === sp.id 
+                          ? 'border-[var(--color-blood)] shadow-[0_0_20px_rgba(217,26,26,0.3)] cursor-pointer active:scale-[0.98]' 
+                          : 'border-gray-800/30 cursor-pointer active:scale-[0.98]'
                     }`}
                   >
-                    <div className={`absolute top-0 right-0 w-4 h-4 border-l border-b rounded-bl-sm transition-colors duration-300 ${
-                      spotter === sp.id ? 'bg-[var(--color-blood)] border-[var(--color-blood)]' : 'bg-[var(--color-bronze)]/20 border-[var(--color-bronze)]/40 group-hover:bg-[var(--color-bronze)]'
-                    }`}></div>
+                    {!sp.disabled && (
+                      <div className={`absolute top-0 right-0 w-4 h-4 border-l border-b rounded-bl-sm transition-colors duration-300 ${
+                        spotter === sp.id ? 'bg-[var(--color-blood)] border-[var(--color-blood)]' : 'bg-[var(--color-bronze)]/20 border-[var(--color-bronze)]/40 group-hover:bg-[var(--color-bronze)]'
+                      }`}></div>
+                    )}
                     
                     <div className="p-6 flex flex-col items-center gap-6 relative z-10">
                       <div className={`w-32 h-32 rounded-full bg-[var(--color-abyss)] border-2 flex items-center justify-center transition-all duration-300 relative overflow-hidden ${
-                        spotter === sp.id ? 'border-[var(--color-blood)] shadow-[0_0_30px_rgba(217,26,26,0.5)]' : 'border-[var(--color-bronze)] shadow-[0_0_20px_rgba(200,154,81,0.3)] group-hover:shadow-[0_0_30px_rgba(200,154,81,0.5)]'
+                        sp.disabled 
+                          ? 'border-gray-600'
+                          : spotter === sp.id 
+                            ? 'border-[var(--color-blood)] shadow-[0_0_30px_rgba(217,26,26,0.5)]' 
+                            : 'border-[var(--color-bronze)] shadow-[0_0_20px_rgba(200,154,81,0.3)] group-hover:shadow-[0_0_30px_rgba(200,154,81,0.5)]'
                       }`}>
                         <img alt={sp.title} className={`w-full h-full object-cover transition-transform duration-500 ${
-                          spotter === sp.id ? 'scale-110' : 'group-hover:scale-110 grayscale group-hover:grayscale-0'
+                          sp.disabled ? '' : spotter === sp.id ? 'scale-110' : 'group-hover:scale-110 grayscale group-hover:grayscale-0'
                         }`} src={sp.img} />
+                        
+                        {sp.disabled && (
+                          <div className="absolute inset-0 bg-black/60 flex items-center justify-center backdrop-blur-[2px]">
+                            <span className="material-symbols-outlined text-[var(--color-bone)] text-3xl">lock</span>
+                          </div>
+                        )}
                       </div>
                       
                       <div className="text-center flex flex-col gap-1">
                         <h2 className={`font-headline-md uppercase tracking-wider transition-colors ${
-                          spotter === sp.id ? 'text-[var(--color-blood)]' : 'text-[var(--color-blood)]/80 group-hover:text-[var(--color-blood)]'
-                        }`}>{sp.title}</h2>
+                          sp.disabled ? 'text-gray-500' : spotter === sp.id ? 'text-[var(--color-blood)]' : 'text-[var(--color-blood)]/80 group-hover:text-[var(--color-blood)]'
+                        }`}>
+                          {sp.title}
+                          {sp.disabled && <span className="block text-[10px] text-[var(--color-bronze)] mt-1 tracking-widest">PRO SUBSCRIPTION REQUIRED</span>}
+                        </h2>
                         <p className={`font-label-bold uppercase tracking-widest text-xs ${
-                          spotter === sp.id ? 'text-[var(--color-bone)]' : 'text-[var(--color-ash)]'
+                          sp.disabled ? 'text-gray-600' : spotter === sp.id ? 'text-[var(--color-bone)]' : 'text-[var(--color-ash)]'
                         }`}>{sp.subtitle}</p>
                       </div>
                       
                       <div className={`w-full p-3 rounded-lg border-l-2 relative overflow-hidden ${
-                        spotter === sp.id ? 'bg-[var(--color-abyss)] border-[var(--color-blood)]' : 'bg-[#0d0e14] border-[var(--color-blood)]/50'
+                        sp.disabled 
+                          ? 'bg-[#0d0e14]/50 border-gray-800'
+                          : spotter === sp.id 
+                            ? 'bg-[var(--color-abyss)] border-[var(--color-blood)]' 
+                            : 'bg-[#0d0e14] border-[var(--color-blood)]/50'
                       }`}>
-                        <div className={`absolute top-0 left-0 w-full h-full bg-[linear-gradient(45deg,transparent_25%,rgba(217,26,26,0.03)_50%,transparent_75%,transparent_100%)] bg-[length:20px_20px] pointer-events-none ${
-                          spotter === sp.id ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
-                        }`}></div>
+                        {!sp.disabled && (
+                          <div className={`absolute top-0 left-0 w-full h-full bg-[linear-gradient(45deg,transparent_25%,rgba(217,26,26,0.03)_50%,transparent_75%,transparent_100%)] bg-[length:20px_20px] pointer-events-none ${
+                            spotter === sp.id ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                          }`}></div>
+                        )}
                         <p className={`font-body-md italic text-center relative z-10 ${
-                          spotter === sp.id ? 'text-[var(--color-bone)]' : 'text-[var(--color-ash)]'
+                          sp.disabled ? 'text-gray-600' : spotter === sp.id ? 'text-[var(--color-bone)]' : 'text-[var(--color-ash)]'
                         }`}>{sp.quote}</p>
                       </div>
                     </div>

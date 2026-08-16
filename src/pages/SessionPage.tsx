@@ -56,10 +56,12 @@ export default function SessionPage() {
     
     if (auth.currentUser) {
       const earnedCalories = calculateCalories();
-      try {
-        await recordSessionComplete(auth.currentUser.uid, earnedCalories);
-      } catch (err) {
-        console.error("Failed to save session record:", err);
+      if (earnedCalories > 0) {
+        try {
+          await recordSessionComplete(auth.currentUser.uid, earnedCalories);
+        } catch (err) {
+          console.error("Failed to save session record:", err);
+        }
       }
     }
     navigate('/dashboard');

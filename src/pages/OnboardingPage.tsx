@@ -520,47 +520,52 @@ export default function OnboardingPage() {
               </div>
 
               <div className="flex flex-col gap-6 pb-6">
-                {Object.entries(customPool).map(([dayName, exerciseIds]) => (
-                  <div key={dayName} className="border border-gray-800 bg-[var(--color-abyss)]">
-                    <div className="bg-[var(--color-charcoal)] p-3 border-b border-gray-800">
-                      <h3 className="font-display font-bold text-[var(--color-bronze)] uppercase tracking-widest">{dayName}</h3>
+                {Object.entries(customPool).map(([dayName, exerciseIds], idx) => {
+                  const dayColor = idx === 0 ? 'text-[var(--color-bronze)]' : idx === 1 ? 'text-orange-500' : 'text-[var(--color-blood)]';
+                  return (
+                    <div key={dayName} className="border border-gray-800 bg-[var(--color-abyss)]">
+                      <div className="bg-[var(--color-charcoal)] p-3 border-b border-gray-800">
+                        <h3 className={`font-display font-bold uppercase tracking-widest ${dayColor}`}>{dayName}</h3>
+                      </div>
+                      <div className="p-3 flex flex-col gap-2">
+                        {exerciseIds.length === 0 ? (
+                          <p className="text-sm text-gray-500 italic">No exercises available. Enable more equipment or muscles.</p>
+                        ) : (
+                          exerciseIds.map(id => {
+                            const ex = EXERCISE_DB.find(e => e.id === id);
+                            if (!ex) return null;
+                            const isBlacklisted = blacklistedExercises.includes(id);
+                            const emoji = ex.equipment === 'Dumbbell' ? '🦾' : ex.equipment === 'Mat' ? '🧘' : ex.equipment === 'PullupBar' ? '🐒' : ex.equipment === 'Bodyweight' ? '🤸' : '🏋️';
+                            
+                            return (
+                              <button
+                                key={id}
+                                onClick={() => toggleExercise(id)}
+                                className={`text-left flex items-center justify-between p-3 border transition-all active:scale-[0.98] ${
+                                  !isBlacklisted 
+                                    ? 'bg-[var(--color-charcoal)] border-[var(--color-bronze)] shadow-[0_0_10px_rgba(200,154,81,0.1)]' 
+                                    : 'bg-[var(--color-abyss)] border-gray-800 opacity-60 grayscale'
+                                }`}
+                              >
+                                <div className="flex flex-col">
+                                  <span className={`font-display font-bold uppercase tracking-widest text-sm flex items-center gap-2 ${!isBlacklisted ? 'text-[var(--color-bone)]' : 'text-gray-500 line-through'}`}>
+                                    <span className="text-lg leading-none">{emoji}</span> {ex.name}
+                                  </span>
+                                  <span className="font-sans text-[10px] text-[var(--color-ash)] uppercase mt-1">
+                                    {ex.muscleGroup} • {ex.equipment}
+                                  </span>
+                                </div>
+                                <div className={`w-5 h-5 border flex items-center justify-center shrink-0 ${!isBlacklisted ? 'border-[var(--color-bronze)] bg-[var(--color-bronze)]/20 text-[var(--color-bronze)]' : 'border-gray-600 bg-transparent text-transparent'}`}>
+                                  {(!isBlacklisted) && <span className="text-xs font-bold leading-none">✓</span>}
+                                </div>
+                              </button>
+                            );
+                          })
+                        )}
+                      </div>
                     </div>
-                    <div className="p-3 flex flex-col gap-2">
-                      {exerciseIds.length === 0 ? (
-                        <p className="text-sm text-gray-500 italic">No exercises available. Enable more equipment or muscles.</p>
-                      ) : (
-                        exerciseIds.map(id => {
-                          const ex = EXERCISE_DB.find(e => e.id === id);
-                          if (!ex) return null;
-                          const isBlacklisted = blacklistedExercises.includes(id);
-                          return (
-                            <button
-                              key={id}
-                              onClick={() => toggleExercise(id)}
-                              className={`text-left flex items-center justify-between p-3 border transition-all active:scale-[0.98] ${
-                                !isBlacklisted 
-                                  ? 'bg-[var(--color-charcoal)] border-[var(--color-bronze)] shadow-[0_0_10px_rgba(200,154,81,0.1)]' 
-                                  : 'bg-[var(--color-abyss)] border-gray-800 opacity-60 grayscale'
-                              }`}
-                            >
-                              <div className="flex flex-col">
-                                <span className={`font-display font-bold uppercase tracking-widest text-sm ${!isBlacklisted ? 'text-[var(--color-bone)]' : 'text-gray-500 line-through'}`}>
-                                  {ex.name}
-                                </span>
-                                <span className="font-sans text-[10px] text-[var(--color-ash)] uppercase mt-1">
-                                  {ex.muscleGroup} • {ex.equipment}
-                                </span>
-                              </div>
-                              <div className={`w-5 h-5 border flex items-center justify-center ${!isBlacklisted ? 'border-[var(--color-bronze)] bg-[var(--color-bronze)]/20 text-[var(--color-bronze)]' : 'border-gray-600 bg-transparent text-transparent'}`}>
-                                {(!isBlacklisted) && <span className="text-xs font-bold leading-none">✓</span>}
-                              </div>
-                            </button>
-                          );
-                        })
-                      )}
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               <div className="flex flex-col gap-3">

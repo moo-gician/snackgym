@@ -77,15 +77,16 @@ export default function OnboardingPage() {
         const userDoc = await getDoc(doc(db, 'users', user.uid));
         if (userDoc.exists()) {
           const data = userDoc.data();
-          if (data.equipment && data.equipment.length > 0) setEquipment(data.equipment);
-          if (data.targetMuscles && data.targetMuscles.length > 0) setMuscles(data.targetMuscles);
-          if (data.course) setCourse(data.course);
-          if (data.workStartTime) setWorkStartTime(data.workStartTime);
-          if (data.workEndTime) setWorkEndTime(data.workEndTime);
-          if (data.sessionsPerDay) setTargetInterval(data.sessionsPerDay === 4 ? 120 : data.sessionsPerDay >= 8 ? 30 : 60);
-          if (data.activeDays) setActiveDays(data.activeDays);
-          if (data.spotter) setSpotter(data.spotter);
-          if (data.notificationMethod) setNotificationMethod(data.notificationMethod);
+          if (!sessionStorage.getItem('ob_equipment') && data.equipment && data.equipment.length > 0) setEquipment(data.equipment);
+          if (!sessionStorage.getItem('ob_muscles') && data.targetMuscles && data.targetMuscles.length > 0) setMuscles(data.targetMuscles);
+          if (!sessionStorage.getItem('ob_course') && data.course) setCourse(data.course);
+          if (!sessionStorage.getItem('ob_workStart') && data.workStartTime) setWorkStartTime(data.workStartTime);
+          if (!sessionStorage.getItem('ob_workEnd') && data.workEndTime) setWorkEndTime(data.workEndTime);
+          if (!sessionStorage.getItem('ob_interval') && data.sessionsPerDay) setTargetInterval(data.sessionsPerDay === 4 ? 120 : data.sessionsPerDay >= 8 ? 30 : 60);
+          if (!sessionStorage.getItem('ob_activeDays') && data.activeDays) setActiveDays(data.activeDays);
+          if (!sessionStorage.getItem('ob_spotter') && data.spotter) setSpotter(data.spotter);
+          if (!sessionStorage.getItem('ob_notif') && data.notificationMethod) setNotificationMethod(data.notificationMethod);
+          if (!sessionStorage.getItem('ob_blacklist') && data.blacklistedExercises) setBlacklistedExercises(data.blacklistedExercises);
         }
         setDataLoaded(true);
       }

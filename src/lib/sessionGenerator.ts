@@ -5,9 +5,9 @@ export function generateSessionExercises(
   course: 'MICRO' | 'COMPACT' | 'CIRCUIT',
   existingIds: string[] = []
 ): Exercise[] {
-  let targetCount = 3;
-  if (course === 'COMPACT') targetCount = 5;
-  if (course === 'CIRCUIT') targetCount = 7;
+  let targetCount = 2; // MICRO (1-2 mins)
+  if (course === 'COMPACT') targetCount = 4; // COMPACT (3-5 mins)
+  if (course === 'CIRCUIT') targetCount = 8; // CIRCUIT (6-10 mins)
   
   if (existingIds.length > 0) {
     targetCount = existingIds.length + 2;

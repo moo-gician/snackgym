@@ -211,7 +211,7 @@ export default function DashboardPage() {
             </div>
             
             {/* Spotter Bubble */}
-            <div className={`px-4 z-10 mt-6 transition-all duration-700 ${isSnoozed ? 'grayscale opacity-70' : ''}`}>
+            <div className="px-4 z-10 mt-6 transition-all duration-700">
               <div className="relative bg-[var(--color-charcoal)] border border-[var(--color-blood)]/30 p-4 rounded-none shadow-[0_0_20px_rgba(217,26,26,0.15)] overflow-hidden">
                 <div className="absolute top-0 right-0 w-2 h-2 bg-[var(--color-blood)]"></div>
                 <div className="absolute top-0 left-0 right-2 h-[1px] bg-gradient-to-r from-[var(--color-blood)]/50 to-transparent"></div>

@@ -547,13 +547,18 @@ export default function OnboardingPage() {
                                     : 'bg-[var(--color-abyss)] border-gray-800 opacity-60 grayscale'
                                 }`}
                               >
-                                <div className="flex flex-col">
-                                  <span className={`font-display font-bold uppercase tracking-widest text-sm flex items-center gap-2 ${!isBlacklisted ? 'text-[var(--color-bone)]' : 'text-gray-500 line-through'}`}>
-                                    <span className="text-lg leading-none">{emoji}</span> {ex.name}
+                                <div className="flex items-center gap-4">
+                                  <span className={`text-3xl leading-none transition-all ${!isBlacklisted ? '' : 'grayscale opacity-50'}`}>
+                                    {emoji}
                                   </span>
-                                  <span className="font-sans text-[10px] text-[var(--color-ash)] uppercase mt-1">
-                                    {ex.muscleGroup} • {ex.equipment}
-                                  </span>
+                                  <div className="flex flex-col">
+                                    <span className={`font-display font-bold uppercase tracking-widest text-sm ${!isBlacklisted ? 'text-[var(--color-bone)]' : 'text-gray-500 line-through'}`}>
+                                      {ex.name}
+                                    </span>
+                                    <span className="font-sans text-[10px] text-[var(--color-ash)] uppercase mt-0.5">
+                                      {ex.muscleGroup} • {ex.equipment}
+                                    </span>
+                                  </div>
                                 </div>
                                 <div className={`w-5 h-5 border flex items-center justify-center shrink-0 ${!isBlacklisted ? 'border-[var(--color-bronze)] bg-[var(--color-bronze)]/20 text-[var(--color-bronze)]' : 'border-gray-600 bg-transparent text-transparent'}`}>
                                   {(!isBlacklisted) && <span className="text-xs font-bold leading-none">✓</span>}

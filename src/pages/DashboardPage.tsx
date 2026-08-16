@@ -19,6 +19,22 @@ export default function DashboardPage() {
   const [nextSessionTime, setNextSessionTime] = useState<string | null>(null);
   const [timeLeft, setTimeLeft] = useState<string>('--:--:--');
 
+  const targetQuote = isSnoozed 
+    ? `"Snoozing, ${user?.displayName?.split(' ')[0] || 'Recruit'}? I guess weakness is your new PR. Turn that off and get back to work!"`
+    : `"${user?.displayName?.split(' ')[0] || 'Recruit'}, your chair is making you soft. Drop and give me 20. Excuses burn zero calories."`;
+  const [displayedQuote, setDisplayedQuote] = useState('');
+
+  useEffect(() => {
+    setDisplayedQuote('');
+    let i = 0;
+    const interval = setInterval(() => {
+      i++;
+      setDisplayedQuote(targetQuote.substring(0, i));
+      if (i > targetQuote.length) clearInterval(interval);
+    }, 40);
+    return () => clearInterval(interval);
+  }, [targetQuote]);
+
   useEffect(() => {
     async function fetchUser() {
       if (!user) return;
@@ -36,53 +52,54 @@ export default function DashboardPage() {
     fetchUser();
   }, [user]);
 
-  // Calculate Next Session Time
+  // Calculate Next Session Time & Countdown
   useEffect(() => {
-    if (!userData.alarmTimes || userData.alarmTimes.length === 0) return;
-    
-    const { completedAlarms = [], skippedAlarms = [] } = userData;
-
-    // Find the first alarm time that is not completed and not skipped
-    let next = null;
-    for (const timeStr of userData.alarmTimes) {
-      if (completedAlarms.includes(timeStr) || skippedAlarms.includes(timeStr)) continue;
-      
-      // Even if the time has passed, if it hasn't been completed or skipped, it is the 'next' overdue session.
-      // Alternatively, we strictly take the next future one. But usually, if it's past due, you still need to do it or skip it.
-      // So we just take the first uncompleted/unskipped one in the list.
-      next = timeStr;
-      break;
-    }
-    setNextSessionTime(next);
-  }, [userData]);
-
-  // Countdown Timer Update
-  useEffect(() => {
-    if (!nextSessionTime) {
-      setTimeLeft('NO SESSIONS');
+    if (!userData.alarmTimes || userData.alarmTimes.length === 0) {
+      setTimeLeft('OFF DUTY');
       return;
     }
-
+    
     const intervalId = setInterval(() => {
       const now = new Date();
-      const [nH, nM] = nextSessionTime.split(':').map(Number);
-      const targetDate = new Date();
-      targetDate.setHours(nH, nM, 0, 0);
+      const currentH = now.getHours();
+      const currentM = now.getMinutes();
+      const currentS = now.getSeconds();
+      const currentTotalSeconds = currentH * 3600 + currentM * 60 + currentS;
 
-      let diff = targetDate.getTime() - now.getTime();
+      const { completedAlarms = [], skippedAlarms = [] } = userData;
+
+      let next = null;
+      let nextDiff = -1;
+
+      for (const timeStr of (userData.alarmTimes || [])) {
+        if (completedAlarms.includes(timeStr) || skippedAlarms.includes(timeStr)) continue;
+        
+        const [h, m] = timeStr.split(':').map(Number);
+        const targetSeconds = h * 3600 + m * 60;
+        
+        const diff = targetSeconds - currentTotalSeconds;
+        
+        if (diff >= 0) {
+          next = timeStr;
+          nextDiff = diff;
+          break;
+        }
+      }
+
+      setNextSessionTime(next);
       
-      if (diff < 0) {
-        setTimeLeft('OVERDUE');
-      } else {
-        const h = Math.floor(diff / (1000 * 60 * 60));
-        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        const s = Math.floor((diff % (1000 * 60)) / 1000);
+      if (next) {
+        const h = Math.floor(nextDiff / 3600);
+        const m = Math.floor((nextDiff % 3600) / 60);
+        const s = Math.floor(nextDiff % 60);
         setTimeLeft(`${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`);
+      } else {
+        setTimeLeft('OFF DUTY');
       }
     }, 1000);
 
     return () => clearInterval(intervalId);
-  }, [nextSessionTime]);
+  }, [userData]);
 
   const handleSkipSession = async () => {
     if (!user || !nextSessionTime) return;
@@ -143,8 +160,7 @@ export default function DashboardPage() {
   };
 
   const sessionsPerDay = userData.alarmTimes ? userData.alarmTimes.length : (userData.sessionsPerDay || 6);
-  // Re-calculate todaySessions based on completedAlarms array length if possible to ensure perfect sync
-  const todaySessions = userData.completedAlarms ? userData.completedAlarms.length : (userData.todaySessions || 0);
+  const todaySessions = userData.todaySessions || 0;
   const totalCalories = Math.floor(userData.totalCalories || 0);
   const streak = userData.currentStreak || 0;
   
@@ -206,10 +222,9 @@ export default function DashboardPage() {
                   </div>
                   <div>
                     <span className="font-headline-md text-[var(--color-blood)] uppercase tracking-wider block mb-1">Spartan Spotter</span>
-                    <p className={`font-body-md text-[var(--color-bone)] italic leading-snug ${!isSnoozed ? 'animate-pulse' : ''}`}>
-                      {isSnoozed 
-                        ? `"Snoozing, ${auth.currentUser?.displayName?.split(' ')[0] || 'Recruit'}? I guess weakness is your new PR. Turn that off and get back to work!"`
-                        : `"${auth.currentUser?.displayName?.split(' ')[0] || 'Recruit'}, your chair is making you soft. Drop and give me 20. Excuses burn zero calories."`}
+                    <p className="font-body-md text-[var(--color-bone)] italic leading-snug min-h-[3rem]">
+                      {displayedQuote}
+                      <span className="animate-pulse opacity-50 ml-1 block inline-block w-2 h-4 bg-[var(--color-blood)] align-middle"></span>
                     </p>
                   </div>
                 </div>
@@ -287,8 +302,8 @@ export default function DashboardPage() {
                 </button>
               </div>
 
-              <Link to="/session/manual" className="mt-4 text-xs font-bold text-gray-500 hover:text-[var(--color-ash)] uppercase tracking-widest underline underline-offset-4">
-                Start Manual Assault Instead
+              <Link to="/session/manual" className="mt-4 w-full py-3 px-4 rounded-none border border-gray-800 bg-[var(--color-abyss)] text-[var(--color-ash)] font-display font-bold text-sm uppercase tracking-widest flex justify-center items-center gap-2 hover:border-[var(--color-blood)] hover:text-[var(--color-bone)] transition-all group">
+                <span className="text-gray-600 group-hover:text-[var(--color-blood)] transition-colors">⚡</span> Start Manual Assault
               </Link>
             </div>
           </div>

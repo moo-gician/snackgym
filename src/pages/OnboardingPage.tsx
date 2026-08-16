@@ -533,10 +533,15 @@ export default function OnboardingPage() {
                       ? 'border-orange-500 bg-orange-500/20 text-orange-500'
                       : 'border-[var(--color-blood)] bg-[var(--color-blood)]/20 text-[var(--color-blood)]';
 
+                  const activeCount = exerciseIds.filter(id => !blacklistedExercises.includes(id)).length;
+
                   return (
                     <div key={dayName} className={`border border-gray-800 bg-[var(--color-abyss)]`}>
-                      <div className="bg-[var(--color-charcoal)] p-3 border-b border-gray-800">
-                        <h3 className={`font-display font-bold uppercase tracking-widest ${dayColor}`}>{dayName}</h3>
+                      <div className="bg-[var(--color-charcoal)] p-3 border-b border-gray-800 flex items-center justify-between">
+                        <h3 className={`font-display font-bold uppercase tracking-widest text-sm ${dayColor}`}>{dayName}</h3>
+                        <span className="font-sans text-[10px] text-[var(--color-ash)] uppercase tracking-wider">
+                          {activeCount} weapons selected
+                        </span>
                       </div>
                       <div className="p-3 flex flex-col gap-2">
                         {exerciseIds.length === 0 ? (

@@ -438,9 +438,9 @@ export default function OnboardingPage() {
 
           {step === 5 && (
             <div className="flex flex-col">
-              <div className="flex flex-col gap-2 items-center text-center mb-8">
-                <h1 className="font-headline-lg text-[var(--color-bone)] uppercase tracking-tight text-center font-bold">WHO IS DRAGGING YOU THROUGH HELL?</h1>
-                <p className="font-headline-md text-[var(--color-bronze)] uppercase tracking-wider text-center">Select your AI tormentor.</p>
+              <div className="flex flex-col items-center mb-6">
+                <h1 className="font-display font-bold text-3xl md:text-4xl text-[var(--color-bone)] uppercase tracking-wide leading-tight text-center mb-2">WHO IS DRAGGING YOU THROUGH HELL?</h1>
+                <p className="font-display font-bold text-[var(--color-bronze)] mt-2 uppercase text-center text-sm tracking-widest">Assign your commanding officer.</p>
               </div>
 
               <div className="flex flex-col gap-6 pb-12">

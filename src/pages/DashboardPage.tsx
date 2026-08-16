@@ -242,30 +242,46 @@ export default function DashboardPage() {
   };
 
   const getRank = (s: number) => {
-    if (s === 0) return { title: "Sewer Rat 🐀", color: "text-gray-500" };
-    if (s <= 2) return { title: "Stray Dog 🐕", color: "text-yellow-600" };
-    if (s <= 6) return { title: "Mortal 🧍", color: "text-blue-400" };
-    if (s <= 13) return { title: "BEAST 🦍", color: "text-[var(--color-blood)]" };
-    return { title: "SPARTAN 🏛️", color: "text-[var(--color-bronze)]" };
+    if (s === 0) return { title: "Sewer Rat 🐀", color: "text-gray-500", nextGoal: "Survive 1 day to become a STRAY DOG 🐕" };
+    if (s <= 2) return { title: "Stray Dog 🐕", color: "text-yellow-600", nextGoal: `Survive ${3 - s} more days to become a MORTAL 🧍` };
+    if (s <= 6) return { title: "Mortal 🧍", color: "text-blue-400", nextGoal: `Survive ${7 - s} more days to become a BEAST 🦍` };
+    if (s <= 13) return { title: "BEAST 🦍", color: "text-[var(--color-blood)]", nextGoal: `Survive ${14 - s} more days to become a SPARTAN 🏛️` };
+    return { title: "SPARTAN 🏛️", color: "text-[var(--color-bronze)]", nextGoal: "Max Rank Achieved! Maintain your glory." };
   };
 
   const sessionsPerDay = userData.alarmTimes ? userData.alarmTimes.length : (userData.sessionsPerDay || 6);
   const todaySessions = userData.todaySessions || 0;
-  const totalCalories = Math.floor(userData.totalCalories || 0);
   const streak = userData.currentStreak || 0;
   
   const rank = getRank(streak);
 
+  const nowForStats = new Date();
+  const todayDateStr = nowForStats.toLocaleDateString('en-CA');
+  const getMondayDateStr = (d: Date) => {
+    const date = new Date(d);
+    const day = date.getDay() || 7;
+    if (day !== 1) date.setHours(-24 * (day - 1));
+    return date.toLocaleDateString('en-CA');
+  };
+  const currentWeekStr = getMondayDateStr(nowForStats);
+  const currentMonthStr = todayDateStr.substring(0, 7);
+
+  const displayTodayCals = userData.lastWorkoutDate === todayDateStr ? (userData.todayCalories || 0) : 0;
+  const displayWeeklyCals = userData.lastWeekResetDate === currentWeekStr ? (userData.weeklyCalories || 0) : 0;
+  const displayMonthlyCals = userData.lastMonthResetDate === currentMonthStr ? (userData.monthlyCalories || 0) : 0;
+
+  const donuts = Math.floor(displayTodayCals / 250);
+  const beers = Math.floor(displayWeeklyCals / 150);
+  const pizzas = Math.floor(displayMonthlyCals / 1000);
+
   const handleShareGlory = () => {
     const currentQuote = achievementQuotes[achQuoteIndex % achievementQuotes.length];
-    const text = `🏆 [SNACK GYM - BEAST MODE] 🏆\n${firstName} survived ${todaySessions} brutal sessions today.\nBurned ${totalCalories} kcal (🍩 ${Math.floor(totalCalories/250)} donuts) so far.\nRank: ${rank.title}\n\n🤬 Spartan Spotter says:\n"${currentQuote}"\n\nThink you can beat this weakling? Prove it.\n🔗 https://snackgym.com`;
+    const text = `🏆 [SNACK GYM - BEAST MODE] 🏆\n${firstName} survived ${todaySessions} brutal sessions today.\nBurned ${displayTodayCals} kcal (🍩 ${donuts} donuts).\nRank: ${rank.title}\n\n🤬 Spartan Spotter says:\n"${currentQuote}"\n\nThink you can beat this weakling? Prove it.\n🔗 https://snackgym.com`;
     navigator.clipboard.writeText(text);
     alert("Copied to clipboard! Share your glory on IG/TikTok/Telegram.");
   };
   
   const progressPercent = Math.min(todaySessions / sessionsPerDay, 1);
-  const donuts = Math.floor(totalCalories / 250);
-  const beers = Math.floor(totalCalories / 150);
 
   return (
     <div className="min-h-screen bg-[var(--color-abyss)] text-[var(--color-ash)] pb-24 flex flex-col font-sans">
@@ -438,45 +454,46 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            <div className="bg-[var(--color-charcoal)] p-6 rounded-none border-l-4 border-[var(--color-bronze)] mb-6 flex items-center gap-6 relative overflow-hidden">
-              <div className="absolute top-0 right-0 opacity-5 text-8xl font-display text-[var(--color-bronze)] translate-x-4 -translate-y-4">STREAK</div>
-              <div className="flex-1 relative z-10">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="text-[var(--color-ash)] text-sm font-bold uppercase tracking-wider mb-1">Current Streak</h3>
-                    <div className="text-5xl font-display font-black text-[var(--color-bone)] flex items-baseline gap-2">
-                      🔥 {streak} <span className="text-lg text-[var(--color-ash)] font-sans">Days</span>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <h3 className="text-[var(--color-ash)] text-xs font-bold uppercase tracking-widest mb-1">Rank</h3>
-                    <span className={`font-display font-bold text-lg uppercase tracking-wider ${rank.color}`}>{rank.title}</span>
-                  </div>
+            <div className="bg-[var(--color-charcoal)] p-6 rounded-none border-t border-[var(--color-bronze)] mb-6 relative overflow-hidden flex flex-col items-center text-center">
+              <div className="absolute top-0 right-0 opacity-5 text-[10rem] font-display text-[var(--color-bronze)] translate-x-4 -translate-y-4 pointer-events-none">RANK</div>
+              <h3 className="text-[var(--color-ash)] text-xs font-bold uppercase tracking-widest mb-2">Current Rank</h3>
+              <div className={`text-4xl sm:text-5xl font-display font-black uppercase tracking-wider mb-4 ${rank.color}`}>
+                {rank.title}
+              </div>
+              
+              <div className="bg-[var(--color-abyss)] border border-gray-800 px-4 py-3 w-full rounded-none">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-[var(--color-ash)] text-xs font-bold uppercase tracking-wider">Current Streak</span>
+                  <span className="text-xl font-display font-bold text-[var(--color-bone)]">🔥 {streak} <span className="text-xs text-[var(--color-ash)] font-sans">Days</span></span>
                 </div>
-                <p className="text-xs text-[var(--color-blood)] font-bold uppercase tracking-widest mt-4">Keep the fire burning!</p>
+                <div className="w-full h-px bg-gray-800 mb-2"></div>
+                <p className="text-xs font-bold uppercase tracking-widest text-[var(--color-bronze)]">{rank.nextGoal}</p>
               </div>
             </div>
 
-            <div className="bg-[var(--color-charcoal)] p-6 rounded-none border border-gray-800 mb-6 relative">
+            <div className="bg-[var(--color-charcoal)] p-4 sm:p-6 rounded-none border border-gray-800 mb-6 relative">
               <div className="absolute top-0 right-0 w-2 h-2 bg-[var(--color-bronze)]"></div>
-              <h3 className="text-[var(--color-bone)] font-bold font-display uppercase tracking-wider mb-2 flex items-center gap-2">
+              <h3 className="text-[var(--color-bone)] font-bold font-display uppercase tracking-wider mb-4 flex items-center gap-2">
                 <span>🍩</span> Spoils of War
               </h3>
-              <p className="text-[var(--color-ash)] text-sm mb-4">
-                You've burned an estimated <strong>{totalCalories} kcal</strong>. That's equivalent to:
-              </p>
-              <div className="flex items-center gap-4">
-                <div className="flex-1 bg-[var(--color-abyss)] p-4 rounded-none text-center border border-gray-800 relative overflow-hidden">
-                  <div className="absolute top-0 left-0 w-1 h-full bg-[var(--color-bronze)]"></div>
-                  <span className="text-4xl block mb-2">🍩</span>
-                  <span className="font-display font-black text-3xl text-[var(--color-bone)] block leading-none mb-1">{donuts}</span>
-                  <span className="text-xs text-[var(--color-ash)] font-bold uppercase tracking-widest block">Donuts Defeated</span>
+              <div className="grid grid-cols-3 gap-2 sm:gap-4">
+                <div className="bg-[var(--color-abyss)] p-3 rounded-none text-center border border-gray-800 relative overflow-hidden flex flex-col items-center justify-center">
+                  <div className="absolute top-0 left-0 w-full h-1 bg-[var(--color-bronze)]"></div>
+                  <span className="text-3xl block mb-1">🍩</span>
+                  <span className="font-display font-black text-2xl text-[var(--color-bone)] block leading-none mb-1">{donuts}</span>
+                  <span className="text-[9px] sm:text-[10px] text-[var(--color-ash)] font-bold uppercase tracking-widest block leading-tight">Today<br/>(Donuts)</span>
                 </div>
-                <div className="flex-1 bg-[var(--color-abyss)] p-4 rounded-none text-center border border-gray-800 relative overflow-hidden">
-                  <div className="absolute top-0 left-0 w-1 h-full bg-[var(--color-bronze)]"></div>
-                  <span className="text-4xl block mb-2">🍺</span>
-                  <span className="font-display font-black text-3xl text-[var(--color-bone)] block leading-none mb-1">{beers}</span>
-                  <span className="text-xs text-[var(--color-ash)] font-bold uppercase tracking-widest block">Beers Sweated</span>
+                <div className="bg-[var(--color-abyss)] p-3 rounded-none text-center border border-gray-800 relative overflow-hidden flex flex-col items-center justify-center">
+                  <div className="absolute top-0 left-0 w-full h-1 bg-[var(--color-bronze)]"></div>
+                  <span className="text-3xl block mb-1">🍺</span>
+                  <span className="font-display font-black text-2xl text-[var(--color-bone)] block leading-none mb-1">{beers}</span>
+                  <span className="text-[9px] sm:text-[10px] text-[var(--color-ash)] font-bold uppercase tracking-widest block leading-tight">This Week<br/>(Beers)</span>
+                </div>
+                <div className="bg-[var(--color-abyss)] p-3 rounded-none text-center border border-gray-800 relative overflow-hidden flex flex-col items-center justify-center">
+                  <div className="absolute top-0 left-0 w-full h-1 bg-[var(--color-bronze)]"></div>
+                  <span className="text-3xl block mb-1">🍕</span>
+                  <span className="font-display font-black text-2xl text-[var(--color-bone)] block leading-none mb-1">{pizzas}</span>
+                  <span className="text-[9px] sm:text-[10px] text-[var(--color-ash)] font-bold uppercase tracking-widest block leading-tight">This Month<br/>(Pizzas)</span>
                 </div>
               </div>
             </div>

@@ -16,9 +16,14 @@ export type UserProfile = {
   activeDays: number[];
   timezone: string;
   totalCalories?: number;
+  todayCalories?: number;
+  weeklyCalories?: number;
+  monthlyCalories?: number;
   todaySessions?: number;
   currentStreak?: number;
   lastWorkoutDate?: string;
+  lastWeekResetDate?: string;
+  lastMonthResetDate?: string;
   snooze_until?: string | null;
   updatedAt: string;
   alarmTimes?: string[];
@@ -82,14 +87,49 @@ export async function recordSessionComplete(uid: string, earnedCalories: number,
 
   let {
     totalCalories = 0,
+    todayCalories = 0,
+    weeklyCalories = 0,
+    monthlyCalories = 0,
     todaySessions = 0,
     currentStreak = 0,
     lastWorkoutDate = '',
+    lastWeekResetDate = '',
+    lastMonthResetDate = '',
     completedAlarms = [],
     skippedAlarms = []
   } = data;
 
+  const getMondayDate = (d: Date) => {
+    const date = new Date(d);
+    const day = date.getDay() || 7; // Sun is 0 -> 7
+    if (day !== 1) {
+      date.setHours(-24 * (day - 1));
+    }
+    return date.toLocaleDateString('en-CA');
+  };
+
+  const currentWeekMonday = getMondayDate(now);
+  const currentMonthStr = todayDate.substring(0, 7); // YYYY-MM
+
+  // Reset daily
+  if (lastWorkoutDate !== todayDate) {
+    todayCalories = 0;
+  }
+  // Reset weekly
+  if (lastWeekResetDate !== currentWeekMonday) {
+    weeklyCalories = 0;
+    lastWeekResetDate = currentWeekMonday;
+  }
+  // Reset monthly
+  if (lastMonthResetDate !== currentMonthStr) {
+    monthlyCalories = 0;
+    lastMonthResetDate = currentMonthStr;
+  }
+
   totalCalories += earnedCalories;
+  todayCalories += earnedCalories;
+  weeklyCalories += earnedCalories;
+  monthlyCalories += earnedCalories;
 
   if (lastWorkoutDate === todayDate) {
     todaySessions += 1;
@@ -112,9 +152,14 @@ export async function recordSessionComplete(uid: string, earnedCalories: number,
 
   await updateDoc(userRef, {
     totalCalories,
+    todayCalories,
+    weeklyCalories,
+    monthlyCalories,
     todaySessions,
     currentStreak,
     lastWorkoutDate: todayDate,
+    lastWeekResetDate,
+    lastMonthResetDate,
     completedAlarms,
     skippedAlarms,
     updatedAt: new Date().toISOString()

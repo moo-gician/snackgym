@@ -1,6 +1,6 @@
 import { EXERCISE_DB } from './exerciseDB';
 
-export type SplitStrategy = '1-Split (Full Body)' | '2-Split (Upper/Lower)' | '2-Split (Push/Core)' | '3-Split (Push/Pull/Legs)';
+export type SplitStrategy = '1-Split (Full Body)' | '2-Split (Upper/Lower)' | '2-Split (Push/Core)' | '2-Split (Push/Pull)' | '3-Split (Push/Pull/Legs)';
 
 export function calculateSplitStrategy(
   targetMuscles: string[],
@@ -13,12 +13,20 @@ export function calculateSplitStrategy(
     return '1-Split (Full Body)'; // Single or double target -> 1 Split with antagonist fallback
   }
 
-  // Check if Legs and Back are excluded (Beach body scenario)
+  // Check which major groups are included
   const hasLegs = targetMuscles.includes('Legs');
   const hasBack = targetMuscles.includes('Back');
+  const hasCore = targetMuscles.includes('Core');
+  const hasPush = targetMuscles.includes('Chest') || targetMuscles.includes('Shoulders');
   
-  if (!hasLegs && !hasBack && numMuscles >= 3) {
-    return '2-Split (Push/Core)';
+  if (!hasLegs) {
+    if (!hasBack && hasPush && numMuscles >= 3) {
+      return '2-Split (Push/Core)';
+    }
+    if (hasBack && hasPush && numMuscles >= 3) {
+      return '2-Split (Push/Pull)';
+    }
+    return '1-Split (Full Body)';
   }
 
   if (sessionsPerDay >= 3 && numMuscles >= 4) {
@@ -56,6 +64,9 @@ export function generateCustomPool(
   } else if (splitStrategy === '2-Split (Push/Core)') {
     pool['Day A (Push)'] = baseFilteredDB.filter(ex => ex.splitType === 'Push').map(e => e.id);
     pool['Day B (Core & Pull)'] = baseFilteredDB.filter(ex => ex.splitType === 'Core' || ex.splitType === 'Pull').map(e => e.id);
+  } else if (splitStrategy === '2-Split (Push/Pull)') {
+    pool['Day A (Push)'] = baseFilteredDB.filter(ex => ex.splitType === 'Push').map(e => e.id);
+    pool['Day B (Pull & Core)'] = baseFilteredDB.filter(ex => ex.splitType === 'Pull' || ex.splitType === 'Core').map(e => e.id);
   } else {
     // 1-Split (Full Body)
     pool['Day A (Full Body)'] = baseFilteredDB.map(e => e.id);

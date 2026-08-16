@@ -134,7 +134,7 @@ export default function OnboardingPage() {
     setCurrentSplitStrategy(finalStrategy);
     setCustomPool(finalPool);
     if (wasDowngraded) {
-      setDowngradeWarning(`Your blacklisted exercises forced a downgrade to ${finalStrategy}.`);
+      setDowngradeWarning(`Insufficient exercises for some muscle groups forced a downgrade to ${finalStrategy}.`);
     } else {
       setDowngradeWarning(null);
     }
@@ -194,7 +194,7 @@ export default function OnboardingPage() {
       
       setCurrentSplitStrategy(finalStrategy);
       setCustomPool(finalPool);
-      if (wasDowngraded) setDowngradeWarning(`Your blacklisted exercises forced a downgrade to ${finalStrategy}.`);
+      if (wasDowngraded) setDowngradeWarning(`Insufficient exercises for some muscle groups forced a downgrade to ${finalStrategy}.`);
       else setDowngradeWarning(null);
 
       // Cleanup session storage

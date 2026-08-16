@@ -455,7 +455,7 @@ export default function OnboardingPage() {
           {step === 5 && (
             <div className="flex flex-col">
               <div className="flex flex-col items-center mb-6">
-                <h1 className="font-display font-bold text-3xl md:text-4xl text-[var(--color-bone)] uppercase tracking-wide leading-tight text-center mb-2">WHO IS DRAGGING YOU THROUGH HELL?</h1>
+                <h1 className="font-display font-bold text-3xl md:text-4xl text-[var(--color-bone)] uppercase tracking-wide leading-tight text-center mb-2">CHOOSE YOUR PUNISHER, {auth.currentUser?.displayName?.split(' ')[0]?.toUpperCase() || 'RECRUIT'}.</h1>
                 <p className="font-display font-bold text-[var(--color-bronze)] mt-2 uppercase text-center text-sm tracking-widest">Assign your commanding officer.</p>
               </div>
 
@@ -465,7 +465,7 @@ export default function OnboardingPage() {
                     id: 'SPARTAN',
                     title: 'SPARTAN SPOTTER',
                     subtitle: 'Ruthless. Brutal. Unforgiving.',
-                    quote: '"Get up, lazy bones! Time to crush it!"',
+                    quote: `"So you're ${auth.currentUser?.displayName?.split(' ')[0] || 'Recruit'}? You don't look like much. I'm your Spartan Spotter."`,
                     img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD51FeObMtC6z6ZBtJD8p6aNUgd5xOxJmaxBhjMam0av-ygMXreK223xu94s9zt2p0xexAYJZAN4j31JplRuwrkCgLsWb8f83fxT7FPPVmbI5JuNU5V6i1OMfNdTD7agx2yArUXmxHdaESYc-KnNuwfRu_b86KMi9AsmxCZG_jUf5rrpUhP3VE8saA2CZO1DXeM24KLHR-xUTzAOY3yJ88F9Ct03InCCfqxmjaoHErs8D0xqnq108-0',
                     color: 'var(--color-blood)',
                     disabled: false
@@ -474,7 +474,7 @@ export default function OnboardingPage() {
                     id: 'DRILL_SERGEANT',
                     title: 'DRILL SERGEANT',
                     subtitle: 'Aggressive. Loud. Demanding.',
-                    quote: '"Drop down and give me 50, maggot!"',
+                    quote: `"Listen up, ${auth.currentUser?.displayName?.split(' ')[0] || 'maggot'}! I'm here to break you!"`,
                     img: '/drill_sergeant.jpg',
                     color: 'var(--color-ash)',
                     disabled: true

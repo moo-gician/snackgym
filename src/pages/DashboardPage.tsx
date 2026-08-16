@@ -208,8 +208,8 @@ export default function DashboardPage() {
                     <span className="font-headline-md text-[var(--color-blood)] uppercase tracking-wider block mb-1">Spartan Spotter</span>
                     <p className={`font-body-md text-[var(--color-bone)] italic leading-snug ${!isSnoozed ? 'animate-pulse' : ''}`}>
                       {isSnoozed 
-                        ? '"Snoozing? I guess weakness is your new PR. Turn that off and get back to work!"'
-                        : '"Your chair is making you soft. Drop and give me 20. Excuses burn zero calories."'}
+                        ? `"Snoozing, ${auth.currentUser?.displayName?.split(' ')[0] || 'Recruit'}? I guess weakness is your new PR. Turn that off and get back to work!"`
+                        : `"${auth.currentUser?.displayName?.split(' ')[0] || 'Recruit'}, your chair is making you soft. Drop and give me 20. Excuses burn zero calories."`}
                     </p>
                   </div>
                 </div>
@@ -429,7 +429,7 @@ export default function DashboardPage() {
         <div className="fixed inset-0 bg-black/80 z-50 flex flex-col justify-end">
           <div className="bg-[var(--color-charcoal)] rounded-t-none p-6 pb-24 animate-fade-in-up border-t border-[var(--color-blood)] border-opacity-30">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-display uppercase tracking-wider text-[var(--color-bone)] font-bold">How was your assault?</h2>
+              <h2 className="text-2xl font-display uppercase tracking-wider text-[var(--color-bone)] font-bold">How was your assault, {auth.currentUser?.displayName?.split(' ')[0] || 'Recruit'}?</h2>
               <button onClick={() => setShowFeedback(false)} className="text-[var(--color-ash)] hover:text-[var(--color-bone)] font-bold p-2 text-xl">✕</button>
             </div>
             <p className="text-sm text-[var(--color-ash)] mb-6">Your feedback will automatically adjust tomorrow's session difficulty (Progressive Overload).</p>

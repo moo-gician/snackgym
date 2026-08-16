@@ -51,8 +51,10 @@ export default function SessionPage() {
   };
 
   const handleFinish = async (isEarly: boolean) => {
+    const firstName = auth.currentUser?.displayName?.split(' ')[0] || 'Recruit';
+    
     if (isEarly) {
-      if (!window.confirm("Cowardice recorded. Unchecked exercises will be skipped. Retreat?")) {
+      if (!window.confirm(`Cowardice recorded, ${firstName}. Your spotter will remember this. Unchecked exercises will be skipped. Retreat?`)) {
         return;
       }
     }
@@ -71,7 +73,8 @@ export default function SessionPage() {
   };
 
   const handleFullSkip = () => {
-    if (window.confirm("Skip entire session? Your spotter will remember this.")) {
+    const firstName = auth.currentUser?.displayName?.split(' ')[0] || 'Recruit';
+    if (window.confirm(`Skip entire session, ${firstName}? Your spotter will remember this cowardice.`)) {
       navigate('/dashboard');
     }
   };
@@ -139,7 +142,7 @@ export default function SessionPage() {
                 : 'bg-[var(--color-charcoal)] text-[var(--color-blood)] border-[var(--color-blood)] hover:bg-[var(--color-blood)] hover:text-[var(--color-abyss)]'
             }`}
           >
-            {allCompleted ? '⚔️ Glory Achieved' : 'Retreat Early'}
+            {allCompleted ? `⚔️ Glory Achieved, ${auth.currentUser?.displayName?.split(' ')[0] || ''}`.trim() : 'Retreat Early'}
           </button>
         </div>
       </div>

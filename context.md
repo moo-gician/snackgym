@@ -53,3 +53,4 @@
 - **v1.4.0** (2026-08-15): Stitch AI에서 추출한 Iron & Ichor 디자인 시스템 연동 및 신규 Landing Page 화면 이식 완료.
 - **v1.5.0** (2026-08-15): Stitch AI의 Onboarding 6개 단계 및 Dashboard 화면 이식 완료 (네오-브루탈리즘 UI 전면 적용).
 - **v1.6.0** (2026-08-16): Dynamic Split & Custom Exercise Pool 알고리즘 (Armory Onboarding & Session Generation) 통합 완료.
+- **v1.6.1** (2026-08-16): Split Strategy 필터링 및 할당 로직 버그 픽스, Armory UI 스크롤 개선 및 세션 당 운동 개수 시간 기준 현실화(1분/개).

@@ -491,12 +491,6 @@ export default function DashboardPage() {
                 <span className="text-xs font-bold text-[var(--color-bone)] uppercase tracking-wider">Feedback</span>
               </button>
             </div>
-            <div className="mt-4">
-              <button onClick={handleSoftDelete} className="w-full flex items-center justify-center gap-2 p-3 bg-red-900/10 rounded-none border border-red-900/50 hover:bg-red-900/30 transition-colors tap-scale">
-                <Trash2 size={16} className="text-red-500" />
-                <span className="text-xs font-bold text-red-500 uppercase tracking-wider">Surrender</span>
-              </button>
-            </div>
           </div>
         )}
 

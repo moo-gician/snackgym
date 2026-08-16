@@ -522,8 +522,19 @@ export default function OnboardingPage() {
               <div className="flex flex-col gap-6 pb-6">
                 {Object.entries(customPool).map(([dayName, exerciseIds], idx) => {
                   const dayColor = idx === 0 ? 'text-[var(--color-bronze)]' : idx === 1 ? 'text-orange-500' : 'text-[var(--color-blood)]';
+                  const activeBorderClass = idx === 0 
+                    ? 'border-[var(--color-bronze)] shadow-[0_0_10px_rgba(200,154,81,0.1)]' 
+                    : idx === 1 
+                      ? 'border-orange-500 shadow-[0_0_10px_rgba(249,115,22,0.1)]' 
+                      : 'border-[var(--color-blood)] shadow-[0_0_10px_rgba(217,26,26,0.1)]';
+                  const checkmarkClass = idx === 0 
+                    ? 'border-[var(--color-bronze)] bg-[var(--color-bronze)]/20 text-[var(--color-bronze)]'
+                    : idx === 1
+                      ? 'border-orange-500 bg-orange-500/20 text-orange-500'
+                      : 'border-[var(--color-blood)] bg-[var(--color-blood)]/20 text-[var(--color-blood)]';
+
                   return (
-                    <div key={dayName} className="border border-gray-800 bg-[var(--color-abyss)]">
+                    <div key={dayName} className={`border border-gray-800 bg-[var(--color-abyss)]`}>
                       <div className="bg-[var(--color-charcoal)] p-3 border-b border-gray-800">
                         <h3 className={`font-display font-bold uppercase tracking-widest ${dayColor}`}>{dayName}</h3>
                       </div>
@@ -543,7 +554,7 @@ export default function OnboardingPage() {
                                 onClick={() => toggleExercise(id)}
                                 className={`text-left flex items-center justify-between p-3 border transition-all active:scale-[0.98] ${
                                   !isBlacklisted 
-                                    ? 'bg-[var(--color-charcoal)] border-[var(--color-bronze)] shadow-[0_0_10px_rgba(200,154,81,0.1)]' 
+                                    ? `bg-[var(--color-charcoal)] ${activeBorderClass}` 
                                     : 'bg-[var(--color-abyss)] border-gray-800 opacity-60 grayscale'
                                 }`}
                               >
@@ -560,7 +571,7 @@ export default function OnboardingPage() {
                                     </span>
                                   </div>
                                 </div>
-                                <div className={`w-5 h-5 border flex items-center justify-center shrink-0 ${!isBlacklisted ? 'border-[var(--color-bronze)] bg-[var(--color-bronze)]/20 text-[var(--color-bronze)]' : 'border-gray-600 bg-transparent text-transparent'}`}>
+                                <div className={`w-5 h-5 border flex items-center justify-center shrink-0 ${!isBlacklisted ? checkmarkClass : 'border-gray-600 bg-transparent text-transparent'}`}>
                                   {(!isBlacklisted) && <span className="text-xs font-bold leading-none">✓</span>}
                                 </div>
                               </button>

@@ -5,7 +5,9 @@ import { saveOnboardingData } from '../lib/firestore';
 import { doc, getDoc } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
 import BodyMap from '../components/BodyMap';
-import { User } from 'lucide-react';
+import { User, ShieldAlert, RefreshCw } from 'lucide-react';
+import { EXERCISE_DB } from '../lib/exerciseDB';
+import { calculateSplitStrategy, generateCustomPool, autoDowngradeSplitIfNeeded, type SplitStrategy } from '../lib/workoutLogic';
 
 type CourseType = 'MICRO' | 'COMPACT' | 'CIRCUIT' | null;
 type SpotterType = 'SPARTAN' | 'DRILL_SERGEANT' | null;
@@ -48,6 +50,17 @@ export default function OnboardingPage() {
     return saved ? JSON.parse(saved) : [1, 2, 3, 4, 5]; // Mon-Fri default
   });
 
+  // Blacklist
+  const [blacklistedExercises, setBlacklistedExercises] = useState<string[]>(() => {
+    const saved = sessionStorage.getItem('ob_blacklist');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  // Custom Pool States
+  const [currentSplitStrategy, setCurrentSplitStrategy] = useState<SplitStrategy>('1-Split (Full Body)');
+  const [customPool, setCustomPool] = useState<Record<string, string[]>>({});
+  const [downgradeWarning, setDowngradeWarning] = useState<string | null>(null);
+
   const [spotter, setSpotter] = useState<SpotterType>(() => {
     return (sessionStorage.getItem('ob_spotter') as SpotterType) || 'SPARTAN';
   });
@@ -88,15 +101,7 @@ export default function OnboardingPage() {
   useEffect(() => sessionStorage.setItem('ob_interval', targetInterval.toString()), [targetInterval]);
   useEffect(() => { if (spotter) sessionStorage.setItem('ob_spotter', spotter); }, [spotter]);
   useEffect(() => { if (notificationMethod) sessionStorage.setItem('ob_notif', notificationMethod); }, [notificationMethod]);
-
-  const nextStep = () => {
-    if (navigator.vibrate) navigator.vibrate(50);
-    setStep(s => Math.min(6, s + 1));
-  };
-  const prevStep = () => {
-    if (navigator.vibrate) navigator.vibrate(50);
-    setStep(s => Math.max(1, s - 1));
-  };
+  useEffect(() => sessionStorage.setItem('ob_blacklist', JSON.stringify(blacklistedExercises)), [blacklistedExercises]);
 
   const alarmTimes = useMemo(() => {
     if (!workStartTime || !workEndTime) return [];
@@ -117,6 +122,45 @@ export default function OnboardingPage() {
     return times;
   }, [workStartTime, workEndTime, targetInterval]);
 
+  const recalculatePool = () => {
+    if (navigator.vibrate) navigator.vibrate(50);
+    const sessionsPerDay = alarmTimes.length > 0 ? alarmTimes.length : 1;
+    const initialStrategy = calculateSplitStrategy(muscles, sessionsPerDay);
+    const initialPool = generateCustomPool(initialStrategy, equipment, muscles);
+    
+    const { finalStrategy, finalPool, wasDowngraded } = autoDowngradeSplitIfNeeded(initialStrategy, initialPool, blacklistedExercises);
+    
+    setCurrentSplitStrategy(finalStrategy);
+    setCustomPool(finalPool);
+    if (wasDowngraded) {
+      setDowngradeWarning(`Your blacklisted exercises forced a downgrade to ${finalStrategy}.`);
+    } else {
+      setDowngradeWarning(null);
+    }
+  };
+
+  useEffect(() => {
+    if (step === 5) {
+      recalculatePool();
+    }
+  }, [step, equipment, muscles, alarmTimes.length]);
+
+  const toggleExercise = (id: string) => {
+    if (navigator.vibrate) navigator.vibrate(20);
+    setBlacklistedExercises(prev => 
+      prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+    );
+  };
+
+  const nextStep = () => {
+    if (navigator.vibrate) navigator.vibrate(50);
+    setStep(s => Math.min(6, s + 1));
+  };
+  const prevStep = () => {
+    if (navigator.vibrate) navigator.vibrate(50);
+    setStep(s => Math.max(1, s - 1));
+  };
+
   const completeOnboarding = async () => {
     const user = auth.currentUser;
     if (!user) {
@@ -136,7 +180,10 @@ export default function OnboardingPage() {
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         spotter: spotter as any,
         notificationMethod: notificationMethod as any,
-        alarmTimes
+        alarmTimes,
+        splitStrategy: currentSplitStrategy,
+        customExercisePool: customPool,
+        blacklistedExercises
       });
       
       console.log("Onboarding data saved successfully!");
@@ -455,102 +502,74 @@ export default function OnboardingPage() {
           {step === 5 && (
             <div className="flex flex-col">
               <div className="flex flex-col items-center mb-6">
-                <h1 className="font-display font-bold text-3xl md:text-4xl text-[var(--color-bone)] uppercase tracking-wide leading-tight text-center mb-2">CHOOSE YOUR PUNISHER, {auth.currentUser?.displayName?.split(' ')[0]?.toUpperCase() || 'RECRUIT'}.</h1>
-                <p className="font-display font-bold text-[var(--color-bronze)] mt-2 uppercase text-center text-sm tracking-widest">Assign your commanding officer.</p>
+                <h1 className="font-display font-bold text-3xl md:text-4xl text-[var(--color-bone)] uppercase tracking-wide leading-tight text-center mb-2">YOUR ARMORY</h1>
+                <p className="font-display font-bold text-[var(--color-bronze)] mt-2 uppercase text-center text-sm tracking-widest">Review and customize your weapons.</p>
               </div>
 
-              <div className="flex flex-col gap-6 pb-12">
-                {[
-                  {
-                    id: 'SPARTAN',
-                    title: 'SPARTAN SPOTTER',
-                    subtitle: 'Ruthless. Brutal. Unforgiving.',
-                    quote: `"So you're ${auth.currentUser?.displayName?.split(' ')[0] || 'Recruit'}? You don't look like much. I'm your Spartan Spotter."`,
-                    img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD51FeObMtC6z6ZBtJD8p6aNUgd5xOxJmaxBhjMam0av-ygMXreK223xu94s9zt2p0xexAYJZAN4j31JplRuwrkCgLsWb8f83fxT7FPPVmbI5JuNU5V6i1OMfNdTD7agx2yArUXmxHdaESYc-KnNuwfRu_b86KMi9AsmxCZG_jUf5rrpUhP3VE8saA2CZO1DXeM24KLHR-xUTzAOY3yJ88F9Ct03InCCfqxmjaoHErs8D0xqnq108-0',
-                    color: 'var(--color-blood)',
-                    disabled: false
-                  },
-                  {
-                    id: 'DRILL_SERGEANT',
-                    title: 'DRILL SERGEANT',
-                    subtitle: 'Aggressive. Loud. Demanding.',
-                    quote: `"Listen up, ${auth.currentUser?.displayName?.split(' ')[0] || 'maggot'}! I'm here to break you!"`,
-                    img: '/drill_sergeant.jpg',
-                    color: 'var(--color-ash)',
-                    disabled: true
-                  }
-                ].map(sp => (
-                  <div 
-                    key={sp.id}
-                    onClick={() => { 
-                      if(sp.disabled) return;
-                      if(navigator.vibrate) navigator.vibrate(50); 
-                      setSpotter(sp.id as SpotterType); 
-                    }}
-                    className={`relative w-full rounded-xl bg-[var(--color-charcoal)] border overflow-hidden group transition-all duration-300 ${
-                      sp.disabled
-                        ? 'opacity-60 grayscale cursor-not-allowed border-gray-800'
-                        : spotter === sp.id 
-                          ? 'border-[var(--color-blood)] shadow-[0_0_20px_rgba(217,26,26,0.3)] cursor-pointer active:scale-[0.98]' 
-                          : 'border-gray-800/30 cursor-pointer active:scale-[0.98]'
-                    }`}
-                  >
-                    {!sp.disabled && (
-                      <div className={`absolute top-0 right-0 w-4 h-4 border-l border-b rounded-bl-sm transition-colors duration-300 ${
-                        spotter === sp.id ? 'bg-[var(--color-blood)] border-[var(--color-blood)]' : 'bg-[var(--color-bronze)]/20 border-[var(--color-bronze)]/40 group-hover:bg-[var(--color-bronze)]'
-                      }`}></div>
-                    )}
-                    
-                    <div className="p-6 flex flex-col items-center gap-6 relative z-10">
-                      <div className={`w-32 h-32 rounded-full bg-[var(--color-abyss)] border-2 flex items-center justify-center transition-all duration-300 relative overflow-hidden ${
-                        sp.disabled 
-                          ? 'border-gray-600'
-                          : spotter === sp.id 
-                            ? 'border-[var(--color-blood)] shadow-[0_0_30px_rgba(217,26,26,0.5)]' 
-                            : 'border-[var(--color-bronze)] shadow-[0_0_20px_rgba(200,154,81,0.3)] group-hover:shadow-[0_0_30px_rgba(200,154,81,0.5)]'
-                      }`}>
-                        <img alt={sp.title} className={`w-full h-full object-cover transition-transform duration-500 ${
-                          sp.disabled ? '' : spotter === sp.id ? 'scale-110' : 'group-hover:scale-110 grayscale group-hover:grayscale-0'
-                        }`} src={sp.img} />
-                        
-                        {sp.disabled && (
-                          <div className="absolute inset-0 bg-black/60 flex items-center justify-center backdrop-blur-[2px]">
-                            <span className="material-symbols-outlined text-[var(--color-bone)] text-3xl">lock</span>
-                          </div>
-                        )}
-                      </div>
-                      
-                      <div className="text-center flex flex-col gap-1">
-                        <h2 className={`font-headline-md uppercase tracking-wider transition-colors ${
-                          sp.disabled ? 'text-gray-500' : spotter === sp.id ? 'text-[var(--color-blood)]' : 'text-[var(--color-blood)]/80 group-hover:text-[var(--color-blood)]'
-                        }`}>
-                          {sp.title}
-                          {sp.disabled && <span className="block text-[10px] text-[var(--color-bronze)] mt-1 tracking-widest">PRO SUBSCRIPTION REQUIRED</span>}
-                        </h2>
-                        <p className={`font-label-bold uppercase tracking-widest text-xs ${
-                          sp.disabled ? 'text-gray-600' : spotter === sp.id ? 'text-[var(--color-bone)]' : 'text-[var(--color-ash)]'
-                        }`}>{sp.subtitle}</p>
-                      </div>
-                      
-                      <div className={`w-full p-3 rounded-lg border-l-2 relative overflow-hidden ${
-                        sp.disabled 
-                          ? 'bg-[#0d0e14]/50 border-gray-800'
-                          : spotter === sp.id 
-                            ? 'bg-[var(--color-abyss)] border-[var(--color-blood)]' 
-                            : 'bg-[#0d0e14] border-[var(--color-blood)]/50'
-                      }`}>
-                        {!sp.disabled && (
-                          <div className={`absolute top-0 left-0 w-full h-full bg-[linear-gradient(45deg,transparent_25%,rgba(217,26,26,0.03)_50%,transparent_75%,transparent_100%)] bg-[length:20px_20px] pointer-events-none ${
-                            spotter === sp.id ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
-                          }`}></div>
-                        )}
-                        <p className={`font-body-md italic text-center relative z-10 ${
-                          sp.disabled ? 'text-gray-600' : spotter === sp.id ? 'text-[var(--color-bone)]' : 'text-[var(--color-ash)]'
-                        }`}>{sp.quote}</p>
-                      </div>
+              <div className="bg-[var(--color-charcoal)] border border-gray-800 p-5 mb-6 text-center shadow-md">
+                <span className="font-display font-bold text-[var(--color-ash)] uppercase tracking-widest text-xs block mb-2">Master Plan Generated</span>
+                <h2 className="font-display font-bold text-2xl text-[var(--color-bone)] tracking-widest">{currentSplitStrategy}</h2>
+                {downgradeWarning && (
+                  <div className="mt-4 p-3 border-l-2 border-[var(--color-blood)] bg-[var(--color-blood)]/10 text-left">
+                    <p className="font-display font-bold text-[var(--color-blood)] text-xs uppercase tracking-widest flex items-center gap-2">
+                      <ShieldAlert size={14} /> SPARTAN WARNING
+                    </p>
+                    <p className="font-body-md text-sm text-[var(--color-ash)] mt-1">{downgradeWarning}</p>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex flex-col gap-6 pb-6">
+                {Object.entries(customPool).map(([dayName, exerciseIds]) => (
+                  <div key={dayName} className="border border-gray-800 bg-[var(--color-abyss)]">
+                    <div className="bg-[var(--color-charcoal)] p-3 border-b border-gray-800">
+                      <h3 className="font-display font-bold text-[var(--color-bronze)] uppercase tracking-widest">{dayName}</h3>
+                    </div>
+                    <div className="p-3 flex flex-col gap-2">
+                      {exerciseIds.length === 0 ? (
+                        <p className="text-sm text-gray-500 italic">No exercises available. Enable more equipment or muscles.</p>
+                      ) : (
+                        exerciseIds.map(id => {
+                          const ex = EXERCISE_DB.find(e => e.id === id);
+                          if (!ex) return null;
+                          const isBlacklisted = blacklistedExercises.includes(id);
+                          return (
+                            <button
+                              key={id}
+                              onClick={() => toggleExercise(id)}
+                              className={`text-left flex items-center justify-between p-3 border transition-all active:scale-[0.98] ${
+                                !isBlacklisted 
+                                  ? 'bg-[var(--color-charcoal)] border-[var(--color-bronze)] shadow-[0_0_10px_rgba(200,154,81,0.1)]' 
+                                  : 'bg-[var(--color-abyss)] border-gray-800 opacity-60 grayscale'
+                              }`}
+                            >
+                              <div className="flex flex-col">
+                                <span className={`font-display font-bold uppercase tracking-widest text-sm ${!isBlacklisted ? 'text-[var(--color-bone)]' : 'text-gray-500 line-through'}`}>
+                                  {ex.name}
+                                </span>
+                                <span className="font-sans text-[10px] text-[var(--color-ash)] uppercase mt-1">
+                                  {ex.muscleGroup} • {ex.equipment}
+                                </span>
+                              </div>
+                              <div className={`w-5 h-5 border flex items-center justify-center ${!isBlacklisted ? 'border-[var(--color-bronze)] bg-[var(--color-bronze)]/20 text-[var(--color-bronze)]' : 'border-gray-600 bg-transparent text-transparent'}`}>
+                                {(!isBlacklisted) && <span className="text-xs font-bold leading-none">✓</span>}
+                              </div>
+                            </button>
+                          );
+                        })
+                      )}
                     </div>
                   </div>
                 ))}
+              </div>
+
+              <div className="flex flex-col gap-3">
+                <button 
+                  onClick={recalculatePool}
+                  className="w-full bg-[var(--color-abyss)] border border-[var(--color-ash)] p-4 font-display font-bold text-[var(--color-bone)] uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-[var(--color-charcoal)] active:scale-[0.98] transition-all"
+                >
+                  <RefreshCw size={16} /> RECALCULATE ROUTINE
+                </button>
               </div>
             </div>
           )}

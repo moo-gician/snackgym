@@ -1,8 +1,11 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { CheckCircle2, Circle, User } from 'lucide-react';
-import { auth } from '../lib/firebase';
+import { CheckCircle2, Circle, User, Plus } from 'lucide-react';
+import { auth, db } from '../lib/firebase';
 import { recordSessionComplete } from '../lib/firestore';
+import { doc, getDoc } from 'firebase/firestore';
+import type { Exercise } from '../lib/exerciseDB';
+import { generateSessionExercises } from '../lib/sessionGenerator';
 
 export default function SessionPage() {
   const navigate = useNavigate();
@@ -11,6 +14,12 @@ export default function SessionPage() {
   
   const [completed, setCompleted] = useState<Record<string, boolean>>({});
   const [spark, setSpark] = useState<string | null>(null);
+
+  const [exercises, setExercises] = useState<Exercise[]>([]);
+  const [poolIds, setPoolIds] = useState<string[]>([]);
+  const [courseType, setCourseType] = useState<'MICRO'|'COMPACT'|'CIRCUIT'>('MICRO');
+  const [dayName, setDayName] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(true);
 
   const firstName = auth.currentUser?.displayName?.split(' ')[0] || 'Recruit';
 
@@ -41,11 +50,56 @@ export default function SessionPage() {
     return () => clearInterval(interval);
   }, [targetQuote]);
 
-  // Mock data for MVP UI testing
-  const exercises = [
-    { id: 'ex1', emoji: '🦾', name: 'Dumbbell Bench Press', weight: '12kg', reps: 12, muscle: 'Chest' },
-    { id: 'ex2', emoji: '🦾', name: 'One-Arm Dumbbell Row', weight: '14kg', reps: 10, muscle: 'Back' },
-  ];
+  useEffect(() => {
+    const loadData = async () => {
+      const user = auth.currentUser;
+      if (!user) return;
+      try {
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        if (userDoc.exists()) {
+          const data = userDoc.data();
+          const customPool = data.customExercisePool || {};
+          const course = data.course || 'MICRO';
+          setCourseType(course);
+          
+          let splitIdx = data.currentSplitIndex || 0;
+          
+          // Logic: check if last completed date is not today. If not, and they completed something yesterday, advance splitIndex.
+          // For MVP, we will advance splitIndex after handleFinish. Here we just read it.
+          const dayKeys = Object.keys(customPool);
+          if (dayKeys.length > 0) {
+            const todayKey = dayKeys[splitIdx % dayKeys.length];
+            setDayName(todayKey);
+            const availableIds = customPool[todayKey] || [];
+            setPoolIds(availableIds);
+            
+            // Generate initial list
+            if (availableIds.length > 0) {
+              const generated = generateSessionExercises(availableIds, course, []);
+              setExercises(generated);
+            }
+          }
+        }
+      } catch (err) {
+        console.error("Failed to load session data", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    // Wait for auth to be ready
+    const unsub = auth.onAuthStateChanged(user => {
+      if (user) loadData();
+    });
+    return () => unsub();
+  }, []);
+
+  const addMoreExercises = () => {
+    if (navigator.vibrate) navigator.vibrate(50);
+    const existingIds = exercises.map(ex => ex.id);
+    const updated = generateSessionExercises(poolIds, courseType, existingIds);
+    setExercises(updated);
+  };
 
   const handleCheck = (exId: string) => {
     if (!completed[exId]) {
@@ -68,13 +122,23 @@ export default function SessionPage() {
       }
 
       let weightVal = 0;
-      if (ex.weight) {
-        const match = ex.weight.match(/\d+/);
+      if (typeof ex.baseWeight === 'string') {
+        const match = ex.baseWeight.match(/\d+/);
         if (match) weightVal = parseInt(match[0], 10);
+      } else if (typeof ex.baseWeight === 'number') {
+        weightVal = ex.baseWeight;
       }
       
+      let repsVal = 10;
+      if (typeof ex.baseReps === 'number') {
+        repsVal = ex.baseReps;
+      } else if (typeof ex.baseReps === 'string') {
+        const match = ex.baseReps.match(/\d+/);
+        if (match) repsVal = parseInt(match[0], 10);
+      }
+
       const weightMultiplier = (weightVal * 0.01) + 1;
-      return total + (ex.reps * baseKcal * weightMultiplier);
+      return total + (repsVal * baseKcal * weightMultiplier);
     }, 0);
   };
 
@@ -126,7 +190,7 @@ export default function SessionPage() {
               {scheduledTime ? `${scheduledTime} SESSION` : 'MANUAL ASSAULT'}
             </h1>
             <p className="text-sm font-bold uppercase tracking-widest text-[var(--color-blood)] mt-1">
-              {scheduledTime ? `SCHEDULED STRIKE` : `UNSCHEDULED STRIKE`}
+              {scheduledTime ? `SCHEDULED STRIKE` : `UNSCHEDULED STRIKE`} {dayName ? `// ${dayName}` : ''}
             </p>
           </div>
         </div>
@@ -150,44 +214,62 @@ export default function SessionPage() {
           </div>
         </div>
 
-      <div className="flex-1 space-y-4">
-        {exercises.map(ex => (
-          <div 
-            key={ex.id}
-            onClick={() => handleCheck(ex.id)}
-            className={`relative p-5 rounded-none border transition-all cursor-pointer overflow-hidden ${
-              completed[ex.id] 
-                ? 'border-[var(--color-bronze)] bg-[var(--color-abyss)] opacity-60 shadow-[0_0_10px_rgba(200,154,81,0.2)]' 
-                : 'border-gray-800 bg-[var(--color-charcoal)] hover:border-[var(--color-ash)]'
-            }`}
-          >
-            {spark === ex.id && (
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <span className="text-6xl animate-pulse">💥</span>
-              </div>
-            )}
-            
-            <div className="flex items-center justify-between relative z-10">
-              <div className="flex gap-4 items-start">
-                <span className={`text-2xl mt-0.5 transition-all duration-300 ${completed[ex.id] ? 'grayscale opacity-50' : ''}`}>
-                  {ex.emoji}
-                </span>
-                <div>
-                  <h3 className={`text-xl font-display font-bold uppercase tracking-wider transition-all ${completed[ex.id] ? 'line-through text-gray-600' : 'text-[var(--color-bone)]'}`}>
-                    {ex.name}
-                  </h3>
-                  <p className={`text-sm mt-1 font-bold tracking-widest uppercase ${completed[ex.id] ? 'text-gray-700' : 'text-[var(--color-ash)]'}`}>
-                    ({ex.muscle}) {ex.weight} / {ex.reps} reps
-                  </p>
-                </div>
-              </div>
-              <div className={`transition-transform duration-300 shrink-0 ${completed[ex.id] ? 'scale-110 text-[var(--color-bronze)]' : 'text-gray-700'}`}>
-                {completed[ex.id] ? <CheckCircle2 size={32} /> : <Circle size={32} />}
-              </div>
-            </div>
+        {isLoading ? (
+          <div className="flex justify-center items-center py-12">
+            <span className="text-[var(--color-bronze)] font-display font-bold animate-pulse uppercase tracking-widest">Calibrating Weapons...</span>
           </div>
-        ))}
-      </div>
+        ) : (
+          <div className="flex-1 space-y-4">
+            {exercises.map(ex => {
+              const emoji = ex.equipment === 'Dumbbell' ? '🦾' : ex.equipment === 'Mat' ? '🧘' : ex.equipment === 'PullupBar' ? '🐒' : ex.equipment === 'Bodyweight' ? '🤸' : '🏋️';
+              return (
+                <div 
+                  key={ex.id}
+                  onClick={() => handleCheck(ex.id)}
+                  className={`relative p-5 rounded-none border transition-all cursor-pointer overflow-hidden ${
+                    completed[ex.id] 
+                      ? 'border-[var(--color-bronze)] bg-[var(--color-abyss)] opacity-60 shadow-[0_0_10px_rgba(200,154,81,0.2)]' 
+                      : 'border-gray-800 bg-[var(--color-charcoal)] hover:border-[var(--color-ash)]'
+                  }`}
+                >
+                  {spark === ex.id && (
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                      <span className="text-6xl animate-pulse">💥</span>
+                    </div>
+                  )}
+                  
+                  <div className="flex items-center justify-between relative z-10">
+                    <div className="flex gap-4 items-start">
+                      <span className={`text-2xl mt-0.5 transition-all duration-300 ${completed[ex.id] ? 'grayscale opacity-50' : ''}`}>
+                        {emoji}
+                      </span>
+                      <div>
+                        <h3 className={`text-xl font-display font-bold uppercase tracking-wider transition-all ${completed[ex.id] ? 'line-through text-gray-600' : 'text-[var(--color-bone)]'}`}>
+                          {ex.name}
+                        </h3>
+                        <p className={`text-sm mt-1 font-bold tracking-widest uppercase ${completed[ex.id] ? 'text-gray-700' : 'text-[var(--color-ash)]'}`}>
+                          ({ex.muscleGroup}) {ex.baseWeight} / {ex.baseReps} {typeof ex.baseReps === 'number' ? 'reps' : ''}
+                        </p>
+                      </div>
+                    </div>
+                    <div className={`transition-transform duration-300 shrink-0 ${completed[ex.id] ? 'scale-110 text-[var(--color-bronze)]' : 'text-gray-700'}`}>
+                      {completed[ex.id] ? <CheckCircle2 size={32} /> : <Circle size={32} />}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+
+            {exercises.length > 0 && exercises.length < poolIds.length && (
+              <button 
+                onClick={addMoreExercises}
+                className="w-full mt-6 py-4 border-2 border-dashed border-[var(--color-bronze)]/50 text-[var(--color-bronze)] hover:bg-[var(--color-bronze)] hover:text-[var(--color-abyss)] transition-all font-display font-bold uppercase tracking-widest flex items-center justify-center gap-2"
+              >
+                <Plus size={20} /> I CAN DO MORE
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-[var(--color-abyss)] via-[var(--color-abyss)] to-transparent">

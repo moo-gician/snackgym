@@ -24,6 +24,10 @@ export type UserProfile = {
   alarmTimes?: string[];
   completedAlarms?: string[];
   skippedAlarms?: string[];
+  splitStrategy?: string;
+  customExercisePool?: Record<string, string[]>;
+  blacklistedExercises?: string[];
+  currentSplitIndex?: number;
 };
 
 /**

@@ -488,7 +488,7 @@ export default function DashboardPage() {
               </button>
               <button onClick={() => setShowFeedback(true)} className="flex flex-col items-center justify-center p-4 bg-[var(--color-charcoal)] rounded-none border border-gray-800 hover:border-[var(--color-blood)] hover:shadow-[0_0_15px_rgba(217,26,26,0.2)] transition-all tap-scale">
                 <Activity size={24} className="text-[var(--color-blood)] mb-2" />
-                <span className="text-xs font-bold text-[var(--color-bone)] uppercase tracking-wider">Feedback</span>
+                <span className="text-xs font-bold text-[var(--color-bone)] uppercase tracking-wider">Intensity</span>
               </button>
             </div>
           </div>
@@ -512,15 +512,15 @@ export default function DashboardPage() {
                 </button>
                 <button onClick={() => navigate('/onboarding?step=3')} className="p-3 bg-[var(--color-charcoal)] border border-gray-800 rounded-none flex items-center gap-3 hover:border-[var(--color-bronze)] tap-scale text-left">
                   <span className="text-xl">⚡</span>
-                  <span className="font-bold text-sm text-[var(--color-bone)] uppercase tracking-wider mt-0.5">Routine</span>
+                  <span className="font-bold text-sm text-[var(--color-bone)] uppercase tracking-wider mt-0.5">Course</span>
+                </button>
+                <button onClick={() => navigate('/onboarding?step=5')} className="p-3 bg-[var(--color-charcoal)] border border-gray-800 rounded-none flex items-center gap-3 hover:border-[var(--color-bronze)] tap-scale text-left">
+                  <span className="text-xl">📋</span>
+                  <span className="font-bold text-sm text-[var(--color-bone)] uppercase tracking-wider mt-0.5">Exercise List</span>
                 </button>
                 <button onClick={() => navigate('/onboarding?step=4')} className="p-3 bg-[var(--color-charcoal)] border border-gray-800 rounded-none flex items-center gap-3 hover:border-[var(--color-bronze)] tap-scale text-left">
                   <span className="text-xl">⏰</span>
                   <span className="font-bold text-sm text-[var(--color-bone)] uppercase tracking-wider mt-0.5">Schedule</span>
-                </button>
-                <button onClick={() => navigate('/onboarding?step=5')} className="p-3 bg-[var(--color-charcoal)] border border-gray-800 rounded-none flex items-center gap-3 hover:border-[var(--color-bronze)] tap-scale text-left">
-                  <span className="text-xl">💀</span>
-                  <span className="font-bold text-sm text-[var(--color-bone)] uppercase tracking-wider mt-0.5">Spotter</span>
                 </button>
                 <button onClick={() => navigate('/onboarding?step=6')} className="p-3 bg-[var(--color-charcoal)] border border-gray-800 rounded-none flex items-center gap-3 hover:border-[var(--color-bronze)] tap-scale text-left">
                   <span className="text-xl">🚪</span>
@@ -586,15 +586,15 @@ export default function DashboardPage() {
             <div className="grid grid-cols-3 gap-3">
               <button onClick={() => handleFeedback('easy')} className="p-4 rounded-none border border-gray-800 bg-[var(--color-abyss)] hover:border-[var(--color-bronze)] font-bold text-[var(--color-ash)] hover:text-[var(--color-bone)] flex flex-col items-center gap-2 transition-all">
                 <span className="text-2xl opacity-50 grayscale">😎</span>
-                <span className="uppercase text-xs tracking-widest">Too Easy</span>
+                <span className="uppercase text-xs tracking-widest text-center">Too Easy</span>
               </button>
               <button onClick={() => handleFeedback('good')} className="p-4 rounded-none border border-[var(--color-bronze)] bg-[var(--color-abyss)] font-bold text-[var(--color-bronze)] flex flex-col items-center gap-2 shadow-[0_0_15px_rgba(200,154,81,0.2)]">
                 <span className="text-2xl">🔥</span>
-                <span className="uppercase text-xs tracking-widest">Bloody</span>
+                <span className="uppercase text-xs tracking-widest text-center">Just Right</span>
               </button>
               <button onClick={() => handleFeedback('hard')} className="p-4 rounded-none border border-gray-800 bg-[var(--color-abyss)] hover:border-[var(--color-blood)] font-bold text-[var(--color-ash)] hover:text-[var(--color-blood)] flex flex-col items-center gap-2 transition-all">
                 <span className="text-2xl grayscale">💀</span>
-                <span className="uppercase text-xs tracking-widest">Dead</span>
+                <span className="uppercase text-xs tracking-widest text-center">Too Hard</span>
               </button>
             </div>
           </div>

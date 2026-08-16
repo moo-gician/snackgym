@@ -162,13 +162,18 @@ export default function OnboardingPage() {
     setStep(s => Math.max(1, s - 1));
   };
 
-  const completeOnboarding = async () => {
+  const handleAutoSaveAndNavigate = async (path?: string) => {
     const user = auth.currentUser;
     if (!user) {
-      alert("Login is required.");
+      if (path) navigate(path);
       return;
     }
-    
+
+    const sessionsPerDay = alarmTimes.length > 0 ? alarmTimes.length : 1;
+    const initialStrategy = calculateSplitStrategy(muscles, sessionsPerDay);
+    const initialPool = generateCustomPool(initialStrategy, equipment, muscles);
+    const { finalStrategy, finalPool, wasDowngraded } = autoDowngradeSplitIfNeeded(initialStrategy, initialPool, blacklistedExercises);
+
     try {
       await saveOnboardingData(user.uid, {
         equipment,
@@ -176,33 +181,42 @@ export default function OnboardingPage() {
         course: course as any,
         workStartTime,
         workEndTime,
-        sessionsPerDay: alarmTimes.length > 0 ? alarmTimes.length : 1,
+        sessionsPerDay,
         activeDays,
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         spotter: spotter as any,
         notificationMethod: notificationMethod as any,
         alarmTimes,
-        splitStrategy: currentSplitStrategy,
-        customExercisePool: customPool,
+        splitStrategy: finalStrategy,
+        customExercisePool: finalPool,
         blacklistedExercises
       });
       
-      console.log("Onboarding data saved successfully!");
-      
-      // Cleanup session storage
-      ['ob_equipment', 'ob_muscles', 'ob_course', 'ob_workStart', 'ob_workEnd', 'ob_interval', 'ob_activeDays', 'ob_spotter', 'ob_notif'].forEach(k => sessionStorage.removeItem(k));
+      setCurrentSplitStrategy(finalStrategy);
+      setCustomPool(finalPool);
+      if (wasDowngraded) setDowngradeWarning(`Your blacklisted exercises forced a downgrade to ${finalStrategy}.`);
+      else setDowngradeWarning(null);
 
-      if (notificationMethod === 'telegram') {
-        const telegramUrl = `https://t.me/SnackGymBot?start=${user.uid}`;
-        window.location.href = telegramUrl;
+      // Cleanup session storage
+      ['ob_equipment', 'ob_muscles', 'ob_course', 'ob_workStart', 'ob_workEnd', 'ob_interval', 'ob_activeDays', 'ob_spotter', 'ob_notif', 'ob_blacklist'].forEach(k => sessionStorage.removeItem(k));
+
+      if (path) {
+        navigate(path);
       } else {
-        navigate('/dashboard');
+        // Default complete behavior
+        if (notificationMethod === 'telegram') {
+          window.location.href = `https://t.me/SnackGymBot?start=${user.uid}`;
+        } else {
+          navigate('/dashboard');
+        }
       }
     } catch (error) {
       console.error("Failed to save onboarding data:", error);
-      alert("Failed to save data. Please try again.");
+      if (path) navigate(path);
     }
   };
+
+  const completeOnboarding = () => handleAutoSaveAndNavigate();
 
   return (
     <div className="min-h-screen bg-[var(--color-abyss)] text-[var(--color-ash)] font-sans flex flex-col">
@@ -676,14 +690,14 @@ export default function OnboardingPage() {
         <div className="h-24 flex items-center justify-center pb-4">
           <div className="flex items-center bg-[var(--color-charcoal)]/90 backdrop-blur-md rounded-full p-2 border border-gray-800 shadow-2xl w-full max-w-md mx-auto h-[72px]">
             <button 
-              onClick={() => navigate('/dashboard')} 
+              onClick={() => handleAutoSaveAndNavigate('/dashboard')} 
               className="flex-1 flex flex-col items-center justify-center gap-1 transition-all duration-300 text-gray-500 hover:text-gray-300"
             >
               <span className="text-2xl mb-1">⚔️</span>
               <span className="font-display font-bold text-[10px] uppercase tracking-widest">Arena</span>
             </button>
             <button 
-              onClick={() => navigate('/dashboard')} 
+              onClick={() => handleAutoSaveAndNavigate('/dashboard')} 
               className="flex-1 flex flex-col items-center justify-center gap-1 transition-all duration-300 text-gray-500 hover:text-gray-300"
             >
               <span className="text-2xl mb-1">🔥</span>

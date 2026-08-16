@@ -16,7 +16,6 @@ export function calculateSplitStrategy(
   // Check which major groups are included
   const hasLegs = targetMuscles.includes('Legs');
   const hasBack = targetMuscles.includes('Back');
-  const hasCore = targetMuscles.includes('Core');
   const hasPush = targetMuscles.includes('Chest') || targetMuscles.includes('Shoulders');
   
   if (!hasLegs) {

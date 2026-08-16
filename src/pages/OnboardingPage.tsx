@@ -3,7 +3,9 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { auth, db } from '../lib/firebase';
 import { saveOnboardingData } from '../lib/firestore';
 import { doc, getDoc } from 'firebase/firestore';
+import { signOut } from 'firebase/auth';
 import BodyMap from '../components/BodyMap';
+import { User } from 'lucide-react';
 
 type CourseType = 'MICRO' | 'COMPACT' | 'CIRCUIT' | null;
 type SpotterType = 'SPARTAN' | 'DRILL_SERGEANT' | null;
@@ -162,11 +164,24 @@ export default function OnboardingPage() {
             <img src="https://lh3.googleusercontent.com/aida/AP1WRLvL3hsJ2y4za4DRON2I13kxqT-k84HauYfDzQw6W6u3cozHNVsMbONuPLoKkpVT9dK2a1_u0uo5vksj3dc0-FFdlJ-HgueDt5Cr7wA0Nbke59Hpo54CjjZVI1U9V7fLylSFWlbOuYQr89qYPV01DmM5z23_uMNsQEX5cTcUVnv7nVqkVilcjqh6NlXdPTs3E1aAlwUkt9IGCc1g546aHK--oY8-vDnNFeA2ALgnjZJX0QPTTSslf65rvyo" alt="B.E.A.S.T. Logo" className="w-full h-full object-contain" />
           </div>
           <span className="font-display font-bold text-[14px] uppercase tracking-widest text-[var(--color-bronze)] whitespace-nowrap">Armory Onboarding</span>
-          <div className="flex-grow flex items-center gap-1">
+          <div className="flex-grow flex items-center gap-1 px-2">
             {[1,2,3,4,5,6].map(idx => (
               <div key={idx} className={`h-1 rounded-sm flex-1 transition-all duration-300 ${step >= idx ? 'bg-[var(--color-bronze)] shadow-[0_0_8px_rgba(200,154,81,0.4)]' : 'bg-[var(--color-charcoal)]'}`} />
             ))}
           </div>
+          <button 
+            onClick={async () => {
+              if (auth.currentUser) {
+                await signOut(auth);
+                navigate('/');
+              } else {
+                navigate('/');
+              }
+            }}
+            className="w-8 h-8 shrink-0 rounded-none border border-[var(--color-bronze)] bg-[var(--color-abyss)] flex items-center justify-center shadow-[0_0_10px_rgba(200,154,81,0.2)] hover:bg-[var(--color-charcoal)] transition-colors"
+          >
+            <User size={18} className="text-[var(--color-bronze)]" />
+          </button>
         </div>
       </header>
 

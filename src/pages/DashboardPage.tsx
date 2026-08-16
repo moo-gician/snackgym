@@ -5,7 +5,7 @@ import { signOut } from 'firebase/auth';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { deactivateUser } from '../lib/firestore';
 import type { UserProfile } from '../lib/firestore';
-import { Settings as SettingsIcon, LogOut, Trash2, Share2, Activity, BellOff } from 'lucide-react';
+import { Settings as SettingsIcon, LogOut, Trash2, Share2, Activity, BellOff, User } from 'lucide-react';
 
 export default function DashboardPage() {
   const navigate = useNavigate();
@@ -100,8 +100,8 @@ export default function DashboardPage() {
             <img alt="B.E.A.S.T. Logo" className="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AP1WRLvL3hsJ2y4za4DRON2I13kxqT-k84HauYfDzQw6W6u3cozHNVsMbONuPLoKkpVT9dK2a1_u0uo5vksj3dc0-FFdlJ-HgueDt5Cr7wA0Nbke59Hpo54CjjZVI1U9V7fLylSFWlbOuYQr89qYPV01DmM5z23_uMNsQEX5cTcUVnv7nVqkVilcjqh6NlXdPTs3E1aAlwUkt9IGCc1g546aHK--oY8-vDnNFeA2ALgnjZJX0QPTTSslf65rvyo" />
             <span className="font-display font-bold text-[16px] uppercase tracking-wider text-[var(--color-bronze)] leading-none mt-1">Camp Dashboard</span>
           </div>
-          <button onClick={() => setActiveTab('SETTINGS')} className="w-8 h-8 rounded-none bg-[var(--color-bronze)] flex items-center justify-center tap-scale">
-            <SettingsIcon size={18} className="text-[var(--color-abyss)]" />
+          <button onClick={handleLogout} className="w-8 h-8 rounded-none border border-[var(--color-bronze)] bg-[var(--color-abyss)] flex items-center justify-center shadow-[0_0_10px_rgba(200,154,81,0.2)] hover:bg-[var(--color-charcoal)] transition-colors">
+            <User size={18} className="text-[var(--color-bronze)]" />
           </button>
         </div>
       </header>
@@ -130,6 +130,24 @@ export default function DashboardPage() {
                 <BellOff size={14} />
                 <span className="font-display font-bold text-sm uppercase mt-0.5">{isSnoozed ? 'Snoozed' : 'Snooze'}</span>
               </button>
+            </div>
+            
+            {/* Spotter Bubble */}
+            <div className="px-4 z-10 mt-6">
+              <div className="relative bg-[var(--color-charcoal)] border border-[var(--color-blood)]/30 p-4 rounded-none shadow-[0_0_20px_rgba(217,26,26,0.15)] overflow-hidden">
+                <div className="absolute top-0 right-0 w-2 h-2 bg-[var(--color-blood)]"></div>
+                <div className="absolute top-0 left-0 right-2 h-[1px] bg-gradient-to-r from-[var(--color-blood)]/50 to-transparent"></div>
+                <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(45deg,transparent_25%,rgba(217,26,26,0.03)_50%,transparent_75%,transparent_100%)] bg-[length:20px_20px] pointer-events-none"></div>
+                <div className="flex items-center gap-4 relative z-10">
+                  <div className="w-14 h-14 bg-[var(--color-abyss)] border border-[var(--color-blood)] rounded-full flex items-center justify-center shrink-0 overflow-hidden shadow-[0_0_15px_rgba(217,26,26,0.3)]">
+                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuD51FeObMtC6z6ZBtJD8p6aNUgd5xOxJmaxBhjMam0av-ygMXreK223xu94s9zt2p0xexAYJZAN4j31JplRuwrkCgLsWb8f83fxT7FPPVmbI5JuNU5V6i1OMfNdTD7agx2yArUXmxHdaESYc-KnNuwfRu_b86KMi9AsmxCZG_jUf5rrpUhP3VE8saA2CZO1DXeM24KLHR-xUTzAOY3yJ88F9Ct03InCCfqxmjaoHErs8D0xqnq108-0" alt="Spartan Spotter" className="w-full h-full object-cover" />
+                  </div>
+                  <div>
+                    <span className="font-headline-md text-[var(--color-blood)] uppercase tracking-wider block mb-1">Spartan Spotter</span>
+                    <p className="font-body-md text-[var(--color-bone)] italic leading-snug">"Your chair is making you soft. Drop and give me 20. Excuses burn zero calories."</p>
+                  </div>
+                </div>
+              </div>
             </div>
             
             {/* Progress Ring */}
@@ -169,23 +187,7 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {/* Spotter Bubble */}
-            <div className="px-4 mb-8 z-10 mt-6">
-              <div className="relative bg-[var(--color-charcoal)] border border-gray-800 p-4 rounded-none shadow-[0_0_20px_rgba(0,0,0,0.5)]">
-                <div className="absolute top-0 right-0 w-2 h-2 bg-[var(--color-bronze)]"></div>
-                <div className="absolute top-0 left-0 right-2 h-[1px] bg-gray-700"></div>
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 bg-[var(--color-abyss)] border border-gray-800 flex items-center justify-center shrink-0">
-                    <span className="text-2xl">🤬</span>
-                  </div>
-                  <div>
-                    <span className="font-display font-bold text-[var(--color-bronze)] uppercase tracking-wider block mb-1">Spartan Spotter</span>
-                    <p className="text-sm text-[var(--color-ash)] italic">"Your chair is making you soft. Drop and give me 20. Excuses burn zero calories."</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
+
             {/* Action Button */}
             <div className="px-4 mb-8 z-10">
               <Link to="/session/manual-1" className="w-full relative group overflow-hidden bg-[var(--color-bronze)] py-4 px-6 flex items-center justify-center gap-2 border border-yellow-600 shadow-[0_0_15px_rgba(200,154,81,0.2)] hover:shadow-[0_0_25px_rgba(200,154,81,0.4)] transition-all active:scale-[0.98]">

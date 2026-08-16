@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { signInWithGoogle } from '../lib/auth'
 import { auth } from '../lib/firebase'
+import { User } from 'lucide-react'
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -37,9 +38,9 @@ export default function LandingPage() {
           <button
             onClick={handleLogin}
             disabled={loading}
-            className="w-10 h-10 rounded-none border border-[var(--color-bronze)] bg-[var(--color-abyss)] flex items-center justify-center shadow-[0_0_10px_rgba(200,154,81,0.2)] hover:bg-[var(--color-charcoal)] transition-colors"
+            className="w-8 h-8 rounded-none border border-[var(--color-bronze)] bg-[var(--color-abyss)] flex items-center justify-center shadow-[0_0_10px_rgba(200,154,81,0.2)] hover:bg-[var(--color-charcoal)] transition-colors"
           >
-            <span className="text-xl leading-none opacity-80 hover:opacity-100">⚔️</span>
+            <User size={18} className="text-[var(--color-bronze)]" />
           </button>
         </div>
       </header>

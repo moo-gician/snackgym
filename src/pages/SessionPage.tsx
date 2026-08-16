@@ -26,17 +26,42 @@ export default function SessionPage() {
   const quotes = useMemo(() => [
     `You're already here. Quitting now would be embarrassing, ${firstName}.`,
     `Those weights won't lift themselves, ${firstName}. Get moving.`,
-    `Pain is just weakness leaving your body. Do not stop.`,
-    `Excuses burn zero calories. Let's see what you've got.`,
-    `I've seen better form from a wet noodle. Prove me wrong, ${firstName}.`
+    `Pain is just weakness leaving your body, ${firstName}. Do not stop.`,
+    `Excuses burn zero calories, ${firstName}. Let's see what you've got.`,
+    `I've seen better form from a wet noodle. Prove me wrong, ${firstName}.`,
+    `This is where the magic happens, ${firstName}. Keep pushing!`,
+    `Your mind will quit a thousand times before your body does, ${firstName}.`,
+    `Don't count the days, ${firstName}, make the days count.`,
+    `Sweat is magic, ${firstName}. Cover yourself in it daily.`,
+    `${firstName}, the only bad workout is the one that didn't happen.`,
+    `You are stronger than you think, ${firstName}. Show me!`,
+    `${firstName}, resting is for when you're done, not when you're tired.`,
+    `Embrace the suck, ${firstName}. That's where growth lives.`,
+    `Are you going to talk about it or be about it, ${firstName}?`,
+    `Rome wasn't built in a day, but they worked on it every single day, ${firstName}.`,
+    `Focus, ${firstName}! Mind muscle connection.`,
+    `You can either suffer the pain of discipline or the pain of regret, ${firstName}.`,
+    `${firstName}, every drop of sweat is a down payment on your goals.`,
+    `Leave it all on the floor, ${firstName}. No regrets.`,
+    `This is your arena, ${firstName}. Conquer it!`
   ], [firstName]);
 
+  const [quoteIndex, setQuoteIndex] = useState(0);
   const [targetQuote, setTargetQuote] = useState('');
   const [displayedQuote, setDisplayedQuote] = useState('');
 
   useEffect(() => {
-    setTargetQuote(quotes[Math.floor(Math.random() * quotes.length)]);
-  }, [quotes]);
+    setQuoteIndex(Math.floor(Math.random() * 20));
+  }, []);
+
+  useEffect(() => {
+    setTargetQuote(quotes[quoteIndex % quotes.length]);
+  }, [quoteIndex, quotes]);
+
+  const handleSpotterClick = () => {
+    if (navigator.vibrate) navigator.vibrate(20);
+    setQuoteIndex(prev => prev + 1);
+  };
 
   useEffect(() => {
     if (!targetQuote) return;
@@ -198,7 +223,10 @@ export default function SessionPage() {
         {/* Spotter UI */}
         <div className="mb-8 relative animate-fade-in-up">
           <div className="absolute -left-2 top-0 w-1 h-full bg-[var(--color-blood)]"></div>
-          <div className="bg-[var(--color-charcoal)] border border-gray-800 p-4 pl-6 relative shadow-lg">
+          <div 
+            onClick={handleSpotterClick}
+            className="bg-[var(--color-charcoal)] border border-gray-800 p-4 pl-6 relative shadow-lg cursor-pointer active:scale-[0.98] transition-transform"
+          >
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-full overflow-hidden border border-[var(--color-blood)] shrink-0 bg-[var(--color-abyss)] shadow-[0_0_10px_rgba(217,26,26,0.3)]">
                 <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuD51FeObMtC6z6ZBtJD8p6aNUgd5xOxJmaxBhjMam0av-ygMXreK223xu94s9zt2p0xexAYJZAN4j31JplRuwrkCgLsWb8f83fxT7FPPVmbI5JuNU5V6i1OMfNdTD7agx2yArUXmxHdaESYc-KnNuwfRu_b86KMi9AsmxCZG_jUf5rrpUhP3VE8saA2CZO1DXeM24KLHR-xUTzAOY3yJ88F9Ct03InCCfqxmjaoHErs8D0xqnq108-0" alt="Spartan Spotter" className="w-full h-full object-cover" />

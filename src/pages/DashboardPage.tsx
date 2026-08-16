@@ -19,10 +19,55 @@ export default function DashboardPage() {
   const [nextSessionTime, setNextSessionTime] = useState<string | null>(null);
   const [timeLeft, setTimeLeft] = useState<string>('--:--:--');
 
+  const firstName = user?.displayName?.split(' ')[0] || 'Recruit';
+
+  const dashboardQuotes = useMemo(() => [
+    `${firstName}, your chair is making you soft. Drop and give me 20.`,
+    `Excuses burn zero calories, ${firstName}. Get up!`,
+    `I can see you slacking, ${firstName}. Your muscles are deflating.`,
+    `Are we resting again, ${firstName}? The enemy is training right now.`,
+    `${firstName}! Sweat is just fat crying. Make it weep.`,
+    `I've seen more hustle in a sloth, ${firstName}. Move!`,
+    `Don't make me come through this screen, ${firstName}.`,
+    `Your future self is begging you to lift, ${firstName}.`,
+    `You call that a break, ${firstName}? That's a vacation!`,
+    `${firstName}, the only bad workout is the one you didn't do.`,
+    `Pain is temporary, ${firstName}. Quitting lasts forever.`,
+    `I didn't hear a rep, ${firstName}. Back to work.`,
+    `${firstName}, discipline is choosing what you want most over what you want now.`,
+    `Stop wishing for it, ${firstName}, and start working for it.`,
+    `You're not tired, ${firstName}. You're just uninspired. Let's go!`,
+    `If it doesn't challenge you, ${firstName}, it doesn't change you.`,
+    `${firstName}, earn your shower today.`,
+    `I'm waiting, ${firstName}. And I don't like waiting.`,
+    `Is that your warm-up, ${firstName}? Because I'm getting bored.`,
+    `${firstName}, prove to yourself that you're better than your excuses.`
+  ], [firstName]);
+
+  const snoozedQuotes = useMemo(() => [
+    `Snoozing, ${firstName}? I guess weakness is your new PR.`,
+    `A snooze button is just a failure button, ${firstName}.`,
+    `Sleep won't build those muscles, ${firstName}.`,
+    `${firstName}, every time you snooze, a dumbbell sheds a tear.`,
+    `I hope your dreams are better than your work ethic, ${firstName}.`
+  ], [firstName]);
+
+  const [quoteIndex, setQuoteIndex] = useState(0);
+  
   const targetQuote = isSnoozed 
-    ? `"Snoozing, ${user?.displayName?.split(' ')[0] || 'Recruit'}? I guess weakness is your new PR. Turn that off and get back to work!"`
-    : `"${user?.displayName?.split(' ')[0] || 'Recruit'}, your chair is making you soft. Drop and give me 20. Excuses burn zero calories."`;
+    ? snoozedQuotes[quoteIndex % snoozedQuotes.length]
+    : dashboardQuotes[quoteIndex % dashboardQuotes.length];
+
+  const handleSpotterClick = () => {
+    if (navigator.vibrate) navigator.vibrate(20);
+    setQuoteIndex(prev => prev + 1);
+  };
+
   const [displayedQuote, setDisplayedQuote] = useState('');
+
+  useEffect(() => {
+    setQuoteIndex(Math.floor(Math.random() * 20)); // Start with a random quote
+  }, []);
 
   useEffect(() => {
     setDisplayedQuote('');
@@ -212,7 +257,10 @@ export default function DashboardPage() {
             
             {/* Spotter Bubble */}
             <div className="px-4 z-10 mt-6 transition-all duration-700">
-              <div className="relative bg-[var(--color-charcoal)] border border-[var(--color-blood)]/30 p-4 rounded-none shadow-[0_0_20px_rgba(217,26,26,0.15)] overflow-hidden">
+              <div 
+                onClick={handleSpotterClick}
+                className="relative bg-[var(--color-charcoal)] border border-[var(--color-blood)]/30 p-4 rounded-none shadow-[0_0_20px_rgba(217,26,26,0.15)] overflow-hidden cursor-pointer active:scale-[0.98] transition-transform"
+              >
                 <div className="absolute top-0 right-0 w-2 h-2 bg-[var(--color-blood)]"></div>
                 <div className="absolute top-0 left-0 right-2 h-[1px] bg-gradient-to-r from-[var(--color-blood)]/50 to-transparent"></div>
                 <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(45deg,transparent_25%,rgba(217,26,26,0.03)_50%,transparent_75%,transparent_100%)] bg-[length:20px_20px] pointer-events-none"></div>
@@ -348,13 +396,13 @@ export default function DashboardPage() {
             </div>
 
             <div className="grid grid-cols-2 gap-4 mt-8">
-              <button onClick={handleShare} className="flex flex-col items-center justify-center p-4 bg-[var(--color-charcoal)] rounded-none border border-gray-800 hover:border-[var(--color-bronze)] tap-scale">
-                <Share2 size={24} className="text-[var(--color-bronze)] mb-2" />
-                <span className="text-xs font-bold text-[var(--color-bone)] uppercase tracking-wider">Share Glory</span>
-              </button>
               <button onClick={() => setShowFeedback(true)} className="flex flex-col items-center justify-center p-4 bg-[var(--color-charcoal)] rounded-none border border-gray-800 hover:border-[var(--color-bronze)] tap-scale">
                 <Activity size={24} className="text-[var(--color-blood)] mb-2" />
                 <span className="text-xs font-bold text-[var(--color-bone)] uppercase tracking-wider">Feedback</span>
+              </button>
+              <button onClick={handleSoftDelete} className="flex flex-col items-center justify-center p-4 bg-red-900/10 rounded-none border border-red-900/50 hover:bg-red-900/30 transition-colors tap-scale">
+                <Trash2 size={24} className="text-red-500 mb-2" />
+                <span className="text-xs font-bold text-red-500 uppercase tracking-wider">Surrender</span>
               </button>
             </div>
           </div>

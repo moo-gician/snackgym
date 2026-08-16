@@ -1,11 +1,10 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { CheckCircle2, Circle } from 'lucide-react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { CheckCircle2, Circle, User } from 'lucide-react';
 import { auth } from '../lib/firebase';
 import { recordSessionComplete } from '../lib/firestore';
 
 export default function SessionPage() {
-  const { id } = useParams();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const scheduledTime = searchParams.get('time');
@@ -44,8 +43,8 @@ export default function SessionPage() {
 
   // Mock data for MVP UI testing
   const exercises = [
-    { id: 'ex1', name: '🦾 Dumbbell Bench Press', weight: '12kg', reps: 12 },
-    { id: 'ex2', name: '🦾 One-Arm Dumbbell Row', weight: '14kg', reps: 10 },
+    { id: 'ex1', emoji: '🦾', name: 'Dumbbell Bench Press', weight: '12kg', reps: 12, muscle: 'Chest' },
+    { id: 'ex2', emoji: '🦾', name: 'One-Arm Dumbbell Row', weight: '14kg', reps: 10, muscle: 'Back' },
   ];
 
   const handleCheck = (exId: string) => {
@@ -104,37 +103,52 @@ export default function SessionPage() {
   const allCompleted = exercises.every(ex => completed[ex.id]);
 
   return (
-    <div className="min-h-screen pb-24 pt-8 px-4 flex flex-col max-w-md mx-auto relative bg-[var(--color-abyss)] text-[var(--color-ash)] font-sans">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-4xl font-display font-bold uppercase tracking-wider text-[var(--color-bone)]">
-            {scheduledTime ? `${scheduledTime} SESSION` : 'MANUAL SESSION'}
-          </h1>
-          <p className="text-sm font-bold uppercase tracking-widest text-[var(--color-blood)] mt-1">
-            {scheduledTime ? `STRIKE SCHEDULED` : `Session ${id}`}
-          </p>
+    <div className="min-h-screen pb-24 flex flex-col relative bg-[var(--color-abyss)] text-[var(--color-ash)] font-sans">
+      
+      {/* GLOBAL HEADER */}
+      <header className="fixed top-0 inset-x-0 z-50 bg-[var(--color-abyss)]/80 backdrop-blur-xl pt-safe border-b border-gray-900">
+        <div className="h-16 px-4 flex items-center justify-between max-w-md mx-auto w-full">
+          <div className="flex items-center gap-2">
+            <img alt="B.E.A.S.T. Logo" className="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AP1WRLvL3hsJ2y4za4DRON2I13kxqT-k84HauYfDzQw6W6u3cozHNVsMbONuPLoKkpVT9dK2a1_u0uo5vksj3dc0-FFdlJ-HgueDt5Cr7wA0Nbke59Hpo54CjjZVI1U9V7fLylSFWlbOuYQr89qYPV01DmM5z23_uMNsQEX5cTcUVnv7nVqkVilcjqh6NlXdPTs3E1aAlwUkt9IGCc1g546aHK--oY8-vDnNFeA2ALgnjZJX0QPTTSslf65rvyo" />
+            <span className="font-display font-bold text-[16px] uppercase tracking-wider text-[var(--color-bronze)] leading-none mt-1">Active Assault</span>
+          </div>
+          <button onClick={() => navigate('/dashboard')} className="w-8 h-8 rounded-none border border-[var(--color-bronze)] bg-[var(--color-abyss)] flex items-center justify-center shadow-[0_0_10px_rgba(200,154,81,0.2)] hover:bg-[var(--color-charcoal)] transition-colors">
+            <User size={18} className="text-[var(--color-bronze)]" />
+          </button>
         </div>
-      </div>
+      </header>
 
-      {/* Spotter UI */}
-      <div className="mb-8 relative animate-fade-in-up">
-        <div className="absolute -left-2 top-0 w-1 h-full bg-[var(--color-blood)]"></div>
-        <div className="bg-[var(--color-charcoal)] border border-gray-800 p-4 pl-6 relative shadow-lg">
-          <div className="flex items-start gap-4">
-            <div className="w-12 h-12 rounded-full overflow-hidden border border-[var(--color-blood)] shrink-0 bg-black shadow-[0_0_10px_rgba(255,51,51,0.2)]">
-              <img src="https://lh3.googleusercontent.com/aida/AP1WRLvL3hsJ2y4za4DRON2I13kxqT-k84HauYfDzQw6W6u3cozHNVsMbONuPLoKkpVT9dK2a1_u0uo5vksj3dc0-FFdlJ-HgueDt5Cr7wA0Nbke59Hpo54CjjZVI1U9V7fLylSFWlbOuYQr89qYPV01DmM5z23_uMNsQEX5cTcUVnv7nVqkVilcjqh6NlXdPTs3E1aAlwUkt9IGCc1g546aHK--oY8-vDnNFeA2ALgnjZJX0QPTTSslf65rvyo" alt="Spartan" className="w-full h-full object-cover grayscale opacity-80" />
-            </div>
-            <div>
-              <span className="font-headline-md text-[var(--color-blood)] uppercase tracking-wider block mb-1">Spartan Spotter</span>
-              <p className="font-body-md text-[var(--color-bone)] italic leading-snug min-h-[3rem]">
-                {displayedQuote}
-                <span className="animate-pulse opacity-50 ml-1 block inline-block w-2 h-4 bg-[var(--color-blood)] align-middle"></span>
-              </p>
+      <div className="flex-1 w-full max-w-md mx-auto px-4 pt-24">
+        {/* Session Title */}
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-4xl font-display font-bold uppercase tracking-wider text-[var(--color-bone)]">
+              {scheduledTime ? `${scheduledTime} SESSION` : 'MANUAL ASSAULT'}
+            </h1>
+            <p className="text-sm font-bold uppercase tracking-widest text-[var(--color-blood)] mt-1">
+              {scheduledTime ? `SCHEDULED STRIKE` : `UNSCHEDULED STRIKE`}
+            </p>
+          </div>
+        </div>
+
+        {/* Spotter UI */}
+        <div className="mb-8 relative animate-fade-in-up">
+          <div className="absolute -left-2 top-0 w-1 h-full bg-[var(--color-blood)]"></div>
+          <div className="bg-[var(--color-charcoal)] border border-gray-800 p-4 pl-6 relative shadow-lg">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-full overflow-hidden border border-[var(--color-blood)] shrink-0 bg-[var(--color-abyss)] shadow-[0_0_10px_rgba(217,26,26,0.3)]">
+                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuD51FeObMtC6z6ZBtJD8p6aNUgd5xOxJmaxBhjMam0av-ygMXreK223xu94s9zt2p0xexAYJZAN4j31JplRuwrkCgLsWb8f83fxT7FPPVmbI5JuNU5V6i1OMfNdTD7agx2yArUXmxHdaESYc-KnNuwfRu_b86KMi9AsmxCZG_jUf5rrpUhP3VE8saA2CZO1DXeM24KLHR-xUTzAOY3yJ88F9Ct03InCCfqxmjaoHErs8D0xqnq108-0" alt="Spartan Spotter" className="w-full h-full object-cover" />
+              </div>
+              <div>
+                <span className="font-headline-md text-[var(--color-blood)] uppercase tracking-wider block mb-1">Spartan Spotter</span>
+                <p className="font-body-md text-[var(--color-bone)] italic leading-snug min-h-[3rem]">
+                  {displayedQuote}
+                  <span className="animate-pulse opacity-50 ml-1 block inline-block w-2 h-4 bg-[var(--color-blood)] align-middle"></span>
+                </p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
       <div className="flex-1 space-y-4">
         {exercises.map(ex => (
@@ -154,20 +168,26 @@ export default function SessionPage() {
             )}
             
             <div className="flex items-center justify-between relative z-10">
-              <div>
-                <h3 className={`text-xl font-display font-bold uppercase tracking-wider transition-all ${completed[ex.id] ? 'line-through text-gray-600' : 'text-[var(--color-bone)]'}`}>
-                  {ex.name}
-                </h3>
-                <p className={`text-sm mt-1 font-bold tracking-widest uppercase ${completed[ex.id] ? 'text-gray-700' : 'text-[var(--color-ash)]'}`}>
-                  {ex.weight} / {ex.reps} reps
-                </p>
+              <div className="flex gap-4 items-start">
+                <span className={`text-2xl mt-0.5 transition-all duration-300 ${completed[ex.id] ? 'grayscale opacity-50' : ''}`}>
+                  {ex.emoji}
+                </span>
+                <div>
+                  <h3 className={`text-xl font-display font-bold uppercase tracking-wider transition-all ${completed[ex.id] ? 'line-through text-gray-600' : 'text-[var(--color-bone)]'}`}>
+                    {ex.name}
+                  </h3>
+                  <p className={`text-sm mt-1 font-bold tracking-widest uppercase ${completed[ex.id] ? 'text-gray-700' : 'text-[var(--color-ash)]'}`}>
+                    ({ex.muscle}) {ex.weight} / {ex.reps} reps
+                  </p>
+                </div>
               </div>
-              <div className={`transition-transform duration-300 ${completed[ex.id] ? 'scale-110 text-[var(--color-bronze)]' : 'text-gray-700'}`}>
+              <div className={`transition-transform duration-300 shrink-0 ${completed[ex.id] ? 'scale-110 text-[var(--color-bronze)]' : 'text-gray-700'}`}>
                 {completed[ex.id] ? <CheckCircle2 size={32} /> : <Circle size={32} />}
               </div>
             </div>
           </div>
         ))}
+      </div>
       </div>
 
       <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-[var(--color-abyss)] via-[var(--color-abyss)] to-transparent">

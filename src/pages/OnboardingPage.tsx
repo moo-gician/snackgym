@@ -588,15 +588,6 @@ export default function OnboardingPage() {
                   );
                 })}
               </div>
-
-              <div className="flex flex-col gap-3">
-                <button 
-                  onClick={recalculatePool}
-                  className="w-full bg-[var(--color-abyss)] border border-[var(--color-ash)] p-4 font-display font-bold text-[var(--color-bone)] uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-[var(--color-charcoal)] active:scale-[0.98] transition-all"
-                >
-                  <RefreshCw size={16} /> RECALCULATE ROUTINE
-                </button>
-              </div>
             </div>
           )}
 
@@ -639,7 +630,16 @@ export default function OnboardingPage() {
 
       {/* Action Footer */}
       <div className="fixed bottom-24 w-full z-40 bg-gradient-to-t from-[var(--color-abyss)] via-[var(--color-abyss)]/90 to-transparent pb-4 px-6 pt-10 pointer-events-none">
-        <div className="h-16 flex gap-4 max-w-md mx-auto pointer-events-auto">
+        <div className="flex flex-col gap-3 max-w-md mx-auto pointer-events-auto">
+          {step === 5 && (
+            <button 
+              onClick={recalculatePool}
+              className="w-full h-12 bg-[var(--color-abyss)] border border-[var(--color-ash)] font-display font-bold text-[var(--color-bone)] uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-[var(--color-charcoal)] active:scale-[0.98] transition-all shadow-[0_0_10px_rgba(0,0,0,0.5)]"
+            >
+              <RefreshCw size={14} /> RECALCULATE ROUTINE
+            </button>
+          )}
+          <div className="h-16 flex gap-4 w-full">
           {step > 1 && (
             <button 
               onClick={prevStep}
@@ -666,6 +666,7 @@ export default function OnboardingPage() {
               ? (notificationMethod === 'telegram' ? 'Connect Telegram' : 'Complete Setup') 
               : 'CONTINUE'} 
           </button>
+        </div>
         </div>
       </div>
 

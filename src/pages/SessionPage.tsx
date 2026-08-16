@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { CheckCircle2, Circle } from 'lucide-react';
 import { auth } from '../lib/firebase';
 import { recordSessionComplete } from '../lib/firestore';
@@ -7,6 +7,9 @@ import { recordSessionComplete } from '../lib/firestore';
 export default function SessionPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const scheduledTime = searchParams.get('time');
+  
   const [completed, setCompleted] = useState<Record<string, boolean>>({});
   const [spark, setSpark] = useState<string | null>(null);
 
@@ -58,7 +61,7 @@ export default function SessionPage() {
       const earnedCalories = calculateCalories();
       if (earnedCalories > 0) {
         try {
-          await recordSessionComplete(auth.currentUser.uid, earnedCalories);
+          await recordSessionComplete(auth.currentUser.uid, earnedCalories, scheduledTime || undefined);
         } catch (err) {
           console.error("Failed to save session record:", err);
         }
@@ -80,8 +83,12 @@ export default function SessionPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-display font-bold uppercase tracking-wider text-[var(--color-bone)]">⚡ Compact Assault</h1>
-          <p className="text-sm font-bold uppercase tracking-widest text-[var(--color-blood)] mt-1">Session {id}</p>
+          <h1 className="text-3xl font-display font-bold uppercase tracking-wider text-[var(--color-bone)]">
+            ⚡ {scheduledTime ? 'Scheduled Assault' : 'Compact Assault'}
+          </h1>
+          <p className="text-sm font-bold uppercase tracking-widest text-[var(--color-blood)] mt-1">
+            {scheduledTime ? `STRIKE TIME: ${scheduledTime}` : `Session ${id}`}
+          </p>
         </div>
         <button onClick={handleFullSkip} className="px-3 py-1.5 bg-transparent border border-gray-800 text-[var(--color-ash)] rounded-none text-xs font-bold uppercase tracking-widest hover:border-[var(--color-blood)] hover:text-[var(--color-blood)] transition-all">
           Retreat

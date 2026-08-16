@@ -135,7 +135,8 @@ export default function OnboardingPage() {
         activeDays,
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         spotter: spotter as any,
-        notificationMethod: notificationMethod as any
+        notificationMethod: notificationMethod as any,
+        alarmTimes
       });
       
       console.log("Onboarding data saved successfully!");

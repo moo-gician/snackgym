@@ -3,9 +3,9 @@ import { useNavigate, Link } from 'react-router-dom';
 import { db, auth } from '../lib/firebase';
 import { signOut } from 'firebase/auth';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { deactivateUser } from '../lib/firestore';
+import { deactivateUser, skipSession } from '../lib/firestore';
 import type { UserProfile } from '../lib/firestore';
-import { LogOut, Trash2, Share2, Activity, BellOff, User } from 'lucide-react';
+import { LogOut, Trash2, Share2, Activity, BellOff, User, SkipForward, Play } from 'lucide-react';
 
 export default function DashboardPage() {
   const navigate = useNavigate();
@@ -15,6 +15,9 @@ export default function DashboardPage() {
   const [userData, setUserData] = useState<Partial<UserProfile>>({});
   const [isSnoozed, setIsSnoozed] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
+  
+  const [nextSessionTime, setNextSessionTime] = useState<string | null>(null);
+  const [timeLeft, setTimeLeft] = useState<string>('--:--:--');
 
   useEffect(() => {
     async function fetchUser() {
@@ -32,6 +35,64 @@ export default function DashboardPage() {
     }
     fetchUser();
   }, [user]);
+
+  // Calculate Next Session Time
+  useEffect(() => {
+    if (!userData.alarmTimes || userData.alarmTimes.length === 0) return;
+    
+    const { completedAlarms = [], skippedAlarms = [] } = userData;
+
+    // Find the first alarm time that is not completed and not skipped
+    let next = null;
+    for (const timeStr of userData.alarmTimes) {
+      if (completedAlarms.includes(timeStr) || skippedAlarms.includes(timeStr)) continue;
+      
+      // Even if the time has passed, if it hasn't been completed or skipped, it is the 'next' overdue session.
+      // Alternatively, we strictly take the next future one. But usually, if it's past due, you still need to do it or skip it.
+      // So we just take the first uncompleted/unskipped one in the list.
+      next = timeStr;
+      break;
+    }
+    setNextSessionTime(next);
+  }, [userData]);
+
+  // Countdown Timer Update
+  useEffect(() => {
+    if (!nextSessionTime) {
+      setTimeLeft('NO SESSIONS');
+      return;
+    }
+
+    const intervalId = setInterval(() => {
+      const now = new Date();
+      const [nH, nM] = nextSessionTime.split(':').map(Number);
+      const targetDate = new Date();
+      targetDate.setHours(nH, nM, 0, 0);
+
+      let diff = targetDate.getTime() - now.getTime();
+      
+      if (diff < 0) {
+        setTimeLeft('OVERDUE');
+      } else {
+        const h = Math.floor(diff / (1000 * 60 * 60));
+        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((diff % (1000 * 60)) / 1000);
+        setTimeLeft(`${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`);
+      }
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, [nextSessionTime]);
+
+  const handleSkipSession = async () => {
+    if (!user || !nextSessionTime) return;
+    if (window.confirm("Skip this session? Your spotter will remember this cowardice.")) {
+      await skipSession(user.uid, nextSessionTime);
+      // Refresh user data to recalculate
+      const userDoc = await getDoc(doc(db, 'users', user.uid));
+      setUserData(userDoc.data() as Partial<UserProfile>);
+    }
+  };
 
   const toggleSnooze = async () => {
     if (!user) return;
@@ -81,8 +142,9 @@ export default function DashboardPage() {
     setShowFeedback(false);
   };
 
-  const todaySessions = userData.todaySessions || 0;
-  const sessionsPerDay = userData.sessionsPerDay || 6;
+  const sessionsPerDay = userData.alarmTimes ? userData.alarmTimes.length : (userData.sessionsPerDay || 6);
+  // Re-calculate todaySessions based on completedAlarms array length if possible to ensure perfect sync
+  const todaySessions = userData.completedAlarms ? userData.completedAlarms.length : (userData.todaySessions || 0);
   const totalCalories = Math.floor(userData.totalCalories || 0);
   const streak = userData.currentStreak || 0;
   
@@ -133,7 +195,7 @@ export default function DashboardPage() {
             </div>
             
             {/* Spotter Bubble */}
-            <div className="px-4 z-10 mt-6">
+            <div className={`px-4 z-10 mt-6 transition-all duration-700 ${isSnoozed ? 'grayscale opacity-70' : ''}`}>
               <div className="relative bg-[var(--color-charcoal)] border border-[var(--color-blood)]/30 p-4 rounded-none shadow-[0_0_20px_rgba(217,26,26,0.15)] overflow-hidden">
                 <div className="absolute top-0 right-0 w-2 h-2 bg-[var(--color-blood)]"></div>
                 <div className="absolute top-0 left-0 right-2 h-[1px] bg-gradient-to-r from-[var(--color-blood)]/50 to-transparent"></div>
@@ -144,17 +206,21 @@ export default function DashboardPage() {
                   </div>
                   <div>
                     <span className="font-headline-md text-[var(--color-blood)] uppercase tracking-wider block mb-1">Spartan Spotter</span>
-                    <p className="font-body-md text-[var(--color-bone)] italic leading-snug">"Your chair is making you soft. Drop and give me 20. Excuses burn zero calories."</p>
+                    <p className={`font-body-md text-[var(--color-bone)] italic leading-snug ${!isSnoozed ? 'animate-pulse' : ''}`}>
+                      {isSnoozed 
+                        ? '"Snoozing? I guess weakness is your new PR. Turn that off and get back to work!"'
+                        : '"Your chair is making you soft. Drop and give me 20. Excuses burn zero calories."'}
+                    </p>
                   </div>
                 </div>
               </div>
             </div>
             
             {/* Progress Ring */}
-            <div className="flex-1 flex flex-col items-center justify-center relative p-4 mt-6">
-              <div className="absolute inset-0 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 rounded-full bg-[var(--color-bronze)]/10 blur-[60px] pointer-events-none"></div>
+            <div className={`flex-1 flex flex-col items-center justify-center relative p-4 mt-6 transition-all duration-700 ${isSnoozed ? 'grayscale opacity-50' : ''}`}>
+              <div className={`absolute inset-0 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 rounded-full bg-[var(--color-bronze)]/10 blur-[60px] pointer-events-none ${!isSnoozed ? 'animate-pulse' : ''}`}></div>
               <div className="relative w-72 h-72 flex items-center justify-center">
-                <svg className="absolute inset-0 w-full h-full -rotate-90 drop-shadow-[0_0_15px_rgba(200,154,81,0.3)]" viewBox="0 0 100 100">
+                <svg className={`absolute inset-0 w-full h-full -rotate-90 drop-shadow-[0_0_15px_rgba(200,154,81,0.3)] ${!isSnoozed ? 'animate-[spin_20s_linear_infinite_reverse]' : ''}`} viewBox="0 0 100 100">
                   <circle cx="50" cy="50" fill="none" r="42" stroke="#33343c" strokeWidth="8"></circle>
                   <defs>
                     <linearGradient id="ringHeat" x1="0%" x2="100%" y1="0%" y2="100%">
@@ -172,12 +238,12 @@ export default function DashboardPage() {
                 </svg>
                 
                 <div className="flex flex-col items-center justify-center text-center p-4">
-                  <span className="font-display font-bold text-xs text-[var(--color-ash)] uppercase tracking-[0.2em] mb-1">Today's Beating</span>
+                  <span className="font-display font-bold text-xs text-[var(--color-ash)] uppercase tracking-[0.1em] mb-1">Completed Assaults</span>
                   <div className="flex items-baseline gap-1">
                     <span className="font-display font-black text-6xl leading-none text-[var(--color-bone)]">{todaySessions}</span>
                     <span className="font-display font-bold text-2xl text-[var(--color-ash)]">/ {sessionsPerDay}</span>
                   </div>
-                  <span className="font-display font-bold text-xs text-[var(--color-ash)] uppercase mt-2 tracking-widest">Sets</span>
+                  <span className="font-display font-bold text-xs text-[var(--color-ash)] uppercase mt-2 tracking-widest">Strikes</span>
                 </div>
                 
                 <div className="absolute top-2 left-1/2 -translate-x-1/2 w-4 h-1 bg-[var(--color-bronze)]"></div>
@@ -188,15 +254,41 @@ export default function DashboardPage() {
             </div>
 
 
-            {/* Action Button */}
-            <div className="px-4 mb-8 z-10">
-              <Link to="/session/manual-1" className="w-full relative group overflow-hidden bg-[var(--color-bronze)] py-4 px-6 flex items-center justify-center gap-2 border border-yellow-600 shadow-[0_0_15px_rgba(200,154,81,0.2)] hover:shadow-[0_0_25px_rgba(200,154,81,0.4)] transition-all active:scale-[0.98]">
-                <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMSIgZmlsbD0iI2ZmZiIgZmlsbC1vcGFjaXR5PSIwLjIiLz48L3N2Zz4=')] opacity-20 group-hover:opacity-40 transition-opacity"></div>
-                <span className="font-display font-bold text-xl text-[var(--color-abyss)] uppercase tracking-widest relative z-10 flex items-center gap-2 mt-1">
-                  Start Manual Assault
-                  <span className="text-2xl leading-none -mt-1">⚡</span>
-                </span>
-                <div className="absolute top-0 left-0 w-full h-[1px] bg-white/30 z-10"></div>
+            {/* Countdown & Action Buttons */}
+            <div className="px-4 mb-8 z-10 flex flex-col items-center">
+              <div className="mb-4 text-center">
+                <span className="font-display font-bold text-xs uppercase tracking-[0.2em] text-[var(--color-ash)] block mb-1">Next Strike In</span>
+                <div className={`font-display font-black text-4xl tracking-wider ${isSnoozed ? 'text-gray-600' : 'text-[var(--color-bone)] drop-shadow-[0_0_10px_rgba(230,225,216,0.3)]'}`}>
+                  {timeLeft}
+                </div>
+              </div>
+
+              <div className="flex gap-3 w-full">
+                <button 
+                  onClick={handleSkipSession}
+                  disabled={!nextSessionTime || isSnoozed}
+                  className="flex-1 bg-[var(--color-charcoal)] border border-gray-700 hover:border-[var(--color-ash)] text-[var(--color-ash)] py-3 px-2 flex items-center justify-center gap-2 rounded-none transition-all disabled:opacity-50"
+                >
+                  <SkipForward size={18} />
+                  <span className="font-display font-bold text-sm uppercase tracking-wider mt-0.5">Skip Session</span>
+                </button>
+                
+                <button 
+                  onClick={() => nextSessionTime && navigate(`/session/scheduled?time=${nextSessionTime}`)}
+                  disabled={!nextSessionTime || isSnoozed}
+                  className="flex-[2] relative group overflow-hidden bg-[var(--color-bronze)] py-3 px-4 flex items-center justify-center gap-2 border border-yellow-600 shadow-[0_0_15px_rgba(200,154,81,0.2)] hover:shadow-[0_0_25px_rgba(200,154,81,0.4)] transition-all active:scale-[0.98] disabled:opacity-50 disabled:grayscale"
+                >
+                  <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMSIgZmlsbD0iI2ZmZiIgZmlsbC1vcGFjaXR5PSIwLjIiLz48L3N2Zz4=')] opacity-20 group-hover:opacity-40 transition-opacity"></div>
+                  <span className="font-display font-bold text-[15px] text-[var(--color-abyss)] uppercase tracking-widest relative z-10 flex items-center gap-2 mt-0.5">
+                    Start Scheduled
+                    <Play size={16} className="fill-current -mt-0.5" />
+                  </span>
+                  <div className="absolute top-0 left-0 w-full h-[1px] bg-white/30 z-10"></div>
+                </button>
+              </div>
+
+              <Link to="/session/manual" className="mt-4 text-xs font-bold text-gray-500 hover:text-[var(--color-ash)] uppercase tracking-widest underline underline-offset-4">
+                Start Manual Assault Instead
               </Link>
             </div>
           </div>

@@ -5,7 +5,7 @@ import { signOut } from 'firebase/auth';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { deactivateUser } from '../lib/firestore';
 import type { UserProfile } from '../lib/firestore';
-import { Settings as SettingsIcon, LogOut, Trash2, Share2, Activity, BellOff, User } from 'lucide-react';
+import { LogOut, Trash2, Share2, Activity, BellOff, User } from 'lucide-react';
 
 export default function DashboardPage() {
   const navigate = useNavigate();

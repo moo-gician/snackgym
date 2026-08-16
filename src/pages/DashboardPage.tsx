@@ -300,13 +300,12 @@ export default function DashboardPage() {
                   ></circle>
                 </svg>
                 
-                <div className="flex flex-col items-center justify-center text-center p-4">
-                  <span className="font-display font-bold text-xs text-[var(--color-ash)] uppercase tracking-[0.1em] mb-1">Completed Assaults</span>
+                <div className="flex flex-col items-center justify-center text-center p-4 gap-1">
                   <div className="flex items-baseline gap-1">
-                    <span className="font-display font-black text-6xl leading-none text-[var(--color-bone)]">{todaySessions}</span>
-                    <span className="font-display font-bold text-2xl text-[var(--color-ash)]">/ {sessionsPerDay}</span>
+                    <span className="font-display font-black text-7xl leading-none text-[var(--color-bone)]">{todaySessions}</span>
+                    <span className="font-display font-bold text-3xl text-[var(--color-ash)]">/ {sessionsPerDay}</span>
                   </div>
-                  <span className="font-display font-bold text-xs text-[var(--color-ash)] uppercase mt-2 tracking-widest">Strikes</span>
+                  <span className="font-display font-bold text-xs text-[var(--color-ash)] uppercase tracking-[0.1em]">Completed Assaults</span>
                 </div>
                 
                 <div className="absolute top-2 left-1/2 -translate-x-1/2 w-4 h-1 bg-[var(--color-bronze)]"></div>
@@ -343,7 +342,7 @@ export default function DashboardPage() {
                 >
                   <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMSIgZmlsbD0iI2ZmZiIgZmlsbC1vcGFjaXR5PSIwLjIiLz48L3N2Zz4=')] opacity-20 group-hover:opacity-40 transition-opacity"></div>
                   <span className="font-display font-bold text-[15px] text-[var(--color-abyss)] uppercase tracking-widest relative z-10 flex items-center gap-2 mt-0.5">
-                    Start Scheduled
+                    Start Assault
                     <Play size={16} className="fill-current -mt-0.5" />
                   </span>
                   <div className="absolute top-0 left-0 w-full h-[1px] bg-white/30 z-10"></div>

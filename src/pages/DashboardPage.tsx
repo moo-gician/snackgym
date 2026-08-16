@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { db, auth } from '../lib/firebase';
 import { signOut } from 'firebase/auth';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { deactivateUser, skipSession } from '../lib/firestore';
 import type { UserProfile } from '../lib/firestore';
-import { LogOut, Trash2, Share2, Activity, BellOff, User, SkipForward, Play } from 'lucide-react';
+import { LogOut, Trash2, Activity, BellOff, User, SkipForward, Play } from 'lucide-react';
 
 export default function DashboardPage() {
   const navigate = useNavigate();
@@ -190,12 +190,6 @@ export default function DashboardPage() {
         alert("An error occurred.");
       }
     }
-  };
-
-  const handleShare = () => {
-    const text = `🤬 Spartan Spotter: "This lazy one just lifted 12kg dumbbells. Let's see how long this lasts. Who's in? [B.E.A.S.T. Link]"`;
-    navigator.clipboard.writeText(text);
-    alert("Copied to clipboard! Share your glory.");
   };
 
   const handleFeedback = (level: string) => {

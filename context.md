@@ -54,3 +54,4 @@
 - **v1.5.0** (2026-08-15): Stitch AI의 Onboarding 6개 단계 및 Dashboard 화면 이식 완료 (네오-브루탈리즘 UI 전면 적용).
 - **v1.6.0** (2026-08-16): Dynamic Split & Custom Exercise Pool 알고리즘 (Armory Onboarding & Session Generation) 통합 완료.
 - **v1.6.1** (2026-08-16): Split Strategy 필터링 및 할당 로직 버그 픽스, Armory UI 스크롤 개선 및 세션 당 운동 개수 시간 기준 현실화(1분/개).
+- **v1.6.2** (2026-08-16): Onboarding Bottom Nav 이탈 시 자동 저장(Auto-save) 로직 구현 및 과금 최적화(단일 Write 패턴) 검증 완료.

@@ -5,7 +5,7 @@ import { signOut } from 'firebase/auth';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { deactivateUser, skipSession } from '../lib/firestore';
 import type { UserProfile } from '../lib/firestore';
-import { LogOut, Trash2, Activity, BellOff, User, SkipForward, Play } from 'lucide-react';
+import { LogOut, Trash2, Activity, BellOff, User, SkipForward, Play, Share2 } from 'lucide-react';
 
 export default function DashboardPage() {
   const navigate = useNavigate();
@@ -44,6 +44,29 @@ export default function DashboardPage() {
     `${firstName}, prove to yourself that you're better than your excuses.`
   ], [firstName]);
 
+  const achievementQuotes = useMemo(() => [
+    `That's it, ${firstName}? My grandmother warms up with your max.`,
+    `You survived another day, ${firstName}. Barely.`,
+    `Don't get cocky, ${firstName}. The iron is still heavier than you.`,
+    `I guess ${firstName} isn't entirely useless after all. Good job.`,
+    `Enjoy the glory today, ${firstName}. Tomorrow we go to war again.`,
+    `Is this all you have to show, ${firstName}? Pathetic.`,
+    `You call this an achievement, ${firstName}? I call it a warm-up.`,
+    `${firstName}, I'm writing this down... under "Things to improve".`,
+    `Wow, ${firstName}. You actually sweated. A milestone.`,
+    `Don't let this tiny victory get to your head, ${firstName}.`,
+    `Not bad, ${firstName}. But not good either.`,
+    `${firstName}, you're one step closer to not being a disappointment.`,
+    `I've seen better stats from a toddler, ${firstName}.`,
+    `This glory won't last if you quit tomorrow, ${firstName}.`,
+    `${firstName}! The weights are laughing at you.`,
+    `You think you're done, ${firstName}? The war just started.`,
+    `I'm unimpressed, ${firstName}. Do better.`,
+    `${firstName}, your form was terrible, but I'll count it.`,
+    `Is that your PR, ${firstName}? Try harder next time.`,
+    `A solid effort, ${firstName}... for a mortal.`
+  ], [firstName]);
+
   const snoozedQuotes = useMemo(() => [
     `Snoozing, ${firstName}? I guess weakness is your new PR.`,
     `A snooze button is just a failure button, ${firstName}.`,
@@ -53,6 +76,7 @@ export default function DashboardPage() {
   ], [firstName]);
 
   const [quoteIndex, setQuoteIndex] = useState(0);
+  const [achQuoteIndex, setAchQuoteIndex] = useState(0);
   
   const targetQuote = isSnoozed 
     ? snoozedQuotes[quoteIndex % snoozedQuotes.length]
@@ -63,10 +87,17 @@ export default function DashboardPage() {
     setQuoteIndex(prev => prev + 1);
   };
 
+  const handleAchSpotterClick = () => {
+    if (navigator.vibrate) navigator.vibrate(20);
+    setAchQuoteIndex(prev => prev + 1);
+  };
+
   const [displayedQuote, setDisplayedQuote] = useState('');
+  const [displayedAchQuote, setDisplayedAchQuote] = useState('');
 
   useEffect(() => {
     setQuoteIndex(Math.floor(Math.random() * 20)); // Start with a random quote
+    setAchQuoteIndex(Math.floor(Math.random() * 20));
   }, []);
 
   useEffect(() => {
@@ -79,6 +110,18 @@ export default function DashboardPage() {
     }, 40);
     return () => clearInterval(interval);
   }, [targetQuote]);
+
+  useEffect(() => {
+    const quote = achievementQuotes[achQuoteIndex % achievementQuotes.length];
+    setDisplayedAchQuote('');
+    let i = 0;
+    const interval = setInterval(() => {
+      i++;
+      setDisplayedAchQuote(quote.substring(0, i));
+      if (i > quote.length) clearInterval(interval);
+    }, 40);
+    return () => clearInterval(interval);
+  }, [achQuoteIndex, achievementQuotes]);
 
   useEffect(() => {
     async function fetchUser() {
@@ -198,10 +241,27 @@ export default function DashboardPage() {
     setShowFeedback(false);
   };
 
+  const getRank = (s: number) => {
+    if (s === 0) return { title: "Sewer Rat 🐀", color: "text-gray-500" };
+    if (s <= 2) return { title: "Stray Dog 🐕", color: "text-yellow-600" };
+    if (s <= 6) return { title: "Mortal 🧍", color: "text-blue-400" };
+    if (s <= 13) return { title: "BEAST 🦍", color: "text-[var(--color-blood)]" };
+    return { title: "SPARTAN 🏛️", color: "text-[var(--color-bronze)]" };
+  };
+
   const sessionsPerDay = userData.alarmTimes ? userData.alarmTimes.length : (userData.sessionsPerDay || 6);
   const todaySessions = userData.todaySessions || 0;
   const totalCalories = Math.floor(userData.totalCalories || 0);
   const streak = userData.currentStreak || 0;
+  
+  const rank = getRank(streak);
+
+  const handleShareGlory = () => {
+    const currentQuote = achievementQuotes[achQuoteIndex % achievementQuotes.length];
+    const text = `🏆 [SNACK GYM - BEAST MODE] 🏆\n${firstName} survived ${todaySessions} brutal sessions today.\nBurned ${totalCalories} kcal (🍩 ${Math.floor(totalCalories/250)} donuts) so far.\nRank: ${rank.title}\n\n🤬 Spartan Spotter says:\n"${currentQuote}"\n\nThink you can beat this weakling? Prove it.\n🔗 https://snackgym.com`;
+    navigator.clipboard.writeText(text);
+    alert("Copied to clipboard! Share your glory on IG/TikTok/Telegram.");
+  };
   
   const progressPercent = Math.min(todaySessions / sessionsPerDay, 1);
   const donuts = Math.floor(totalCalories / 250);
@@ -350,19 +410,50 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* ----------------- PROGRESS TAB ----------------- */}
+        {/* ----------------- PROGRESS (ACHIEVEMENT) TAB ----------------- */}
         {activeTab === 'PROGRESS' && (
-          <div className="flex-1 px-4 pt-8 animate-fade-in-up z-10">
+          <div className="flex-1 px-4 pt-8 animate-fade-in-up z-10 pb-8">
             <h1 className="text-3xl font-display font-bold mb-6 text-[var(--color-bone)] uppercase tracking-wide">Your Glory</h1>
             
+            {/* Achievement Spotter Bubble */}
+            <div className="mb-6 transition-all duration-700">
+              <div 
+                onClick={handleAchSpotterClick}
+                className="relative bg-[var(--color-charcoal)] border border-[var(--color-blood)]/30 p-4 rounded-none shadow-[0_0_20px_rgba(217,26,26,0.15)] overflow-hidden cursor-pointer active:scale-[0.98] transition-transform"
+              >
+                <div className="absolute top-0 right-0 w-2 h-2 bg-[var(--color-blood)]"></div>
+                <div className="absolute top-0 left-0 right-2 h-[1px] bg-gradient-to-r from-[var(--color-blood)]/50 to-transparent"></div>
+                <div className="flex items-center gap-4 relative z-10">
+                  <div className="w-14 h-14 bg-[var(--color-abyss)] border border-[var(--color-blood)] rounded-full flex items-center justify-center shrink-0 overflow-hidden shadow-[0_0_15px_rgba(217,26,26,0.3)]">
+                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuD51FeObMtC6z6ZBtJD8p6aNUgd5xOxJmaxBhjMam0av-ygMXreK223xu94s9zt2p0xexAYJZAN4j31JplRuwrkCgLsWb8f83fxT7FPPVmbI5JuNU5V6i1OMfNdTD7agx2yArUXmxHdaESYc-KnNuwfRu_b86KMi9AsmxCZG_jUf5rrpUhP3VE8saA2CZO1DXeM24KLHR-xUTzAOY3yJ88F9Ct03InCCfqxmjaoHErs8D0xqnq108-0" alt="Spartan Spotter" className="w-full h-full object-cover" />
+                  </div>
+                  <div>
+                    <span className="font-headline-md text-[var(--color-blood)] uppercase tracking-wider block mb-1">Spartan Spotter</span>
+                    <p className="font-body-md text-[var(--color-bone)] italic leading-snug min-h-[3rem]">
+                      {displayedAchQuote}
+                      <span className="animate-pulse opacity-50 ml-1 block inline-block w-2 h-4 bg-[var(--color-blood)] align-middle"></span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div className="bg-[var(--color-charcoal)] p-6 rounded-none border-l-4 border-[var(--color-bronze)] mb-6 flex items-center gap-6 relative overflow-hidden">
               <div className="absolute top-0 right-0 opacity-5 text-8xl font-display text-[var(--color-bronze)] translate-x-4 -translate-y-4">STREAK</div>
               <div className="flex-1 relative z-10">
-                <h3 className="text-[var(--color-ash)] text-sm font-bold uppercase tracking-wider mb-1">Current Streak</h3>
-                <div className="text-5xl font-display font-black text-[var(--color-bone)] flex items-baseline gap-2">
-                  🔥 {streak} <span className="text-lg text-[var(--color-ash)] font-sans">Days</span>
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h3 className="text-[var(--color-ash)] text-sm font-bold uppercase tracking-wider mb-1">Current Streak</h3>
+                    <div className="text-5xl font-display font-black text-[var(--color-bone)] flex items-baseline gap-2">
+                      🔥 {streak} <span className="text-lg text-[var(--color-ash)] font-sans">Days</span>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <h3 className="text-[var(--color-ash)] text-xs font-bold uppercase tracking-widest mb-1">Rank</h3>
+                    <span className={`font-display font-bold text-lg uppercase tracking-wider ${rank.color}`}>{rank.title}</span>
+                  </div>
                 </div>
-                <p className="text-xs text-[var(--color-blood)] font-bold uppercase tracking-widest mt-2">Keep the fire burning!</p>
+                <p className="text-xs text-[var(--color-blood)] font-bold uppercase tracking-widest mt-4">Keep the fire burning!</p>
               </div>
             </div>
 
@@ -375,26 +466,34 @@ export default function DashboardPage() {
                 You've burned an estimated <strong>{totalCalories} kcal</strong>. That's equivalent to:
               </p>
               <div className="flex items-center gap-4">
-                <div className="flex-1 bg-[var(--color-abyss)] p-4 rounded-none text-center border border-gray-800">
+                <div className="flex-1 bg-[var(--color-abyss)] p-4 rounded-none text-center border border-gray-800 relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-1 h-full bg-[var(--color-bronze)]"></div>
                   <span className="text-4xl block mb-2">🍩</span>
-                  <span className="font-display font-bold text-3xl text-[var(--color-bone)] block leading-none mb-1">{donuts}</span>
-                  <span className="text-xs text-[var(--color-ash)] font-bold uppercase tracking-widest block">Donuts</span>
+                  <span className="font-display font-black text-3xl text-[var(--color-bone)] block leading-none mb-1">{donuts}</span>
+                  <span className="text-xs text-[var(--color-ash)] font-bold uppercase tracking-widest block">Donuts Defeated</span>
                 </div>
-                <div className="flex-1 bg-[var(--color-abyss)] p-4 rounded-none text-center border border-gray-800">
+                <div className="flex-1 bg-[var(--color-abyss)] p-4 rounded-none text-center border border-gray-800 relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-1 h-full bg-[var(--color-bronze)]"></div>
                   <span className="text-4xl block mb-2">🍺</span>
-                  <span className="font-display font-bold text-3xl text-[var(--color-bone)] block leading-none mb-1">{beers}</span>
-                  <span className="text-xs text-[var(--color-ash)] font-bold uppercase tracking-widest block">Beers</span>
+                  <span className="font-display font-black text-3xl text-[var(--color-bone)] block leading-none mb-1">{beers}</span>
+                  <span className="text-xs text-[var(--color-ash)] font-bold uppercase tracking-widest block">Beers Sweated</span>
                 </div>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4 mt-8">
-              <button onClick={() => setShowFeedback(true)} className="flex flex-col items-center justify-center p-4 bg-[var(--color-charcoal)] rounded-none border border-gray-800 hover:border-[var(--color-bronze)] tap-scale">
+              <button onClick={handleShareGlory} className="flex flex-col items-center justify-center p-4 bg-[var(--color-charcoal)] rounded-none border border-gray-800 hover:border-[var(--color-bronze)] hover:shadow-[0_0_15px_rgba(200,154,81,0.2)] transition-all tap-scale">
+                <Share2 size={24} className="text-[var(--color-bronze)] mb-2" />
+                <span className="text-xs font-bold text-[var(--color-bone)] uppercase tracking-wider">Share Glory</span>
+              </button>
+              <button onClick={() => setShowFeedback(true)} className="flex flex-col items-center justify-center p-4 bg-[var(--color-charcoal)] rounded-none border border-gray-800 hover:border-[var(--color-blood)] hover:shadow-[0_0_15px_rgba(217,26,26,0.2)] transition-all tap-scale">
                 <Activity size={24} className="text-[var(--color-blood)] mb-2" />
                 <span className="text-xs font-bold text-[var(--color-bone)] uppercase tracking-wider">Feedback</span>
               </button>
-              <button onClick={handleSoftDelete} className="flex flex-col items-center justify-center p-4 bg-red-900/10 rounded-none border border-red-900/50 hover:bg-red-900/30 transition-colors tap-scale">
-                <Trash2 size={24} className="text-red-500 mb-2" />
+            </div>
+            <div className="mt-4">
+              <button onClick={handleSoftDelete} className="w-full flex items-center justify-center gap-2 p-3 bg-red-900/10 rounded-none border border-red-900/50 hover:bg-red-900/30 transition-colors tap-scale">
+                <Trash2 size={16} className="text-red-500" />
                 <span className="text-xs font-bold text-red-500 uppercase tracking-wider">Surrender</span>
               </button>
             </div>
@@ -467,7 +566,7 @@ export default function DashboardPage() {
               className={`flex-1 flex flex-col items-center justify-center gap-1 transition-all duration-300 ${activeTab === 'PROGRESS' ? 'text-[var(--color-bronze)]' : 'text-gray-500 hover:text-gray-300'}`}
             >
               <span className={`text-2xl mb-1 ${activeTab === 'PROGRESS' ? 'drop-shadow-[0_0_10px_rgba(200,154,81,0.5)] scale-110' : ''}`}>🔥</span>
-              <span className="font-display font-bold text-[10px] uppercase tracking-widest">History</span>
+              <span className="font-display font-bold text-[10px] uppercase tracking-widest">Achievement</span>
             </button>
             <button 
               onClick={() => setActiveTab('SETTINGS')} 

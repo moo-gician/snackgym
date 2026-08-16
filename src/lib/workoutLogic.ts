@@ -55,7 +55,7 @@ export function generateCustomPool(
     pool['Day B (Lower & Core)'] = baseFilteredDB.filter(ex => ex.splitType === 'Legs' || ex.splitType === 'Core').map(e => e.id);
   } else if (splitStrategy === '2-Split (Push/Core)') {
     pool['Day A (Push)'] = baseFilteredDB.filter(ex => ex.splitType === 'Push').map(e => e.id);
-    pool['Day B (Core & Arms)'] = baseFilteredDB.filter(ex => ex.splitType === 'Core' || ex.muscleGroup === 'Arms' || ex.muscleGroup === 'Shoulders').map(e => e.id);
+    pool['Day B (Core & Pull)'] = baseFilteredDB.filter(ex => ex.splitType === 'Core' || ex.splitType === 'Pull').map(e => e.id);
   } else {
     // 1-Split (Full Body)
     pool['Day A (Full Body)'] = baseFilteredDB.map(e => e.id);

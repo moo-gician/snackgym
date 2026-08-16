@@ -233,7 +233,7 @@ export default function OnboardingPage() {
         </div>
       </header>
 
-      <main className="flex-grow flex flex-col pb-32 pt-24 px-6 max-w-md mx-auto w-full relative">
+      <main className="flex-grow flex flex-col pb-48 pt-24 px-6 max-w-md mx-auto w-full relative">
         <div className="flex-1 animate-fade-in-up">
           {step === 1 && (
             <div className="flex flex-col text-center">

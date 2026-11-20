@@ -1,4 +1,7 @@
-# B.E.A.S.T. 태스크 백로그 (TODO)
+# B.E.A.S.T. 태스크 백로그 (TODO) — [ARCHIVED 2026-11-20]
+
+> [!NOTE]
+> **프로젝트 종료 (2026-11-20):** PMF 및 ROI 검토 후 Phase 7 중단 및 프로젝트 아카이빙 완료. 모든 실시간 연동(Telegram Webhook, Cloud Functions, Firestore 접근)을 차단하여 과금 요소를 제거했습니다.
 
 ## Phase 1: MVP 구현 (완료)
 - [x] Vite + React (TypeScript) + Tailwind CSS v4 보일러플레이트 세팅
